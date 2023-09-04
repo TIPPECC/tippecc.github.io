@@ -130,7 +130,7 @@
 						<div class="flex justify-end">
 							[
 							{#each member.work_packages as wp}
-								<a href="/work_packages/{wp}" class="m-1 underline">{wp}</a>
+								<a href="/work_packages/{wp.toLowerCase()}" class="m-1 underline">{wp}</a>
 							{/each}
 							]
 						</div>
