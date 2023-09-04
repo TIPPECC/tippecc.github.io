@@ -19,5 +19,6 @@ const config = {
 			precompress: false,
 			ssr: true
 		}),
+	}
 };
 export default config;
