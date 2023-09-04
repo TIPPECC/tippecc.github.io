@@ -19,6 +19,9 @@ const config = {
 			precompress: false,
 			ssr: true
 		}),
+		prerender: {
+			handleMissingId: "warn",
+		}
 	}
 };
 export default config;
