@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+html,
+body {
+	@apply h-full overflow-hidden;
+}
+
+.content-div {
+	@apply w-full lg:px-[20%] max-lg:px-[10%] bg-surface-700 pb-20;
+}
+
+.content-heading {
+	@apply sm:text-3xl max-sm:text-2xl sm:my-4 max-sm:my-3 mr-2;
+}
+
+.content-blockquote {
+	@apply border-l-8 border-l-secondary-500 px-[4%];
+}
