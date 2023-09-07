@@ -26,7 +26,7 @@
 
 	<div class="flex pt-4">
 		<img src={group} alt="Lead" width="30px" />
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#hzg_gerics">HZG-GERICS</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team#hereon_gerics">Hereon-GERICS</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team#wits_gci">WITS-GCI</a></div>
 	</div>
 
@@ -36,9 +36,9 @@
 	For this purpose, we will make use of the already existing but growing CMIP6 archive of global projections
 	of future climate change, as well as the regional climate projections of CORDEX and the new initiative
 	CORDEX-CORE. Moreover, a new set of high-resolution regional climate change projections will be generated
-	with the new coupled ocean-atmosphere RCMs CCAM (WITS-GCI) and ROM (HZG-GERICS) using CMIP6 data as
-	forcing. In order to build up an ensemble of regional climate change projections, the RCMs CCAM and
-	ROM will downscale selected CMIP6 projections to a spatial resolution of about 8 km for a selected
+	with the new coupled ocean-atmosphere RCMs CCAM (WITS-GCI) and ROM (Hereon-GERICS) using CMIP6 data
+	as forcing. In order to build up an ensemble of regional climate change projections, the RCMs CCAM
+	and ROM will downscale selected CMIP6 projections to a spatial resolution of about 8 km for a selected
 	domain in southern Africa. These will be the first coupled ocean-atmosphere projections of future climate
 	change ever obtained for the southern African region, and will include feedbacks between the Agulhas
 	current and Benguela upwelling system and atmospheric circulation over southern Africa. The newly performed

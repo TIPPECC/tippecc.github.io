@@ -25,10 +25,11 @@
 	</div>
 
 	<blockquote class="content-blockquote mb-4">
-		TIPPECC will look within WP 4 into several case studies on different scales in southern Africa. This will include
-		the investigation of tipping points related to “day zero” events in southern Africa, to the cattle
-		industry in southern Africa, to the maize crop in southern Africa, to rural water security
-		in the upper Zambezi, to livelihoods in arid Namibia and to the conservation of mammal biodiversity and related adaptation options.
+		TIPPECC will look within WP 4 into several case studies on different scales in southern Africa.
+		This will include the investigation of tipping points related to “day zero” events in southern
+		Africa, to the cattle industry in southern Africa, to the maize crop in southern Africa, to
+		rural water security in the upper Zambezi, to livelihoods in arid Namibia and to the
+		conservation of mammal biodiversity and related adaptation options.
 	</blockquote>
 
 	<div class="grid md:grid-cols-2 max-md:grid-cols-1 pt-4">
@@ -38,7 +39,7 @@
 			icon={water}
 			title="Rural water supply (Upper Zambezi / Barotse floodplain)"
 			description="."
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
 
 		<CaseStudy
@@ -47,7 +48,7 @@
 			icon={income}
 			title="Livelihoods of communities living in semi-arid regions"
 			description=""
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
 		<CaseStudy
 			wp="Case Study 3"
@@ -55,7 +56,7 @@
 			icon={fence}
 			title="Transboundary conservation"
 			description=""
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
 		<CaseStudy
 			wp="Case Study 4"
@@ -63,7 +64,7 @@
 			icon={no_water}
 			title="“day zero” events"
 			description=""
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
 		<CaseStudy
 			wp="Case Study 5"
@@ -71,7 +72,7 @@
 			icon={cow}
 			title="cattle industry"
 			description=""
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
 		<CaseStudy
 			wp="Case Study 6"
@@ -79,9 +80,7 @@
 			icon={maize}
 			title="maize crop"
 			description=""
-			image = "{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.JPEG"
 		/>
-
-
 	</div>
 </div>

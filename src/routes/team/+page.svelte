@@ -3,43 +3,7 @@
 	import group from '$lib/icons/group-svgrepo-com.svg';
 	import orcid from '$lib/icons/orcid-svgrepo-com.svg';
 	import website from '$lib/icons/web-svgrepo-com.svg';
-
-	let team = [
-		{
-			title: 'Dr.',
-			name: 'Sophie',
-			surname: 'Biskop',
-			role: 'co-project leader & hydrologist',
-			email: '',
-			image: '/biskop.webp',
-			work_packages: ['WP2'],
-			webpage: 'https://www.geographie.uni-jena.de/en/biskop',
-			org: 'Uni Jena'
-		},
-		{
-			name: 'Franziska',
-			surname: 'Zander',
-			role: 'research data manager & scientific software developer',
-			email: '',
-			image: '/zander.webp',
-			work_packages: ['WP3'],
-			webpage: 'https://www.geographie.uni-jena.de/en/zander',
-			orcid: '0000-0001-6892-7046',
-			org: 'Uni Jena'
-		},
-		{
-			title: 'Dr.',
-			name: 'Sven',
-			surname: 'Kralisch',
-			role: 'external contractor & scientific software developer',
-			email: '',
-			// image: '/zander.webp',
-			work_packages: ['WP2', 'WP3'],
-			// webpage: 'https://www.geographie.uni-jena.de/en/kralisch'
-			orcid: '0000-0003-2895-540X',
-			org: 'Uni Jena'
-		}
-	];
+	import team from '../team/team.json';
 </script>
 
 <div class="content-div">
@@ -48,17 +12,16 @@
 		<img src={group} alt="..." width="30px" />
 	</div>
 	<blockquote class="content-blockquote mb-4">
-		TIPPECC is coordinated by <br />
+		TIPPECC is coordinated by: <br />
 		<div class="pl-4 italic">
-			Global Change Institute (GCI), University of the Witwatersrand (WITS), South Africa.
-			<span class="chip bg-green-700 pl-2"><b>GCI-WITS</b></span
-			>
+			Global Change Institute (GCI) at University of the Witwatersrand (WITS) in South Africa
+			<span class="chip bg-green-700 pl-2"><b>WITS-GCI</b></span>
 		</div>
 		<br />
-		Collaborating partners are the <br>
+		Collaborating partners:<br />
 		<div class="pl-4 italic">
 			Helmholtz-Zentrum Geesthacht, Climate Service Center Germany, Hamburg
-			<span class="chip bg-green-700 pl-2"><b>HZG-GERICS</b></span>
+			<span class="chip bg-green-700 pl-2"><b>Hereon-GERICS</b></span>
 		</div>
 		<div class="pl-4 italic">
 			Friedrich Schiller University Jena, Germany
@@ -69,14 +32,13 @@
 			<span class="chip bg-green-700 pl-2"><b>UNZA-IWRMC</b></span>
 		</div>
 		<div class="pl-4 italic">
-			Namibian University for Science and Technology in Southern Africa
-			<span class="chip bg-green-700 pl-2"><b>NUST</b></span>
+			Gobabeb Namib Research Institute
+			<span class="chip bg-green-700 pl-2"><b>Gobabeb</b></span>
 		</div>
 		<div class="pl-4 italic">
 			University of Botswana
 			<span class="chip bg-green-700 pl-2"><b>UB</b></span>
 		</div>
-
 	</blockquote>
 	<section>
 		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4 pt-10">

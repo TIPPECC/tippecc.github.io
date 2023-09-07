@@ -20,7 +20,7 @@ const config = {
 			ssr: true
 		}),
 		prerender: {
-			handleMissingId: "warn",
+			handleMissingId: 'warn'
 		}
 	}
 };

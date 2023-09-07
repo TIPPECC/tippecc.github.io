@@ -12,7 +12,7 @@
 		<div>
 			<h3 class="h3">Project Leader:</h3>
 			<p>
-				Francios Engelbrecht (Wits) (project)<br />
+				Francios Engelbrecht (Wits GCI) (project)<br />
 				Sophie Biskop (Uni Jena) (German side)
 			</p>
 			<h3 class="h3">Postal Address</h3>

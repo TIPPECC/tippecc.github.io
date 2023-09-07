@@ -14,23 +14,23 @@
 	</div>
 
 	<blockquote class="content-blockquote">
-		The WP will analyse regional tipping points in the southern African region towards the
-        provision of climate services such as informing adaptation actions and policy. This will
-        be done through a series of engagements with various actors within case studies to co-develop appropriate
-        adaptation actions.
+		The WP will analyse regional tipping points in the southern African region towards the provision
+		of climate services such as informing adaptation actions and policy. This will be done through a
+		series of engagements with various actors within case studies to co-develop appropriate
+		adaptation actions.
 	</blockquote>
 
 	<div class="flex pt-10">
 		<img src={leader} alt="Lead" width="30px" />
 		<div class="pl-4 text-lg">
-			<a class="anchor" href="/team#francois_engelbrecht">Francois Engelbrecht (GCI-WITS)</a>
+			<a class="anchor" href="/team#francois_engelbrecht">Francois Engelbrecht (WITS_GCI)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
 		<img src={group} alt="Lead" width="30px" />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team#wits_gci">WITS-GCI</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#nust">NUST</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team#gobabeb">Gobabeb</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team#ub">UB</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team#unza_iwemc">UNZA-IWRMC</a></div>
 	</div>

@@ -18,7 +18,7 @@
 
 		<b class="text-lg underline underline-offset-4 decoration-[{color}] ml-2">{title}</b><br />
 	</div>
-	<img src={image} alt="..."  class="mt-2" />
+	<img src={image} alt="..." class="mt-2" />
 	<blockquote class="mt-1 text-sm">
 		{description}
 	</blockquote>
