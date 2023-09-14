@@ -21,15 +21,15 @@
 	<div class="flex pt-10">
 		<img src={leader} alt="Lead" width="30px" />
 		<div class="pl-4 text-lg">
-			<a class="anchor" href="/team#torsten_weber">Sophie Biskop (Uni Jena)</a>
+			<a class="anchor" href="/team/#sophie_biskop">Sophie Biskop (Uni Jena)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
 		<img src={group} alt="Lead" width="30px" />
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#uni_jena">Uni Jena</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#hereon_gerics">Hereon-GERICS</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#wits_gci">WITS-GCI</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#uni_jena">Uni Jena</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#hereon_gerics">Hereon-GERICS</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 	</div>
 
 	<h2 class="h4 pt-10 pb-2">Objectives</h2>

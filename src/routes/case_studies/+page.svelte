@@ -26,10 +26,10 @@
 
 	<blockquote class="content-blockquote mb-4">
 		TIPPECC will look within WP 4 into several case studies on different scales in southern Africa.
-		This will include the investigation of tipping points related to “day zero” events in southern
-		Africa, to the cattle industry in southern Africa, to the maize crop in southern Africa, to
-		rural water security in the upper Zambezi, to livelihoods in arid Namibia and to the
-		conservation of mammal biodiversity and related adaptation options.
+		This will include the investigation of tipping points and related adaptation options related to
+		“day zero” events, to the cattle industry, and to the maize crop in southern Africa, to rural
+		water security in the upper Zambezi, to livelihoods in arid Namibia and to the conservation of
+		mammal biodiversity.
 	</blockquote>
 
 	<div class="grid md:grid-cols-2 max-md:grid-cols-1 pt-4">

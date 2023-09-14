@@ -4,6 +4,38 @@
 	import orcid from '$lib/icons/orcid-svgrepo-com.svg';
 	import website from '$lib/icons/web-svgrepo-com.svg';
 	import team from '../team/team.json';
+
+	/**
+	 * @type {any[string]}
+	 */
+	let color = [];
+	color['WITS-GCI'] = 'bg-violet-500';
+	color['Hereon-GERICS'] = 'bg-green-500';
+	color['Uni Jena'] = 'bg-yellow-500';
+	color['UNZA-IWRMC'] = 'bg-blue-500';
+	color['Gobabeb'] = 'bg-red-500';
+	color['NUST'] = 'bg-red-500';
+	color['UB'] = 'bg-indigo-500';
+
+	/**
+	 * @type {any[]}
+	 */
+	let team_array = [];
+	let filter_value = '';
+	team_array = team;
+	// team_array  = team_array.filter((team) => team.org =="Uni Jena")
+
+	/**
+	 * @param {string} value
+	 */
+	function set_filter(value) {
+		filter_value = value;
+		team_array = team.filter((team) => team.org == value);
+	}
+	function remove_filter() {
+		filter_value = '';
+		team_array = team;
+	}
 </script>
 
 <div class="content-div">
@@ -15,37 +47,61 @@
 		TIPPECC is coordinated by: <br />
 		<div class="pl-4 italic">
 			Global Change Institute (GCI) at University of the Witwatersrand (WITS) in South Africa
-			<span class="chip bg-green-700 pl-2"><b>WITS-GCI</b></span>
+			<button on:click={() => set_filter('WITS-GCI')} title="filter by"
+				><span class="chip {color['WITS-GCI']} pl-2"><b> WITS-GCI</b></span></button
+			>
 		</div>
 		<br />
+
 		Collaborating partners:<br />
 		<div class="pl-4 italic">
 			Helmholtz-Zentrum Geesthacht, Climate Service Center Germany, Hamburg
-			<span class="chip bg-green-700 pl-2"><b>Hereon-GERICS</b></span>
+			<button on:click={() => set_filter('Hereon-GERICS')} title="filter by"
+				><span class="chip {color['Hereon-GERICS']} pl-2"><b> Hereon-GERICS</b></span></button
+			>
 		</div>
 		<div class="pl-4 italic">
 			Friedrich Schiller University Jena, Germany
-			<span class="chip bg-green-700 pl-2"><b>Uni Jena</b></span>
+			<button on:click={() => set_filter('Uni Jena')} title="filter by"
+				><span class="chip {color['Uni Jena']} pl-2"><b> Uni Jena</b></span></button
+			>
 		</div>
 		<div class="pl-4 italic">
 			University of Zambia
-			<span class="chip bg-green-700 pl-2"><b>UNZA-IWRMC</b></span>
+			<button on:click={() => set_filter('UNZA-IWRMC')} title="filter by"
+				><span class="chip {color['UNZA-IWRMC']} pl-2"><b> UNZA-IWRMC</b></span></button
+			>
 		</div>
 		<div class="pl-4 italic">
 			Gobabeb Namib Research Institute
-			<span class="chip bg-green-700 pl-2"><b>Gobabeb</b></span>
+			<button on:click={() => set_filter('Gobabeb')} title="filter by"
+				><span class="chip {color['Gobabeb']} pl-2"><b> Gobabeb</b></span></button
+			>
 		</div>
 		<div class="pl-4 italic">
 			University of Botswana
-			<span class="chip bg-green-700 pl-2"><b>UB</b></span>
+			<button on:click={() => set_filter('UB')} title="filter by"
+				><span class="chip {color['UB']} pl-2"><b> UB</b></span></button
+			>
 		</div>
 	</blockquote>
+	{#if filter_value != ''}
+		<div>
+			Filtered by: <span class="chip {color[filter_value]}"><b>{filter_value}</b></span><button
+				on:click={() => remove_filter()}
+				class="pl-4"><span class="underline"><em>remove filter</em></span></button
+			>
+		</div>
+	{/if}
 	<section>
 		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4 pt-10">
-			{#each team as member}
-				<div class="card p-2 flex flex-col w-full border border-5 border-white">
+			{#each team_array as member}
+				<div
+					id={member.name.toLowerCase() + '_' + member.surname.toLowerCase()}
+					class="card p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
+				>
 					<div class="text-left mt-[-28px]">
-						<span class="chip bg-red-700"><b>{member.org}</b></span>
+						<span class="chip {color[member.org]}"><b>{member.org}</b></span>
 					</div>
 
 					<div class="flex">

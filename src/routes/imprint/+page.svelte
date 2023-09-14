@@ -5,7 +5,7 @@
 <div class="content-div">
 	<div class="flex">
 		<h1 class="content-heading">Legal Notice</h1>
-		<img src={legal} alt="..." width="25px" />
+		<!--<img src={legal} alt="..." width="25px" />-->
 	</div>
 	<div />
 	<section>

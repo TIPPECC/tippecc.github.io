@@ -62,6 +62,7 @@
 	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />
+
 	<svelte:fragment slot="pageFooter">
 		<Footer />
 	</svelte:fragment>

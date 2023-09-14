@@ -23,16 +23,16 @@
 	<div class="flex pt-10">
 		<img src={leader} alt="Lead" width="30px" />
 		<div class="pl-4 text-lg">
-			<a class="anchor" href="/team#francois_engelbrecht">Francois Engelbrecht (WITS_GCI)</a>
+			<a class="anchor" href="/team/#francois_engelbrecht">Francois Engelbrecht (WITS_GCI)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
 		<img src={group} alt="Lead" width="30px" />
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#wits_gci">WITS-GCI</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#gobabeb">Gobabeb</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#ub">UB</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team#unza_iwemc">UNZA-IWRMC</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gobabeb">Gobabeb</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#ub">UB</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#unza_iwemc">UNZA-IWRMC</a></div>
 	</div>
 
 	<h2 class="h4 pt-10 pb-2">Objectives</h2>

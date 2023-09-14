@@ -8,7 +8,7 @@
 </script>
 
 <a
-	class="card p-4 m-1 border border-5 border-[{color}] hover:bg-surface-600"
+	class="card p-4 m-2 border border-5 border-[{color}] hover:bg-surface-600"
 	href="/case_studies/{wp.replaceAll(' ', '').toLowerCase()}"
 	title="click to learn more"
 >

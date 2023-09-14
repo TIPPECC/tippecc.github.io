@@ -28,7 +28,7 @@
 		"role": "external contractor & scientific software developer",
 		"email": "",
 		"work_packages": ["WP2", "WP3"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0003-2895-540X",
 		"org": "Uni Jena"
 	},
@@ -39,7 +39,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP1", "WP2"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "Hereon-GERICS"
 	},
@@ -50,7 +50,7 @@
 		"role": "Principal Investigator",
 		"email": "",
 		"work_packages": ["WP1", "WP2"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0002-8133-8622",
 		"org": "Hereon-GERICS"
 	},
@@ -61,7 +61,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP2"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "WITS-GCI"
 	},
@@ -72,7 +72,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP5"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "WITS-GCI"
 	},
@@ -83,18 +83,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP1", "WP2", "WP4"],
-        "webpage": "",
-		"orcid": "0000-0002-9189-6556",
-		"org": "WITS-GCI"
-	},
-	{
-		"title": "Prof.",
-		"name": "Francois",
-		"surname": "Engelbrecht",
-		"role": "Principal Investigator",
-		"email": "",
-		"work_packages": ["WP1", "WP2", "WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0002-9189-6556",
 		"org": "WITS-GCI"
 	},
@@ -105,7 +94,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP1", "WP2", "WP4"],
-        "webpage": "https://www.wits.ac.za/gci/staff",
+		"webpage": "https://www.wits.ac.za/gci/staff",
 		"orcid": "0000-0003-2782-9049",
 		"org": "WITS-GCI"
 	},
@@ -116,7 +105,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP1", "WP2"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": ""
 	},
@@ -127,7 +116,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP1", "WP2"],
-        "webpage": "https://www.wits.ac.za/gci/staff",
+		"webpage": "https://www.wits.ac.za/gci/staff",
 		"orcid": "",
 		"org": "WITS-GCI"
 	},
@@ -138,7 +127,7 @@
 		"role": "Postdoc",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "Gobabeb"
 	},
@@ -149,7 +138,7 @@
 		"role": "MSc Student",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "NUST"
 	},
@@ -160,7 +149,7 @@
 		"role": "Principal Investigator",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "https://www.gobabeb.org/",
+		"webpage": "https://www.gobabeb.org/",
 		"orcid": "",
 		"org": "NUST"
 	},
@@ -171,7 +160,7 @@
 		"role": "Postdoc",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "NUST"
 	},
@@ -182,7 +171,7 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0002-7396-1430",
 		"org": "UB"
 	},
@@ -193,7 +182,7 @@
 		"role": "Researcher",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0003-1839-4864",
 		"org": "UB"
 	},
@@ -204,7 +193,7 @@
 		"role": "Phd Student",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "0000-0002-7079-2854",
 		"org": "UB"
 	},
@@ -215,7 +204,7 @@
 		"role": "Phd Student",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "UB"
 	},
@@ -226,7 +215,7 @@
 		"role": "Msc Student",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "UB"
 	},
@@ -237,7 +226,7 @@
 		"role": "Msc Student",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
 		"org": "UB"
 	},
@@ -248,8 +237,8 @@
 		"role": "",
 		"email": "",
 		"work_packages": ["WP4"],
-        "webpage": "",
+		"webpage": "",
 		"orcid": "",
-		"org": "UNZA"
+		"org": "UNZA-IWRMC"
 	}
 ]

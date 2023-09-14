@@ -5,7 +5,8 @@
 	import Carousel from 'svelte-carousel';
 	import goals from '$lib/icons/goals-svgrepo-com.svg';
 	import background from '$lib/icons/background-svgrepo-com.svg';
-	import { fade, fly } from 'svelte/transition';
+	import { fade, fly, scale, blur } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
 
 	let visible = false;
 	let carousel; // for calling methods of the carousel instance
@@ -31,12 +32,28 @@
 			}
 		};
 	}
+
+	function fadeScale(node, { delay = 0, duration = 200, easing = (x) => x, baseScale = 0 }) {
+		const o = +getComputedStyle(node).opacity;
+		const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
+		const s = m ? m[1] : 1;
+		const is = 1 - baseScale;
+
+		return {
+			delay,
+			duration,
+			css: (t) => {
+				const eased = easing(t);
+				return `opacity: ${eased * o}; transform: scale(${eased * s * is + baseScale})`;
+			}
+		};
+	}
 </script>
 
 {#if browser}
-	<div class="relative w-full grow flex">
-		<div class="absolute z-30 grow flex justify-center w-full pt-4 pointer-events-none">
-			<h1 class="max-sm:text-5xl max-lg:text-7xl lg:text-4xl">Welcome to the TIPPECC project</h1>
+	<div class="relative w-full grow flex h-[30rem]">
+		<div class="absolute z-30 grow flex justify-center w-full pt-2 pointer-events-none">
+			<h1 class="max-sm:text-3xl max-lg:text-4xl lg:text-4xl">Welcome to the TIPPECC project</h1>
 		</div>
 		<Carousel
 			bind:this={carousel}
@@ -46,13 +63,10 @@
 			autoplayDuration="5000"
 			dots={false}
 		>
-			<div class="flex items-center grow w-full justify-center max-h-[40rem]">
+			<div class="flex items-center grow w-full justify-center max-h-[30rem]">
 				<div class="space-y-10 text-center flex flex-col items-center max-h-96">
 					<!--<h2 class="h2">Welcome to the TIPPECC project</h2>-->
-					<h3 class="h3">
-						Climate change information<br /> for adapting to regional tipping points <br />in
-						southern Africa
-					</h3>
+					<h3 class="h3" />
 					<!-- Animated Logo -->
 					<figure>
 						<section class="img-bg" />
@@ -146,7 +160,7 @@
 					<!-- / -->
 				</div>
 			</div>
-			<div class="flex items-center grow w-full justify-center max-h-[40rem]">
+			<div class="flex items-center grow w-full justify-center max-h-[30rem]">
 				<img
 					class="absolute object-contain h-4/5 w-4/5 z-10 pointer-events-none"
 					src="{base}/IMG_2338.JPEG"
@@ -158,7 +172,7 @@
 					alt="..."
 				/>
 			</div>
-			<div class="flex items-center grow w-full justify-center max-h-[40rem]">
+			<div class="flex items-center grow w-full justify-center max-h-[30rem]">
 				<img
 					class="absolute object-contain h-4/5 w-4/5 z-10 pointer-events-none"
 					src="{base}/IMG_2306.JPEG"
@@ -173,12 +187,10 @@
 		</Carousel>
 	</div>
 {/if}
-<div class="grow flex w-full whitespace-nowrap justify-center py-2 bg-primary-900/80">
-	{#if visible}
-		<h1 class="text-white sm:text-3xl max-sm:text-xl xl:text-4xl" in:typewriter={{ speed: 1 }}>
-			"TIPPing points Explained by Climate Change"
-		</h1>
-	{/if}
+<div class="grow flex w-full justify-center py-2 bg-primary-900/80">
+	<h1 class="h3">
+		Climate change information for adapting to regional tipping points in southern Africa
+	</h1>
 </div>
 
 <div class="content-div">
