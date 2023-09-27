@@ -28,7 +28,7 @@
 	<div class="flex pt-4">
 		<img src={group} alt="Lead" width="30px" />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#uni_jena">Uni Jena</a></div>
-		<div class="pl-4 text-lg"><a class="anchor" href="/team/#hereon_gerics">Hereon-GERICS</a></div>
+		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gerics">GERICS</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 	</div>
 

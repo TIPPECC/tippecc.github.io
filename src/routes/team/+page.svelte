@@ -10,7 +10,7 @@
 	 */
 	let color = [];
 	color['WITS-GCI'] = 'bg-violet-500';
-	color['Hereon-GERICS'] = 'bg-green-500';
+	color['GERICS'] = 'bg-green-500';
 	color['Uni Jena'] = 'bg-yellow-500';
 	color['UNZA-IWRMC'] = 'bg-blue-500';
 	color['Gobabeb'] = 'bg-red-500';
@@ -55,9 +55,9 @@
 
 		Collaborating partners:<br />
 		<div class="pl-4 italic">
-			Helmholtz-Zentrum Geesthacht, Climate Service Center Germany, Hamburg
-			<button on:click={() => set_filter('Hereon-GERICS')} title="filter by"
-				><span class="chip {color['Hereon-GERICS']} pl-2"><b> Hereon-GERICS</b></span></button
+			Climate Service Center Germany (GERICS), Helmholtz-Zentrum Hereon Hamburg, Germany
+			<button on:click={() => set_filter('GERICS')} title="filter by"
+				><span class="chip {color['GERICS']} pl-2"><b> GERICS</b></span></button
 			>
 		</div>
 		<div class="pl-4 italic">
