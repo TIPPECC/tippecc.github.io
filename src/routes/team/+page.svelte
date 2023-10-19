@@ -3,7 +3,11 @@
 	import group from '$lib/icons/group-svgrepo-com.svg';
 	import orcid from '$lib/icons/orcid-svgrepo-com.svg';
 	import website from '$lib/icons/web-svgrepo-com.svg';
-	import team from '../team/team.json';
+	import { API_URL } from '../../app.config';
+	//	import team from '../team/team.json';
+
+	/** @type {import('./$types').PageData} */
+	export let data;
 
 	/**
 	 * @type {any[string]}
@@ -18,10 +22,11 @@
 	color['UB'] = 'bg-indigo-500';
 
 	/**
-	 * @type {any[]}
+	 * @type {any[string]}
 	 */
 	let team_array = [];
 	let filter_value = '';
+	let team = data.result;
 	team_array = team;
 	// team_array  = team_array.filter((team) => team.org =="Uni Jena")
 
@@ -30,7 +35,7 @@
 	 */
 	function set_filter(value) {
 		filter_value = value;
-		team_array = team.filter((team) => team.org == value);
+		team_array = team.filter((/** @type {{ org: string; }} */ team) => team.org == value);
 	}
 	function remove_filter() {
 		filter_value = '';
@@ -96,64 +101,66 @@
 	<section>
 		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4 pt-10">
 			{#each team_array as member}
-				<div
-					id={member.name.toLowerCase() + '_' + member.surname.toLowerCase()}
-					class="card p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
-				>
-					<div class="text-left mt-[-28px]">
-						<span class="chip {color[member.org]}"><b>{member.org}</b></span>
-					</div>
+				{#if member.first_name}
+					<div
+						id={member.first_name.toLowerCase() + '_' + member.last_name.toLowerCase()}
+						class="card p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
+					>
+						<div class="text-left mt-[-28px]">
+							<span class="chip {color[member.related_org]}"><b>{member.related_org}</b></span>
+						</div>
 
-					<div class="flex">
-						<div>
-							<figure
-								class="avatar flex aspect-square text-surface-50 font-semibold justify-center items-center overflow-hidden isolate bg-surface-400-500-token w-20 rounded-full"
-								data-testid="avatar"
-							>
-								<img
-									class="avatar-image w-full h-full object-cover"
-									src="{base}{member.image ? member.image : '/rain.png'}"
-									alt=""
-									style=""
-								/>
-							</figure>
+						<div class="flex">
+							<div>
+								<figure
+									class="avatar flex aspect-square text-surface-50 font-semibold justify-center items-center overflow-hidden isolate bg-surface-400-500-token w-20 rounded-full"
+									data-testid="avatar"
+								>
+									<img
+										class="avatar-image w-full h-full object-cover"
+										src={member.image ? API_URL + member.image : '/rain.png'}
+										alt=""
+										style=""
+									/>
+								</figure>
+							</div>
+							<div class="pl-5">
+								<h3 class="h3">
+									{#if member.title}{member.title} {/if}{member.first_name}
+									{member.last_name}
+								</h3>
+								{#if member.website}<div class="flex">
+										<img src={website} alt="Contact see website" width="20px" /><a
+											href={member.website}
+											target="_blank"
+											class="pl-1 underline">website</a
+										>
+									</div>{/if}
+								{#if member.person_orcid}<div class="flex">
+										<img src={orcid} alt="ORCID" width="20px" /><a
+											href="https://orcid.org/{member.person_orcid}"
+											target="_blank"
+											class="pl-1 underline">{member.person_orcid}</a
+										>
+									</div>{/if}
+							</div>
 						</div>
-						<div class="pl-5">
-							<h3 class="h3">
-								{#if member.title}{member.title} {/if}{member.name}
-								{member.surname}
-							</h3>
-							{#if member.webpage}<div class="flex">
-									<img src={website} alt="Contact see website" width="20px" /><a
-										href={member.webpage}
-										target="_blank"
-										class="pl-1 underline">website</a
-									>
-								</div>{/if}
-							{#if member.orcid}<div class="flex">
-									<img src={orcid} alt="ORCID" width="20px" /><a
-										href="https://orcid.org/{member.orcid}"
-										target="_blank"
-										class="pl-1 underline">{member.orcid}</a
-									>
-								</div>{/if}
+						<div />
+						<hr class="m-2" />
+						<div class="">
+							<div class="pb-2"><em>{member.position}</em></div>
+						</div>
+						<div class="pt-2 mt-auto w-full">
+							<div class="flex justify-end">
+								[
+								{#each member.work_packages as wp}
+									<a href="/work_packages/{wp?.toLowerCase()}" class="m-1 underline">{wp}</a>
+								{/each}
+								]
+							</div>
 						</div>
 					</div>
-					<div />
-					<hr class="m-2" />
-					<div class="">
-						<div class="pb-2"><em>{member.role}</em></div>
-					</div>
-					<div class="pt-2 mt-auto w-full">
-						<div class="flex justify-end">
-							[
-							{#each member.work_packages as wp}
-								<a href="/work_packages/{wp.toLowerCase()}" class="m-1 underline">{wp}</a>
-							{/each}
-							]
-						</div>
-					</div>
-				</div>
+				{/if}
 			{/each}
 		</div>
 	</section>

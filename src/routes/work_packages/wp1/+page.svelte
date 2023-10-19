@@ -36,12 +36,12 @@
 	For this purpose, we will make use of the already existing but growing CMIP6 archive of global projections
 	of future climate change, as well as the regional climate projections of CORDEX and the new initiative
 	CORDEX-CORE. Moreover, a new set of high-resolution regional climate change projections will be generated
-	with the new coupled ocean-atmosphere RCMs CCAM (WITS-GCI) and ROM (GERICS) using CMIP6 data
-	as forcing. In order to build up an ensemble of regional climate change projections, the RCMs CCAM
-	and ROM will downscale selected CMIP6 projections to a spatial resolution of about 8 km for a selected
-	domain in southern Africa. These will be the first coupled ocean-atmosphere projections of future climate
-	change ever obtained for the southern African region, and will include feedbacks between the Agulhas
-	current and Benguela upwelling system and atmospheric circulation over southern Africa. The newly performed
+	with the new coupled ocean-atmosphere RCMs CCAM (WITS-GCI) and ROM (GERICS) using CMIP6 data as forcing.
+	In order to build up an ensemble of regional climate change projections, the RCMs CCAM and ROM will
+	downscale selected CMIP6 projections to a spatial resolution of about 8 km for a selected domain in
+	southern Africa. These will be the first coupled ocean-atmosphere projections of future climate change
+	ever obtained for the southern African region, and will include feedbacks between the Agulhas current
+	and Benguela upwelling system and atmospheric circulation over southern Africa. The newly performed
 	regional climate change projections will be stored at a public database and made available for other
 	scientists from different sectors and SASSCAL projects. This dissemination will take place through
 	the project’s Climate Service Gateway (WP3).
