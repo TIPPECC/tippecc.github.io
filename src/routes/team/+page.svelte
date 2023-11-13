@@ -35,7 +35,7 @@
 	 */
 	function set_filter(value) {
 		filter_value = value;
-		team_array = team.filter((/** @type {{ org: string; }} */ team) => team.org == value);
+		team_array = team.filter((/** @type {{ related_org: string; }} */ team) => team.related_org == value);
 	}
 	function remove_filter() {
 		filter_value = '';
@@ -81,6 +81,9 @@
 			Gobabeb Namib Research Institute
 			<button on:click={() => set_filter('Gobabeb')} title="filter by"
 				><span class="chip {color['Gobabeb']} pl-2"><b> Gobabeb</b></span></button
+			>
+			<button on:click={() => set_filter('NUST')} title="filter by"
+				><span class="chip {color['NUST']} pl-2"><b> NUST</b></span></button
 			>
 		</div>
 		<div class="pl-4 italic">
