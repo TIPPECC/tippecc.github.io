@@ -1,4 +1,4 @@
-import{s as n,f as a,g as h,F as l,j as c,i as d,D as s,d as p}from"../chunks/scheduler.fc7ba46c.js";import{S as f,i as m}from"../chunks/index.cc4922cd.js";function g(o){let e,i=`<div class="flex"><h1 class="content-heading">Legal Notice</h1></div> <div></div> <section><div><h3 class="h3">Project Leader:</h3> <p>Francios Engelbrecht (Wits GCI) (project)<br/>
+import{s as n,f as a,g as h,F as l,j as c,i as d,D as s,d as p}from"../chunks/scheduler.a6588247.js";import{S as f,i as m}from"../chunks/index.c4ed5061.js";function g(o){let e,i=`<div class="flex"><h1 class="content-heading">Legal Notice</h1></div> <div></div> <section><div><h3 class="h3">Project Leader:</h3> <p>Francios Engelbrecht (Wits GCI) (project)<br/>
 				Sophie Biskop (Uni Jena) (German side)</p> <h3 class="h3">Postal Address</h3> <p>Friedrich Schiller University Jena<br/>
 				Institute of Geography<br/>
 				Loebdergraben 32<br/>
