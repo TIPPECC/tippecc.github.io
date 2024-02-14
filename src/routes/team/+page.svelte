@@ -35,7 +35,9 @@
 	 */
 	function set_filter(value) {
 		filter_value = value;
-		team_array = team.filter((/** @type {{ related_org: string; }} */ team) => team.related_org == value);
+		team_array = team.filter(
+			(/** @type {{ related_org: string; }} */ team) => team.related_org == value
+		);
 	}
 	function remove_filter() {
 		filter_value = '';
