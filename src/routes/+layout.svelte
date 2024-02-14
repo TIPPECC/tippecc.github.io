@@ -23,7 +23,7 @@
 		{ label: 'Home', path: '/' },
 		{ label: 'Work Packages', path: '/work_packages' },
 		{ label: 'Case Studies', path: '/case_studies' },
-		{ label: 'Data', path: '/data' },
+		// { label: 'Data', path: '/data' },
 		{ label: 'Team', path: '/team' },
 		{ label: 'Publications', path: '/publications' }
 	];
