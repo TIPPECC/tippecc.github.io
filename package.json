@@ -44,6 +44,8 @@
 	"dependencies": {
 		"highlight.js": "11.8.0",
 		"@floating-ui/dom": "1.5.1",
-		"svelte-carousel": "^1.0.25"
+		"svelte-carousel": "^1.0.25",
+		"svelte-headless-table": "0.17.5",
+		"ol": "8.2.0"
 	}
 }
