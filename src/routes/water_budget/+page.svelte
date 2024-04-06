@@ -8,6 +8,9 @@
 	let folder_data = undefined;
 
 	// checked state of all folder_data_checkboxes
+	/**
+	 * @type {any[]}
+	 */
 	let folder_checkbox_bools = [];
 
 	$: wget_request_string = "";
@@ -131,6 +134,9 @@
 		}
 	}
 
+	/**
+	 * @param {{ srcElement: { value: string; checked: any; }; }} e
+	 */
 	function on_folder_checkbox_change(e) {
 		// just for better readability, bcs. this is a nightmare :)
 		let helper_index = parseInt(e.srcElement.value);
