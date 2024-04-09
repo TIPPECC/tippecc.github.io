@@ -104,7 +104,8 @@
 	}
 
 	async function fetch_foldercontent() {
-		const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
+		// const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
+		const custom_url = 'http://127.0.0.1:8000/climate/get_content'
 
 		try {
 			const res = await fetch(custom_url,
@@ -157,7 +158,7 @@
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
 			if (folder_checkbox_bools[i]) {
-				checked_boxes.push(folder_data['content'][i]);
+				checked_boxes.push(folder_data['content'][i][0]);
 			}
 		}
 
@@ -189,16 +190,28 @@
 </script>
 <!-- Backend Folder Content as checkboxes -->
 {#if folder_data != null}
-	<div>
+	<div class="grid grid-cols-9">
 		{#each Object.values(folder_data['content']) as datapoint, i}
-			<div class="pl-4">
+			<!-- Checkbox and filename -->
+			<div class="col-span-6">
 				<input
 					type="checkbox"
 					value={i}
 					id={"checkbox_" + i}
 					on:change={on_folder_checkbox_change}/>
-				&nbsp;{datapoint}&nbsp;<a href="https://leutra.geogr.uni-jena.de/backend_geoportal//climate/get_file?name={datapoint}" class="underline">download</a>
-			<br>
+					&nbsp;{datapoint[0]}
+			</div>
+			<!-- filesize -->
+			<div>
+				{datapoint[1]}
+			</div>
+			<!-- creation date -->
+			<div>
+				{datapoint[2]}
+			</div>
+			<!-- download link -->
+			<div>
+				&nbsp;<a href="https://leutra.geogr.uni-jena.de/backend_geoportal//climate/get_file?name={datapoint[0]}" class="underline">download</a>
 			</div>
 		{/each}
 		<button class="btn variant-ghost-primary m-4" on:click|preventDefault={handle_checkbox_submit}>Submit</button>
