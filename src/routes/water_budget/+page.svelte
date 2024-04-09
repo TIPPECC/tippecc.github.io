@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 
 	/**
 	 * @type {any}
@@ -13,7 +13,7 @@
 	 */
 	let folder_checkbox_bools = [];
 
-	$: wget_request_string = "";
+	$: wget_request_string = '';
 
 	/**
 	 * @type {any[]}
@@ -32,15 +32,15 @@
 	let url = '';
 
 	// PLACEHOLDER showcase for wget display styling
-	let wget_cmd = "wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
-	let wget_add_args = "-r -H -N --cut-dirs=2"
+	let wget_cmd =
+		"wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
+	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	// set default search type
 	// select_search_type('collection');
 
 	// initial query
 	// send_query();
-
 
 	onMount(() => {
 		fetch_foldercontent();
@@ -64,7 +64,6 @@
 			send_query();
 		}
 	}
-
 
 	async function send_query() {
 		query = '';
@@ -105,11 +104,10 @@
 
 	async function fetch_foldercontent() {
 		// const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
-		const custom_url = 'http://127.0.0.1:8000/climate/get_content'
+		const custom_url = 'http://127.0.0.1:8000/climate/get_content';
 
 		try {
-			const res = await fetch(custom_url,
-			{
+			const res = await fetch(custom_url, {
 				method: 'GET'
 			});
 
@@ -127,7 +125,6 @@
 
 			// sort array
 			folder_data['content'].sort();
-
 
 			console.log('folder_data', folder_data);
 		} catch (error) {
@@ -152,9 +149,8 @@
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
-		const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget"
-		let checked_boxes = []
-
+		const custom_url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget';
+		let checked_boxes = [];
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
 			if (folder_checkbox_bools[i]) {
@@ -162,12 +158,11 @@
 			}
 		}
 
-		console.log("CHECKED: ", checked_boxes);
+		console.log('CHECKED: ', checked_boxes);
 
 		// SEND REQUEST
 		try {
-			const res = await fetch(custom_url,
-			{
+			const res = await fetch(custom_url, {
 				method: 'POST',
 				body: JSON.stringify(checked_boxes)
 			});
@@ -179,8 +174,8 @@
 
 			result = await res.json();
 
-			console.log("RESULT: ", result);
-			wget_request_string = result['wget-command']
+			console.log('RESULT: ', result);
+			wget_request_string = result['wget-command'];
 		} catch (error) {
 			console.log(error);
 		}
@@ -188,6 +183,7 @@
 
 	// array with current geo_data['facets']['file_id']
 </script>
+
 <!-- Backend Folder Content as checkboxes -->
 {#if folder_data != null}
 	<div class="grid grid-cols-9">
@@ -197,9 +193,10 @@
 				<input
 					type="checkbox"
 					value={i}
-					id={"checkbox_" + i}
-					on:change={on_folder_checkbox_change}/>
-					&nbsp;{datapoint[0]}
+					id={'checkbox_' + i}
+					on:change={on_folder_checkbox_change}
+				/>
+				&nbsp;{datapoint[0]}
 			</div>
 			<!-- filesize -->
 			<div>
@@ -211,18 +208,20 @@
 			</div>
 			<!-- download link -->
 			<div>
-				&nbsp;<a href="https://leutra.geogr.uni-jena.de/backend_geoportal//climate/get_file?name={datapoint[0]}" class="underline">download</a>
+				&nbsp;<a
+					href="https://leutra.geogr.uni-jena.de/backend_geoportal//climate/get_file?name={datapoint[0]}"
+					class="underline">download</a
+				>
 			</div>
 		{/each}
-		<button class="btn variant-ghost-primary m-4" on:click|preventDefault={handle_checkbox_submit}>Submit</button>
+		<button class="btn variant-ghost-primary m-4" on:click|preventDefault={handle_checkbox_submit}
+			>Submit</button
+		>
 	</div>
-
 {:else}
 	<div>
 		<p>Loading...</p>
 	</div>
-
-
 {/if}
 {#if wget_request_string.length > 0}
 	<div style="display:flex">
@@ -236,9 +235,7 @@
 				{wget_request_string}
 			</span>
 			<div class="mb-1 mt-2 text-sm">
-				<span>
-					Additional arguments:
-				</span>
+				<span> Additional arguments: </span>
 			</div>
 			<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 text-sm [word-spacing:4px]">
 				{wget_add_args}
