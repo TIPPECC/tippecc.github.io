@@ -186,6 +186,18 @@
 <!-- Backend Folder Content as checkboxes -->
 {#if folder_data != null}
 	<div class="grid grid-cols-9">
+		<div class="col-span-6">
+			Filename
+		</div>
+		<div>
+			Filesize
+		</div>
+		<div>
+			Last modified
+		</div>
+		<div>
+			Download Link
+		</div>
 		{#each Object.values(folder_data['content']) as datapoint, i}
 			<!-- Checkbox and filename -->
 			<div class="col-span-6">
