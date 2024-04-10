@@ -103,8 +103,7 @@
 	}
 
 	async function fetch_foldercontent() {
-		// const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
-		const custom_url = 'http://127.0.0.1:8000/climate/get_content';
+		const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
 
 		try {
 			const res = await fetch(custom_url, {
@@ -209,7 +208,7 @@
 			<!-- download link -->
 			<div>
 				&nbsp;<a
-					href="https://leutra.geogr.uni-jena.de/backend_geoportal//climate/get_file?name={datapoint[0]}"
+					href="https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_file?name={datapoint[0]}"
 					class="underline">download</a
 				>
 			</div>
