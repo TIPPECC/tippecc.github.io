@@ -27,7 +27,29 @@
 	let team_array = [];
 	let filter_value = '';
 	let team = data.result;
-	team_array = team;
+	team_array = team.reverse();
+	team_array = team_array.sort(compare);
+	team_array.sort(
+		(/** @type {{ related_org: string; }} */ a, /** @type {{ related_org: string; }} */ b) =>
+			//	b.last_name.toLowerCase() - a.last_name.toLowerCase() ||
+
+			(b.related_org === 'GERICS') - (a.related_org === 'GERICS') ||
+			(b.related_org === 'Uni Jena') - (a.related_org === 'Uni Jena') ||
+			(b.related_org === 'WITS-GCI') - (a.related_org === 'WITS-GCI') ||
+			(b.related_org === 'NUST') - (a.related_org === 'NUST') ||
+			(b.related_org === 'Gobabeb') - (a.related_org === 'Gobabeb')
+	);
+
+	function compare(a, b) {
+		if (a.last_name < b.last_name) {
+			return -1;
+		}
+		if (a.last_name > b.last_name) {
+			return 1;
+		}
+		return 0;
+	}
+
 	// team_array  = team_array.filter((team) => team.org =="Uni Jena")
 
 	/**

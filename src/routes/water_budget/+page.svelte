@@ -36,6 +36,8 @@
 		"wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
+	let type = 'water_budget';
+
 	// set default search type
 	// select_search_type('collection');
 
@@ -103,7 +105,8 @@
 	}
 
 	async function fetch_foldercontent() {
-		const custom_url = "https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content"
+		const custom_url =
+			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content?type=' + type;
 
 		try {
 			const res = await fetch(custom_url, {
@@ -130,6 +133,14 @@
 			console.log(error);
 		}
 	}
+	let search_term = '';
+	function filter_folder_data() {
+		//folder_data.filter(( /** @type {(string | string[])[]} */ data) => data[0].includes(search_term));
+		const folder_data_new = Object.values(folder_data).filter((item) =>
+			item[0].includes(search_term)
+		);
+		folder_data = folder_data_new;
+	}
 
 	/**
 	 * @param {{ srcElement: { value: string; checked: any; }; }} e
@@ -148,7 +159,8 @@
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
-		const custom_url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget';
+		const custom_url =
+			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget?type=' + type;
 		let checked_boxes = [];
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
@@ -180,53 +192,84 @@
 		}
 	}
 
+	/**
+	 * @param {string} new_type
+	 */
+	function set_type(new_type) {
+		if (new_type == 'water_budget') {
+			font_bold_ind = '';
+			font_bold_col = 'font-bold';
+			type = new_type;
+		} else if (new_type == 'water_budget_bias') {
+			font_bold_col = '';
+			font_bold_ind = 'font-bold';
+			type = new_type;
+		}
+		fetch_foldercontent();
+	}
+
 	// array with current geo_data['facets']['file_id']
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
+<div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_col}"
+		on:click={() => set_type('water_budget')}>Water Budget</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_ind}"
+		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
+	>
+</div>
+<div>
+	<input
+		class="input w-full mt-4"
+		type="text"
+		placeholder="Filter filenames..."
+		bind:value={search_term}
+	/>
+</div>
+
 {#if folder_data != null}
 	<div class="grid grid-cols-9">
-		<div class="col-span-6">
-			Filename
-		</div>
-		<div>
-			Filesize
-		</div>
-		<div>
-			Last modified
-		</div>
-		<div>
-			Download Link
-		</div>
+		<div class="col-span-6">Filename</div>
+		<div>Filesize</div>
+		<div>Last modified</div>
+		<div>Download Link</div>
 		{#each Object.values(folder_data['content']) as datapoint, i}
-			<!-- Checkbox and filename -->
-			<div class="col-span-6">
-				<input
-					type="checkbox"
-					value={i}
-					id={'checkbox_' + i}
-					on:change={on_folder_checkbox_change}
-				/>
-				&nbsp;{datapoint[0]}
-			</div>
-			<!-- filesize -->
-			<div>
-				{datapoint[1]}
-			</div>
-			<!-- creation date -->
-			<div>
-				{datapoint[2]}
-			</div>
-			<!-- download link -->
-			<div>
-				&nbsp;<a
-					href="https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_file?name={datapoint[0]}"
-					class="underline">download</a
-				>
-			</div>
+			{#if datapoint[0].toLowerCase().includes(search_term.toLowerCase())}
+				<!-- Checkbox and filename -->
+				<div class="col-span-6">
+					<input
+						type="checkbox"
+						value={i}
+						id={'checkbox_' + i}
+						on:change={on_folder_checkbox_change}
+					/>
+					&nbsp;{datapoint[0]}
+				</div>
+				<!-- filesize -->
+				<div>
+					{datapoint[1]}
+				</div>
+				<!-- creation date -->
+				<div>
+					{datapoint[2]}
+				</div>
+				<!-- download link -->
+				<div>
+					&nbsp;<a
+						href="https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_file?name={datapoint[0]}&type={type}"
+						class="underline">download</a
+					>
+				</div>
+			{/if}
 		{/each}
 		<button class="btn variant-ghost-primary m-4" on:click|preventDefault={handle_checkbox_submit}
-			>Submit</button
+			>Generate wget link</button
 		>
 	</div>
 {:else}
