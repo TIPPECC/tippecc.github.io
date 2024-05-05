@@ -268,10 +268,13 @@
 				</div>
 			{/if}
 		{/each}
-		<button class="btn variant-ghost-primary m-4" on:click|preventDefault={handle_checkbox_submit}
-			>Generate wget link</button
-		>
 	</div>
+		<button
+			type="button"
+			class="btn variant-ghost-primary"
+			on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
+		>
+
 {:else}
 	<div>
 		<p>Loading...</p>
@@ -282,7 +285,7 @@
 		<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
 			<div class="mb-2">
 				<span>
-					To download all objects using Wget (this is just a visual showcase and can be ignored):
+					To download all objects using Wget:
 				</span>
 			</div>
 			<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
