@@ -1,8 +1,8 @@
 <script>
-    import Map from '../../components/Map.svelte';
-    import Map2 from '../../components/Map2.svelte';
-    import Map3 from '../../components/Map3.svelte'
-    import Map5 from '../../components/Map5.svelte'
+	import Map from '../../components/Map.svelte';
+	import Map2 from '../../components/Map2.svelte';
+	import Map3 from '../../components/Map3.svelte';
+	import Map5 from '../../components/Map5.svelte';
 </script>
 
 <!-- <script>
@@ -44,4 +44,4 @@ const map = new Map({
 
 <!-- <Map></Map> -->
 <!-- <Map2></Map2> -->
-<Map5></Map5>
+<Map5 />
