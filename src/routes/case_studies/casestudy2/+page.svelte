@@ -18,23 +18,21 @@
 	</div>
 
 	<blockquote class="content-blockquote">
-		Drylands’ defining feature of water scarcity puts them at disproportionate risk to all forms of
-		land degradation. Africa, with ~75% of its surface area classified as dryland is thus
-		particularly susceptible, due to land use, social and climate change. The human populations of
-		the arid and hyper-arid zones are highly vulnerable because livelihoods here are marginal at
-		best and the human-environment systems are tightly coupled and in non-equilibrium. Several
-		observations suggest that the traditional grazing practices of pastoralist societies such as the
-		Ovahimba and Damara, developed over centuries in response to the stochastic, non-equilibrium
-		dynamics of arid rangelands with their frequent droughts, are changing. Such changes, in
-		addition to expected climate change can only exacerbate soil degradation rates, and may
-		constitute a regional tipping point. It may in fact constitute conditions for a multidomain,
-		cascading regime shift to follow. Three main uncertainties prevent a confident assessment of the
-		risk of a regime shift: 1) the extent to which the traditional Ovahimba grazing practices have
-		changed, 2) the historical, recent and likely future rates of soil degradation and how these are
-		related to grazing and restoration potential, and 3) the changes in climate and how these are
-		likely to affect soil moisture levels and thus the potential for degradation and a shift in the
-		boundaries of the arid zone. Exploring these uncertainties may lead to adaptation options, and
-		will address a more comprehensive set of vulnerabilities and responses to a changing environment
-		in the arid northwest of Namibia.
+		Case study 2 is the Namibian contribution to TIPPECC. It focuses on the arid zone pastoralist
+		rangeland system of the Ovahimba of northern Kunene. Ovahimba have inhabited the region for over
+		200 years, surviving several intense droughts. The pastoralist lifestyle is finely attuned to
+		its environment, adapting to seasonal and longer-term fluctuations in their resources. However,
+		several factors, including population growth and increased sedentarisation have put pressure on
+		the whole social-ecological system (SES), making it vulnerable to climate change and subsequent
+		regime shifts in their resource base. TIPPECC-Kunene aims to use both traditional ecological
+		knowledge and scientific data to determine 1) the probability of climate tipping points leading
+		to regime shifts in the SES, and 2) those factors that will cause changes and/or shifts, with an
+		emphasis on the role that a climate tipping point(s) will play in this. We further aim to 3)
+		co-develop, with affected communities, feasible adaptation strategies to ongoing global change,
+		ensuring alignment with inherent coping strategies. TIPPECC Kunene is organised around four main
+		objectives, each comprising between one and four sub-projects. Study topics include vegetation
+		change and land degradation, livestock foraging ecology, changes in resource access rules,
+		options for climate change adaptation and alternative livelihoods, and the role of permanent
+		water provisioning in driving economic, social and environmental change.
 	</blockquote>
 </div>
