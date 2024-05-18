@@ -101,7 +101,7 @@
 							><g clip-path="url(#clipPath30)" id="g26"
 								><text
 									id="text34"
-									style="font-variant:normal;font-weight:bold;font-size:39.96px;font-family:GillSansMT;-inkscape-font-specification:GillSansMT-Bold;writing-mode:lr-tb;fill:#ed7d31;fill-opacity:1;fill-rule:nonzero;stroke:none"
+									style="font-variant:normal;font-weight:bold;font-size:39.96px;font-family:Arial;-inkscape-font-specification:GillSansMT-Bold;writing-mode:lr-tb;fill:#ed7d31;fill-opacity:1;fill-rule:nonzero;stroke:none"
 									transform="matrix(1,0,0,-1,79.728,393.77)"
 									><tspan
 										id="tspan32"
