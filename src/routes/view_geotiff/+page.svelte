@@ -1,5 +1,5 @@
 <script>
-	import Map5 from '../../components/Map5.svelte';
+	import Geotiff_Map from '../../lib/Geotiff_Map.svelte';
 </script>
 
 <!-- <script>
@@ -41,4 +41,4 @@ const map = new Map({
 
 <!-- <Map></Map> -->
 <!-- <Map2></Map2> -->
-<Map5 />
+<Geotiff_Map />
