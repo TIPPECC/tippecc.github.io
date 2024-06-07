@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { API_URL } from '../../app.config';
+	import { _fetch_foldercontent_by_type } from '$lib/fetch_folder_content';
 
 	/**
 	 * @type {any}
@@ -46,7 +47,13 @@
 	// send_query();
 
 	onMount(() => {
-		fetch_foldercontent();
+		_fetch_foldercontent_by_type(type)
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	});
 
 	/**
@@ -102,35 +109,6 @@
 		} catch (error) {
 			console.log(error);
 			return [];
-		}
-	}
-
-	async function fetch_foldercontent() {
-		const custom_url = API_URL + '/climate/get_content?type=' + type;
-
-		try {
-			const res = await fetch(custom_url, {
-				method: 'GET'
-			});
-
-			let result = [];
-			if (!res.ok) {
-				throw new Error(`${res.status} ${res.statusText}`);
-			}
-
-			result = await res.json();
-			folder_data = result;
-
-			for (let i = 0; i < folder_data.length; i++) {
-				folder_checkbox_bools.push(false);
-			}
-
-			// sort array
-			folder_data['content'].sort();
-
-			console.log('folder_data', folder_data);
-		} catch (error) {
-			console.log(error);
 		}
 	}
 
