@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { API_URL } from '../../app.config';
 
 	/**
 	 * @type {any}
@@ -53,13 +54,13 @@
 	 */
 	function select_search_type(search_type) {
 		if (search_type == 'collection') {
-			url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/search_collection?';
+			url = API_URL + '/climate/search_collection?';
 			font_bold_ind = '';
 			font_bold_col = 'font-bold';
 			query_parameter = [];
 			send_query();
 		} else if (search_type == 'indicator') {
-			url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/search_indicator?';
+			url = API_URL + '/climate/search_indicator?';
 			font_bold_col = '';
 			font_bold_ind = 'font-bold';
 			query_parameter = [];
@@ -105,8 +106,7 @@
 	}
 
 	async function fetch_foldercontent() {
-		const custom_url =
-			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content?type=' + type;
+		const custom_url = API_URL + '/climate/get_content?type=' + type;
 
 		try {
 			const res = await fetch(custom_url, {
@@ -133,6 +133,7 @@
 			console.log(error);
 		}
 	}
+
 	let search_term = '';
 	function filter_folder_data() {
 		//folder_data.filter(( /** @type {(string | string[])[]} */ data) => data[0].includes(search_term));
@@ -159,8 +160,7 @@
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
-		const custom_url =
-			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget?type=' + type;
+		const custom_url = API_URL + '/climate/select_for_wget?type=' + type;
 		let checked_boxes = [];
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
@@ -262,19 +262,18 @@
 				<!-- download link -->
 				<div>
 					&nbsp;<a
-						href="https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_file?name={datapoint[0]}&type={type}"
+						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}"
 						class="underline">download</a
 					>
 				</div>
 			{/if}
 		{/each}
 	</div>
-		<button
-			type="button"
-			class="btn variant-ghost-primary"
-			on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
-		>
-
+	<button
+		type="button"
+		class="btn variant-ghost-primary"
+		on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
+	>
 {:else}
 	<div>
 		<p>Loading...</p>
@@ -284,9 +283,7 @@
 	<div style="display:flex">
 		<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
 			<div class="mb-2">
-				<span>
-					To download all objects using Wget:
-				</span>
+				<span> To download all objects using Wget: </span>
 			</div>
 			<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
 				{wget_request_string}
