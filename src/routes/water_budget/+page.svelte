@@ -36,7 +36,7 @@
 		"wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
-	let type = 'water_budget';
+	let type = 'kariba';
 
 	// set default search type
 	// select_search_type('collection');
@@ -204,6 +204,10 @@
 			font_bold_col = '';
 			font_bold_ind = 'font-bold';
 			type = new_type;
+		} else if (new_type == 'kariba') {
+			font_bold_col = '';
+			font_bold_ind = 'font-bold';
+			type = new_type;
 		}
 		fetch_foldercontent();
 	}
@@ -222,6 +226,11 @@
 		type="button"
 		class="btn variant-filled-tertiary {font_bold_ind}"
 		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_ind}"
+		on:click={() => set_type('kariba')}>Kariba</button
 	>
 </div>
 <div>
@@ -269,12 +278,11 @@
 			{/if}
 		{/each}
 	</div>
-		<button
-			type="button"
-			class="btn variant-ghost-primary"
-			on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
-		>
-
+	<button
+		type="button"
+		class="btn variant-ghost-primary"
+		on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
+	>
 {:else}
 	<div>
 		<p>Loading...</p>
@@ -284,9 +292,7 @@
 	<div style="display:flex">
 		<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
 			<div class="mb-2">
-				<span>
-					To download all objects using Wget:
-				</span>
+				<span> To download all objects using Wget: </span>
 			</div>
 			<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
 				{wget_request_string}
