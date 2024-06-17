@@ -183,7 +183,7 @@
 			font_bold_ind = 'font-bold';
 			type = new_type;
 		}
-		fetch_foldercontent();
+		_fetch_foldercontent_by_type(type);
 	}
 
 	// array with current geo_data['facets']['file_id']
@@ -240,8 +240,12 @@
 				<!-- download link -->
 				<div>
 					&nbsp;<a
-						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}"
+						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}&filetype=nc"
 						class="underline">download</a
+					>
+					&nbsp;<a
+						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}&filetype=tif"
+						class="underline">download as tif</a
 					>
 				</div>
 			{/if}
