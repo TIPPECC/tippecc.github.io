@@ -35,7 +35,7 @@
 
 	// PLACEHOLDER showcase for wget display styling
 	let wget_cmd =
-		"wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
+		"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	let type = 'water_budget';
@@ -138,7 +138,7 @@
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
-		const custom_url = API_URL + '/climate/select_for_wget?type=' + type;
+		const custom_url = API_URL + '/climate/select_temp_urls?type=' + type;
 		let checked_boxes = [];
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
@@ -240,11 +240,11 @@
 				<!-- download link -->
 				<div>
 					&nbsp;<a
-						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}&filetype=nc"
+						href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=nc"
 						class="underline">download</a
 					>
 					&nbsp;<a
-						href="{API_URL}/climate/get_file?name={datapoint[0]}&type={type}&filetype=tif"
+						href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=tif"
 						class="underline">download as tif</a
 					>
 				</div>
