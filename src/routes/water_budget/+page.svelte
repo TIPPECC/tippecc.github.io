@@ -208,6 +208,10 @@
 			font_bold_col = '';
 			font_bold_ind = 'font-bold';
 			type = new_type;
+		} else if (new_type == 'vaal') {
+			font_bold_col = '';
+			font_bold_ind = 'font-bold';
+			type = new_type;
 		}
 		fetch_foldercontent();
 	}
@@ -231,6 +235,11 @@
 		type="button"
 		class="btn variant-filled-tertiary {font_bold_ind}"
 		on:click={() => set_type('kariba')}>Kariba</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_ind}"
+		on:click={() => set_type('vaal')}>Vaal</button
 	>
 </div>
 <div>
