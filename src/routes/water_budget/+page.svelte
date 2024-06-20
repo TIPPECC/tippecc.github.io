@@ -183,7 +183,14 @@
 			font_bold_ind = 'font-bold';
 			type = new_type;
 		}
-		_fetch_foldercontent_by_type(type);
+
+		_fetch_foldercontent_by_type(type)
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	// array with current geo_data['facets']['file_id']
@@ -212,11 +219,12 @@
 </div>
 
 {#if folder_data != null}
-	<div class="grid grid-cols-9">
+	<div class="grid grid-cols-10">
 		<div class="col-span-6">Filename</div>
 		<div>Filesize</div>
 		<div>Last modified</div>
 		<div>Download Link</div>
+		<div>Visualize</div>
 		{#each Object.values(folder_data['content']) as datapoint, i}
 			{#if datapoint[0].toLowerCase().includes(search_term.toLowerCase())}
 				<!-- Checkbox and filename -->
@@ -243,10 +251,41 @@
 						href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=nc"
 						class="underline">download</a
 					>
-					&nbsp;<a
-						href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=tif"
-						class="underline">download as tif</a
-					>
+					{#if datapoint[3] && !datapoint[3]['in_size_limit']}
+						tif not available
+					{:else}
+						&nbsp;<a
+							href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=tif"
+							class="underline">download as tif</a
+						>
+					{/if}
+				</div>
+				<div>
+					<!-- num bands (we could use basically any metadata from database/file here) -->
+					{#if !datapoint[3]}
+						<!-- no data on the file yet -->
+						Request Mapview (tif) [noFileData]
+					{:else if datapoint[3]['tif_cached']}
+						<!-- Tif file allready exists. We can jump straight to visualization. -->
+						Mapview (tif)
+					{:else if datapoint[3]['in_size_limit']}
+						{#if datapoint[3]['tif_convertable']}
+							<!-- Metadata exists and fits limits, but the file does not exist. 
+								 	 We can try to generate it first and then jump to visualization on success -->
+							Request Mapview (tif) [noTifFile]
+						{:else}
+							<!-- Metadata does not exist OR exceeds limits. If it does not exist we could try
+								 	 to read it. Maybe another bool in database 'nc-readable' can be used here. -->
+							{#if datapoint[3]['num_bands']}
+								Not Convertable
+							{:else}
+								Request Mapview [noMetaData]
+							{/if}
+						{/if}
+					{:else}
+						<!-- Filesize limit exceeded. -->
+						Not Convertable
+					{/if}
 				</div>
 			{/if}
 		{/each}
