@@ -50,6 +50,7 @@
 		_fetch_foldercontent_by_type(type)
 			.then((result) => {
 				folder_data = result;
+				console.log(folder_data);
 			})
 			.catch((error) => {
 				console.log(error);

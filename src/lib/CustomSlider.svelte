@@ -1,13 +1,13 @@
-<script>
+<script lang="ts">
 	// Define custom slider steps
 	export let valMap;
-	export let onSliderChangeFunction;
+	export let onSliderChangeFunction = onSliderChange;
 	// const valMap = [0, 1, 3, 5, 10, 15, 20, 30, 50];
 
 	// This is the default position of the slider
 	export let sliderValue = 0;
 
-	function onSliderChange(event) {
+	function onSliderChange(event?) {
 		// Update the internal slider value based on input change
 		sliderValue = event.target.value;
 		console.log('DRAG END');
@@ -39,6 +39,7 @@
 
 	<div class="mt-1">
 		Selected Value: {valMap[sliderValue]}
+		SliderValue: {sliderValue}
 	</div>
 {/if}
 
