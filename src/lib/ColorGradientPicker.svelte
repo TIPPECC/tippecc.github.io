@@ -43,8 +43,24 @@
 	export function set_bounds(min = cmin, max = cmax) {
 		cmin = min;
 		cmax = max;
-		set_value_stops();
+		set_color_stops();
 		console.log('SETTING BOUNDS: ', cmin, ' ', cmax);
+	}
+
+	function set_custom_bounds(e?) {
+		try {
+			var custom_abs_max = Math.abs(parseFloat(e.target.value));
+			if (isNaN(custom_abs_max)) {
+				throw new Error('NaN value entered as custom abs max.');
+			}
+			cmin = -custom_abs_max;
+			cmax = custom_abs_max;
+			console.log('SETTING BOUNDS: ', cmin, ' ', cmax);
+			console.log('SETTING BOUNDS: ', typeof cmin, ' ', typeof cmax);
+			set_color_stops();
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	function set_color_scheme(e?) {
@@ -160,11 +176,10 @@
 		input_steps = steps;
 
 		set_color_stops();
-		set_value_stops();
 	}
 
 	set_color_stops();
-	get_color_stops_from_middle(-10, 100);
+	// get_color_stops_from_middle(-10, 100);
 
 	function set_color_stops() {
 		if (odd_middle_mode) {
@@ -260,10 +275,10 @@
 	}
 </script>
 
-<div class="p-4 {horizontal ? 'w-[640px]' : 'w-[380px]'}">
+<div class="p-4 {horizontal ? 'w-[480px]' : 'w-[380px]'}">
 	<div
 		class="grid grid-cols-1 {horizontal
-			? 'grid-cols-1 w-[640px] place-items-center'
+			? 'grid-cols-1 w-[480px] place-items-center'
 			: 'grid-cols-2 w-[380px]'}"
 	>
 		<div>
@@ -304,7 +319,15 @@
 					</button>
 				{/if}
 			</div>
-			<div class="flex">
+			<div class="flex mt-1">
+				<label for="custom_bounds_input" class="variant-outline-tertiary px-1">Custom Max:</label>
+				<input
+					id="custom_bounds_input"
+					class="text-black ml-1 w-24"
+					on:change={set_custom_bounds}
+				/>
+			</div>
+			<div class="flex mt-1">
 				<input
 					on:change={change_steps}
 					bind:value={input_steps}
@@ -334,6 +357,7 @@
 				<div class={horizontal ? 'flex items-center mt-2' : ''}>
 					{#key color_stops}
 						{#each color_stops as color, i}
+							<!-- {cmin}:{value_stops[i]}:{(cmin > value_stops[i])}:{typeof(value_stops[i])}:{typeof(cmin)} -->
 							<svg width="20" height="20">
 								{#if show_in_bounds && (cmin > value_stops[i] || cmax < value_stops[i])}
 									<rect width="20" height="20" fill={'#444444'} x="0" y="0" />
