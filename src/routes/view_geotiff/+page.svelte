@@ -1,5 +1,24 @@
 <script>
-	import Map5 from '../../components/Map5.svelte';
+	import Geotiff_Map from '../../lib/Geotiff_Map.svelte';
+	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
+	import TifMap from '$lib/tempresults/tif_map.svelte';
+
+	/**
+	 * @type {ColorGradientPicker}
+	 */
+	let cg_picker;
+	/**
+	 * @type {any}
+	 */
+	let color_stops;
+
+	$: color_stops, rebuild_map();
+
+	function rebuild_map() {
+		if (!color_stops) {
+			return;
+		}
+	}
 </script>
 
 <!-- <script>
@@ -41,4 +60,6 @@ const map = new Map({
 
 <!-- <Map></Map> -->
 <!-- <Map2></Map2> -->
-<Map5 />
+<!-- <Geotiff_Map /> -->
+<!-- <ColorGradientPicker bind:this={cg_picker} bind:color_stops={color_stops}></ColorGradientPicker> -->
+<TifMap />

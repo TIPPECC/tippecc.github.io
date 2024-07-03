@@ -8,6 +8,7 @@
 	import colormap from 'colormap';
 	import { onMount } from 'svelte';
 	import CustomSlider from './CustomSlider.svelte';
+	import { _fetch_foldercontent_by_type } from './fetch_folder_content';
 
 	/*
     * Hardcoded testfiles for now. Will later be supplied
@@ -44,42 +45,17 @@
 		max: 0
 	};
 
-	let type = 'water_budget';
 	let folder_data: any[] = [];
 
 	onMount(() => {
-		fetch_foldercontent();
-	});
-	async function fetch_foldercontent() {
-		const custom_url =
-			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content?type=' + type;
-
-		try {
-			const res = await fetch(custom_url, {
-				method: 'GET'
+		_fetch_foldercontent_by_type('water_budget')
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
 			});
-
-			let result = [];
-			if (!res.ok) {
-				throw new Error(`${res.status} ${res.statusText}`);
-			}
-
-			result = await res.json();
-			folder_data = result;
-
-			//for (let i = 0; i < folder_data.length; i++) {
-			//	files.push(folder_data[i]);
-			//}
-			// files = result;
-
-			// sort array
-			folder_data['content'].sort();
-
-			console.log('folder_data', folder_data);
-		} catch (error) {
-			console.log(error);
-		}
-	}
+	});
 
 	/**
 	 * With geotiff for now. Later will work without additional code via backend.

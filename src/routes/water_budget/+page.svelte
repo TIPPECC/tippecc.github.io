@@ -1,5 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
+	import { API_URL } from '../../app.config';
+	import { _fetch_foldercontent_by_type } from '$lib/fetch_folder_content';
 
 	/**
 	 * @type {any}
@@ -33,7 +35,7 @@
 
 	// PLACEHOLDER showcase for wget display styling
 	let wget_cmd =
-		"wget --input-file 'http://127.0.0.1:8000/climate/get_climate_txt?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
+		"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	let type = 'kariba';
@@ -45,7 +47,13 @@
 	// send_query();
 
 	onMount(() => {
-		fetch_foldercontent();
+		_fetch_foldercontent_by_type(type)
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	});
 
 	/**
@@ -53,13 +61,13 @@
 	 */
 	function select_search_type(search_type) {
 		if (search_type == 'collection') {
-			url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/search_collection?';
+			url = API_URL + '/climate/search_collection?';
 			font_bold_ind = '';
 			font_bold_col = 'font-bold';
 			query_parameter = [];
 			send_query();
 		} else if (search_type == 'indicator') {
-			url = 'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/search_indicator?';
+			url = API_URL + '/climate/search_indicator?';
 			font_bold_col = '';
 			font_bold_ind = 'font-bold';
 			query_parameter = [];
@@ -104,35 +112,6 @@
 		}
 	}
 
-	async function fetch_foldercontent() {
-		const custom_url =
-			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_content?type=' + type;
-
-		try {
-			const res = await fetch(custom_url, {
-				method: 'GET'
-			});
-
-			let result = [];
-			if (!res.ok) {
-				throw new Error(`${res.status} ${res.statusText}`);
-			}
-
-			result = await res.json();
-			folder_data = result;
-
-			for (let i = 0; i < folder_data.length; i++) {
-				folder_checkbox_bools.push(false);
-			}
-
-			// sort array
-			folder_data['content'].sort();
-
-			console.log('folder_data', folder_data);
-		} catch (error) {
-			console.log(error);
-		}
-	}
 	let search_term = '';
 	function filter_folder_data() {
 		//folder_data.filter(( /** @type {(string | string[])[]} */ data) => data[0].includes(search_term));
@@ -159,8 +138,7 @@
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
-		const custom_url =
-			'https://leutra.geogr.uni-jena.de/backend_geoportal/climate/select_for_wget?type=' + type;
+		const custom_url = API_URL + '/climate/select_temp_urls?type=' + type;
 		let checked_boxes = [];
 
 		for (let i = 0; i < folder_checkbox_bools.length; i++) {
@@ -213,7 +191,14 @@
 			font_bold_ind = 'font-bold';
 			type = new_type;
 		}
-		fetch_foldercontent();
+
+		_fetch_foldercontent_by_type(type)
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	// array with current geo_data['facets']['file_id']
@@ -252,11 +237,12 @@
 </div>
 
 {#if folder_data != null}
-	<div class="grid grid-cols-9">
+	<div class="grid grid-cols-10">
 		<div class="col-span-6">Filename</div>
 		<div>Filesize</div>
 		<div>Last modified</div>
 		<div>Download Link</div>
+		<div>Visualize</div>
 		{#each Object.values(folder_data['content']) as datapoint, i}
 			{#if datapoint[0].toLowerCase().includes(search_term.toLowerCase())}
 				<!-- Checkbox and filename -->
@@ -280,9 +266,44 @@
 				<!-- download link -->
 				<div>
 					&nbsp;<a
-						href="https://leutra.geogr.uni-jena.de/backend_geoportal/climate/get_file?name={datapoint[0]}&type={type}"
+						href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=nc"
 						class="underline">download</a
 					>
+					{#if datapoint[3] && !datapoint[3]['in_size_limit']}
+						tif not available
+					{:else}
+						&nbsp;<a
+							href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={type}&filetype=tif"
+							class="underline">download as tif</a
+						>
+					{/if}
+				</div>
+				<div>
+					<!-- num bands (we could use basically any metadata from database/file here) -->
+					{#if !datapoint[3]}
+						<!-- no data on the file yet -->
+						Request Mapview (tif) [noFileData]
+					{:else if datapoint[3]['tif_cached']}
+						<!-- Tif file allready exists. We can jump straight to visualization. -->
+						Mapview (tif)
+					{:else if datapoint[3]['in_size_limit']}
+						{#if datapoint[3]['tif_convertable']}
+							<!-- Metadata exists and fits limits, but the file does not exist. 
+								 	 We can try to generate it first and then jump to visualization on success -->
+							Request Mapview (tif) [noTifFile]
+						{:else}
+							<!-- Metadata does not exist OR exceeds limits. If it does not exist we could try
+								 	 to read it. Maybe another bool in database 'nc-readable' can be used here. -->
+							{#if datapoint[3]['num_bands']}
+								Not Convertable
+							{:else}
+								Request Mapview [noMetaData]
+							{/if}
+						{/if}
+					{:else}
+						<!-- Filesize limit exceeded. -->
+						Not Convertable
+					{/if}
 				</div>
 			{/if}
 		{/each}
