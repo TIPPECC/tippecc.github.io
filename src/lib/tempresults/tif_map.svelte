@@ -212,11 +212,11 @@
 				{
 					// Alle baender 1,2,3,4,5,6,.....
 					bands: [selected_band, selected_band_dif],
-					// url: selected_tif_url
+					 url: selected_tif_url
 					// url: "https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/" + "CLMcom-KIT-CCLM5-0-15_v1_MOHC-HadGEM2-ES__evspsblpot_all__mm__yearsum_mean_2080_2099.tif"
-					url:
-						'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/bias/' +
-						'b_CLMcom-KIT-CCLM5-0-15_v1_MPI-M-MPI-ESM-LR__water_budget_all__mm__yearsum.tif'
+					//url:
+					//	'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/bias/' +
+					//	'b_CLMcom-KIT-CCLM5-0-15_v1_MPI-M-MPI-ESM-LR__water_budget_all__mm__yearsum.tif'
 					// max: current_band_metainfo.max
 				}
 			]
