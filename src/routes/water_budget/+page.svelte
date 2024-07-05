@@ -38,7 +38,7 @@
 		"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
-	let type = 'water_budget';
+	let type = 'kariba';
 
 	// set default search type
 	// select_search_type('collection');
@@ -183,6 +183,14 @@
 			font_bold_col = '';
 			font_bold_ind = 'font-bold';
 			type = new_type;
+		} else if (new_type == 'kariba') {
+			font_bold_col = '';
+			font_bold_ind = 'font-bold';
+			type = new_type;
+		} else if (new_type == 'vaal') {
+			font_bold_col = '';
+			font_bold_ind = 'font-bold';
+			type = new_type;
 		}
 
 		_fetch_foldercontent_by_type(type)
@@ -208,6 +216,16 @@
 		type="button"
 		class="btn variant-filled-tertiary {font_bold_ind}"
 		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_ind}"
+		on:click={() => set_type('kariba')}>Kariba</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {font_bold_ind}"
+		on:click={() => set_type('vaal')}>Vaal</button
 	>
 </div>
 <div>

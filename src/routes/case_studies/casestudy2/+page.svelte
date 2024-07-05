@@ -19,20 +19,21 @@
 
 	<blockquote class="content-blockquote">
 		Case study 2 is the Namibian contribution to TIPPECC. It focuses on the arid zone pastoralist
-		rangeland system of the Ovahimba of northern Kunene. Ovahimba have inhabited the region for over
-		200 years, surviving several intense droughts. The pastoralist lifestyle is finely attuned to
-		its environment, adapting to seasonal and longer-term fluctuations in their resources. However,
-		several factors, including population growth and increased sedentarisation have put pressure on
-		the whole social-ecological system (SES), making it vulnerable to climate change and subsequent
-		regime shifts in their resource base. TIPPECC-Kunene aims to use both traditional ecological
-		knowledge and scientific data to determine 1) the probability of climate tipping points leading
-		to regime shifts in the SES, and 2) those factors that will cause changes and/or shifts, with an
-		emphasis on the role that a climate tipping point(s) will play in this. We further aim to 3)
-		co-develop, with affected communities, feasible adaptation strategies to ongoing global change,
-		ensuring alignment with inherent coping strategies. TIPPECC Kunene is organised around four main
-		objectives, each comprising between one and four sub-projects. Study topics include vegetation
-		change and land degradation, livestock foraging ecology, changes in resource access rules,
-		options for climate change adaptation and alternative livelihoods, and the role of permanent
-		water provisioning in driving economic, social and environmental change.
+		rangeland social-ecological system (SES) of the Ovahimba of northern Kunene. Ovahimba have
+		inhabited the region for over 200 years, surviving several intense droughts. The pastoralist
+		lifestyle is finely attuned to its environment, adapting to seasonal and longer-term
+		fluctuations in their resources. However, several factors, including population growth and
+		increased sedentarisation have put pressure on the whole SES, making it vulnerable to potential
+		tipping points in climate and subsequent shifts in their resource base. TIPPECC-Kunene aims to
+		use both traditional ecological knowledge and scientific data to determine 1) the probability of
+		climate tipping points leading to regime shifts in the SES, and 2) those factors that will cause
+		changes and/or shifts, with an emphasis on the role that a climate tipping point(s) will play in
+		this. We further aim to 3) co-develop, with affected communities, feasible adaptation strategies
+		to ongoing global change, ensuring alignment with inherent coping strategies and traditional
+		access rules. TIPPECC Kunene is organised around four main objectives, each comprising between
+		one and four sub-projects. Study topics include vegetation change and land degradation,
+		livestock foraging ecology, changes in resource access rules, options for climate change
+		adaptation and alternative livelihoods, and the role of permanent water provisioning in driving
+		economic, social and environmental change.
 	</blockquote>
 </div>
