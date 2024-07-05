@@ -12,7 +12,7 @@
 
 	let metadata_loaded: boolean = false;
 	let selected_file: string = '';
-	let folder_data: any[] = [];
+	let folder_data: any[any] = [];
 	let foldertype: string = 'water_budget';
 	let selected_tif_url: string = '';
 	let horizontal_scala: boolean = true;
@@ -30,22 +30,6 @@
 	let map: Map;
 	let dif_mode: boolean = false;
 
-	var TWENTY_FOUR = 86400000;
-	var TWELF = 43200000;
-	var days_1 = 180;
-	var days_2 = 540.5;
-	var days_3 = 900;
-	var days_4 = 1260;
-
-	console.log(Date.parse('days since 1950-01-01T00:00:00+00:00')); // NaN
-	console.log(Date.parse('1950-01-01T00:00:00+00:00')); // -631152000000
-	console.log(new Date(Date.parse('1950-01-01T00:00:00+00:00')).toString()); // Sun Jan 01 1950 01:00:00 GMT+0100 (Central European Standard Time)
-
-	var current_date = new Date(Date.parse('1950-01-01T00:00:00+00:00') + days_1 * TWELF * 2);
-	console.log(current_date.toString()); // Fri Jun 30 1950 01:00:00 GMT+0100 (Central European Summer Time)
-	var current_date = new Date(Date.parse('1950-01-01T00:00:00+00:00') + days_2 * TWELF * 2);
-	console.log(current_date.toString()); // Mon Jun 25 1951 13:00:00 GMT+0100 (Central European Summer Time)
-
 	let base_view = new View({
 		center: [0, 0],
 		zoom: 2
@@ -62,12 +46,12 @@
 	};
 
 	let cg_picker: ColorGradientPicker;
-	let color_stops: any;
+	let color_steps: any;
 
-	$: color_stops, rebuild_map();
+	$: color_steps, rebuild_map();
 
 	function rebuild_map() {
-		if (!color_stops) {
+		if (!color_steps) {
 			return;
 		}
 	}
@@ -86,6 +70,7 @@
 
 	onMount(() => {
 		initialize_map();
+		generate_openlayers_case_stops(cg_picker.get_color_stops());
 	});
 
 	function initialize_map() {
@@ -201,11 +186,42 @@
 		visualize_band();
 	}
 
+	function generate_openlayers_case_stops(color_stops: any[]) {
+		var color_cases = ['case', ['==', ['band', 1], 0], [0, 0, 0, 0]];
+		for (let i = 0; i < color_stops.length; i++) {
+			if (i % 2 == 0) {
+				// console.log("Current UB: ", color_stops[i], " current LB: ", color_stops[i][1]);
+				color_cases.push(['between', ['band', 1], color_stops[i][0], color_stops[i][1]]);
+			} else {
+				color_cases.push(color_stops[i]);
+			}
+		}
+
+		// TODO:
+		// 	- maybe add case here for datapoints that exceed the min-/max-values (should only
+		//	be needed when custom min/max is set)
+
+		// fallback value for the 'case' operator
+		color_cases.push([0, 0, 0, 0]);
+
+		// console.log("Generated ol-stops: ", color_cases)
+		return color_cases;
+	}
+
 	function visualize_band() {
 		console.log('Visualizing: ');
 		console.log('selected_band: ', selected_band, ' ', typeof selected_band);
 		console.log('selected_band_dif: ', selected_band_dif, ' ', typeof selected_band_dif);
 		console.log('dif_mode: ', dif_mode);
+
+		// Important note:
+		// band selection is a bit tricky here..
+		// - band numbers always start at 1
+		// - in the GeoTIFF source itself, bands are indexed as they are in the file
+		// - in the TileLayer however they are referenced as they are loaded into the source
+		// 		- thus when loading 2 bands into the source with e.g. band-number 4 and 50,
+		//		they will be re-indexed in the TileLayer to 1 and 2 respectively
+
 		const source = new GeoTIFF_OL({
 			normalize: false,
 			sources: [
@@ -221,6 +237,7 @@
 				}
 			]
 		});
+
 		var info = [];
 		if (dif_mode) {
 			info = ['-', ['band', 1], ['band', 2]];
@@ -230,14 +247,20 @@
 
 		const layerbandinfo = info;
 
-		const color_thing = [
-			'case',
-			['==', ['band', 1], 0],
-			[0, 0, 0, 0],
+		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops());
 
-			// https://openlayers.org/workshop/en/cog/ndvi.html
-			['interpolate', ['linear'], layerbandinfo, ...cg_picker.get_color_stops()]
-		];
+		// const color_thing = [
+		// 	'case',
+		// 	['==', ['band', 1], 0],
+		// 	[0, 0, 0, 0],
+		// 	['>', ['band', 1], 0],
+		// 	[0, 0, 0, 0],
+
+		// 	// https://openlayers.org/workshop/en/cog/ndvi.html
+		// 	['interpolate', ['linear'], layerbandinfo, [...cg_picker.get_color_stops()]]
+		// ];
+
+		console.log('COLOR_THING: ', color_thing);
 		// const color_thing = [
 		// 			// https://openlayers.org/workshop/en/cog/ndvi.html
 		// 			'interpolate', ['linear'], layerbandinfo, ...cg_picker.get_color_stops()
@@ -339,7 +362,7 @@
 	<div class="flex justify-center items-center">
 		<ColorGradientPicker
 			bind:this={cg_picker}
-			bind:color_stops
+			bind:color_steps
 			bind:horizontal={horizontal_scala}
 			on:color_stops_changed={visualize_band}
 		/>
