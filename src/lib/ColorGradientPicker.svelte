@@ -302,18 +302,16 @@
 	}
 </script>
 
-<div class="p-4 {horizontal ? 'w-[480px]' : 'w-[380px]'}">
-	<div
-		class="grid grid-cols-1 {horizontal
-			? 'grid-cols-1 w-[480px] place-items-center'
-			: 'grid-cols-5 w-[380px]'}"
-	>
-		<div class={horizontal ? '' : 'col-span-3 pt-2 flex place-items-center justify-center p-1'}>
-			<div class={horizontal ? 'flex' : ''}>
-				<div class="flex-1 {horizontal ? 'mr-1' : 'mb-1'}">
+<div class="p-4 mt-2 {horizontal ? 'w-[480px]' : 'w-[260px]'}">
+	<!--Buttons/Inputs-->
+	<div class="grid grid-cols-1 place-items-center {horizontal ? 'grid-cols-1 w-full' : 'w-full'}">
+		<div class={horizontal ? '' : 'pt-2 flex place-items-center p-1'}>
+			<div class={horizontal ? 'md:flex' : ''}>
+				<!--Bounds-->
+				<div class="flex {horizontal ? 'md:mr-1 max-md:mb-1' : 'mb-1'}">
 					{#if show_in_bounds}
 						<button
-							class="variant-filled-tertiary px-1 w-28"
+							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
 							on:click={() => {
 								show_in_bounds = !show_in_bounds;
 							}}
@@ -321,7 +319,7 @@
 						</button>
 					{:else}
 						<button
-							class="variant-filled-tertiary px-1 w-28"
+							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
 							on:click={() => {
 								show_in_bounds = !show_in_bounds;
 							}}
@@ -330,10 +328,11 @@
 					{/if}
 				</div>
 
-				<div class="flex-1 {horizontal ? 'mr-1' : 'mb-1'}">
+				<!--Verticality-->
+				<div class="flex-1 {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
 					{#if horizontal}
 						<button
-							class="variant-filled-tertiary px-1 w-28"
+							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
 							on:click={() => {
 								horizontal = !horizontal;
 							}}
@@ -341,7 +340,7 @@
 						</button>
 					{:else}
 						<button
-							class="variant-filled-tertiary px-1 w-28"
+							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
 							on:click={() => {
 								horizontal = !horizontal;
 							}}
@@ -350,36 +349,40 @@
 					{/if}
 				</div>
 
-				<div class="flex {horizontal ? 'mr-1' : 'mb-1'}">
+				<!--Custom Max-->
+				<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
 					<nobr>
-						<label for="custom_bounds_input" class="flex-1 variant-outline-tertiary px-1"
+						<label for="custom_bounds_input" class="flex variant-outline-tertiary p-1"
 							>Custom Max:</label
 						>
 					</nobr>
 					<input
 						id="custom_bounds_input"
-						class="flex-1 text-black ml-1 max-w-[96px]"
+						class="flex-1 text-black ml-1 max-w-[96px] pl-1"
 						on:change={set_custom_bounds}
 					/>
 				</div>
-				<div class="flex {horizontal ? 'mr-1' : 'mb-1'}">
+
+				<!--Steps-->
+				<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
 					<nobr>
-						<label for="steps_input" class="flex-1 variant-outline-tertiary px-1">Steps:</label>
+						<label for="steps_input" class="flex variant-outline-tertiary p-1">Steps:</label>
 					</nobr>
 					<input
 						on:change={change_steps}
 						bind:value={input_steps}
 						type="number"
 						id="steps_input"
-						class="flex-1 text-black ml-1 max-w-[36px]"
+						class="flex-1 text-black ml-1 max-w-[40px] pl-1"
 						max="21"
 						min="0"
 					/>
 				</div>
 
+				<!--Color Scheme-->
 				<div class="flex">
 					<nobr>
-						<label for="color_scheme_select" class="flex-1 variant-outline-tertiary px-1"
+						<label for="color_scheme_select" class="flex variant-outline-tertiary p-1"
 							>Color Scheme:</label
 						>
 					</nobr>
@@ -400,11 +403,13 @@
 			</div>
 		</div>
 
+		<!--Color Gradient-->
 		<div
 			class="grid grid-cols-1 {horizontal
 				? 'grid-cols-1'
-				: 'grid-cols-[40px_40px] col-span-2 p-1'} place-items-center"
+				: 'grid-cols-[40px_40px] p-1'} place-items-center"
 		>
+			<!--Color Rectangles-->
 			<div>
 				<div class={horizontal ? 'flex items-center mt-2' : ''}>
 					{#key color_steps}
@@ -422,6 +427,7 @@
 				</div>
 			</div>
 
+			<!--Values-->
 			<div>
 				<div class={horizontal ? 'flex items-center' : ''}>
 					{#key color_steps}

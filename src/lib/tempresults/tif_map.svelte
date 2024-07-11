@@ -70,7 +70,6 @@
 
 	onMount(() => {
 		initialize_map();
-		generate_openlayers_case_stops(cg_picker.get_color_stops());
 	});
 
 	function initialize_map() {
@@ -151,16 +150,16 @@
 		current_band_metainfo.min = band_metadata[selected_band].min;
 		current_band_metainfo.max = band_metadata[selected_band].max;
 
-		console.log('meta_result: ', meta_result);
+		// console.log('meta_result: ', meta_result);
 		// console.log('band_metadata: ', band_metadata);
-		console.log('net_cdf_times: ', net_cdf_times);
-		console.log('net_cdf_times TYPE: ', typeof net_cdf_times);
+		// console.log('net_cdf_times: ', net_cdf_times);
+		// console.log('net_cdf_times TYPE: ', typeof net_cdf_times);
 
 		band_slider_values = [];
 		for (let i = 0; i < net_cdf_times.length; i++) {
 			band_slider_values.push(parseFloat(net_cdf_times[i]));
 		}
-		console.log('band_slider_values: ', band_slider_values);
+		// console.log('band_slider_values: ', band_slider_values);
 		cg_picker.set_bounds(current_band_metainfo.min, current_band_metainfo.max);
 
 		// console.log("Tif result: ", result);
@@ -171,8 +170,6 @@
 		// let selected_file_url =
 		// 	API_URL + '/tippecctmp/cache/water_budget/' + selected_file;
 	}
-
-	function createTileLayer_singleBand() {}
 
 	function on_slider_change(e?) {
 		selected_band = parseInt(slider_index) + 1;
@@ -186,12 +183,12 @@
 		visualize_band();
 	}
 
-	function generate_openlayers_case_stops(color_stops: any[]) {
-		var color_cases = ['case', ['==', ['band', 1], 0], [0, 0, 0, 0]];
+	function generate_openlayers_case_stops(color_stops: any[], layerinfo: any[]) {
+		var color_cases = ['case', ['==', layerinfo, 0], [0, 0, 0, 0]];
 		for (let i = 0; i < color_stops.length; i++) {
 			if (i % 2 == 0) {
 				// console.log("Current UB: ", color_stops[i], " current LB: ", color_stops[i][1]);
-				color_cases.push(['between', ['band', 1], color_stops[i][0], color_stops[i][1]]);
+				color_cases.push(['between', layerinfo, color_stops[i][0], color_stops[i][1]]);
 			} else {
 				color_cases.push(color_stops[i]);
 			}
@@ -200,6 +197,12 @@
 		// TODO:
 		// 	- maybe add case here for datapoints that exceed the min-/max-values (should only
 		//	be needed when custom min/max is set)
+		color_cases.push(['<', layerinfo, color_stops[0][0]]);
+		color_cases.push(color_stops[1]);
+
+		color_cases.push(['>', layerinfo, color_stops[color_stops.length - 2][1]]);
+		color_cases.push(color_stops[color_stops.length - 1]);
+		// adding limits
 
 		// fallback value for the 'case' operator
 		color_cases.push([0, 0, 0, 0]);
@@ -209,10 +212,11 @@
 	}
 
 	function visualize_band() {
-		console.log('Visualizing: ');
-		console.log('selected_band: ', selected_band, ' ', typeof selected_band);
-		console.log('selected_band_dif: ', selected_band_dif, ' ', typeof selected_band_dif);
-		console.log('dif_mode: ', dif_mode);
+		// console.log('Visualizing: ');
+		// console.log('selected_band: ', selected_band);
+		// console.log('selected_band_dif: ', selected_band_dif);
+		// console.log('dif_mode: ', dif_mode);
+		// console.log("selected url: ", selected_tif_url);
 
 		// Important note:
 		// band selection is a bit tricky here..
@@ -222,17 +226,26 @@
 		// 		- thus when loading 2 bands into the source with e.g. band-number 4 and 50,
 		//		they will be re-indexed in the TileLayer to 1 and 2 respectively
 
+		var bands_helper = [];
+		if (dif_mode) {
+			bands_helper = [selected_band, selected_band_dif];
+		} else {
+			bands_helper = [selected_band];
+		}
+
 		const source = new GeoTIFF_OL({
 			normalize: false,
 			sources: [
 				{
 					// Alle baender 1,2,3,4,5,6,.....
 					bands: [selected_band, selected_band_dif],
-					 url: selected_tif_url
+					// TODO:
+					// 	- there are still some errors left with some tif files, (invalid byte order value, ..)
+					url: selected_tif_url
 					// url: "https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/" + "CLMcom-KIT-CCLM5-0-15_v1_MOHC-HadGEM2-ES__evspsblpot_all__mm__yearsum_mean_2080_2099.tif"
-					//url:
-					//	'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/bias/' +
-					//	'b_CLMcom-KIT-CCLM5-0-15_v1_MPI-M-MPI-ESM-LR__water_budget_all__mm__yearsum.tif'
+					// url:
+					// 	'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/bias/' +
+					// 	'b_CLMcom-KIT-CCLM5-0-15_v1_MPI-M-MPI-ESM-LR__water_budget_all__mm__yearsum.tif'
 					// max: current_band_metainfo.max
 				}
 			]
@@ -245,9 +258,9 @@
 			info = ['band', 1];
 		}
 
-		const layerbandinfo = info;
+		const layerinfo = info;
 
-		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops());
+		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops(), layerinfo);
 
 		// const color_thing = [
 		// 	'case',
@@ -289,11 +302,17 @@
 	}
 </script>
 
-<div class="flex px-4 pt-4 w-full">
-	<label for="fileselect">Select file:</label>
+<div class="lg:flex px-4 pt-4 w-full">
+	<label
+		class="flex max-w-[100px] place-items-center justify-center variant-outline-tertiary p-1"
+		for="fileselect">Select file:</label
+	>
+
+	<!--TODO: Bare Select will probably not be enough for mobile
+	layouts if needed here. Needs replacement by something better. -->
 	<select
 		id="fileselect"
-		class="bg-primary-500 rounded-md p-1"
+		class="bg-primary-500 rounded-md p-1 max-lg:max-w-[100%] max-w-[80%] max-lg:mt-1 lg:ml-2"
 		bind:value={selected_file}
 		on:change={file_selected}
 	>
@@ -305,17 +324,39 @@
 			{/each}
 		{/if}
 	</select>
+
+	{#if dif_mode}
+		<div>
+			<button
+				class="variant-filled-tertiary p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+				on:click={() => {
+					dif_mode = !dif_mode;
+				}}>Normal mode</button
+			>
+		</div>
+	{:else}
+		<div>
+			<button
+				class="variant-filled-tertiary hover:bg-tertiary-600 p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+				on:click={() => {
+					dif_mode = !dif_mode;
+				}}>Dif mode</button
+			>
+		</div>
+	{/if}
 </div>
 
 {#if band_slider_values}
 	{#if band_slider_values.length >= 2}
-		<div class="flex w-full pl-4">
-			<div class="variant-outline-tertiary mt-2 px-2 pt-1">
+		<div class="md:flex w-full pl-4 pr-4">
+			<div
+				class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
+			>
 				<h2>Band meta data <b>#{selected_band}:</b></h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
 			</div>
-			<div class="px-4 w-full">
+			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 				<CustomSliderPicker
 					valMap={band_slider_values}
 					bind:slider_value
@@ -326,13 +367,15 @@
 		</div>
 
 		{#if dif_mode}
-			<div class="flex w-full pl-4">
-				<div class="variant-outline-tertiary mt-2 px-2 pt-1">
+			<div class="md:flex w-full pl-4 pr-4">
+				<div
+					class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
+				>
 					<h2>Band meta data <b>#{selected_band_dif}:</b></h2>
 					<div id="band_min">MIN: {current_dif_band_metainfo['min']}</div>
 					<div id="band_min">MAX: {current_dif_band_metainfo['max']}</div>
 				</div>
-				<div class="px-4 w-full">
+				<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 					<CustomSliderPicker
 						valMap={band_slider_values}
 						bind:slider_value={slider_value_dif}
@@ -341,19 +384,6 @@
 					/>
 				</div>
 			</div>
-			<button
-				class="btn"
-				on:click={() => {
-					dif_mode = !dif_mode;
-				}}>Normal mode</button
-			>
-		{:else}
-			<button
-				class="btn"
-				on:click={() => {
-					dif_mode = !dif_mode;
-				}}>Dif mode</button
-			>
 		{/if}
 	{/if}
 {/if}
