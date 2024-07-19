@@ -146,6 +146,7 @@
 		meta_result = await meta_res.json();
 
 		current_metadata = meta_result.metadata;
+		// console.log("Current Metadata: ", current_metadata);
 		var band_metadata = meta_result.metadata.band_metadata;
 		var net_cdf_times = JSON.parse(meta_result.metadata.net_cdf_times);
 
@@ -158,9 +159,21 @@
 		// console.log('net_cdf_times TYPE: ', typeof net_cdf_times);
 
 		band_slider_values = [];
-		for (let i = 0; i < net_cdf_times.length; i++) {
-			band_slider_values.push(parseFloat(net_cdf_times[i]));
+		var start_date = Date.parse(current_metadata.timestamp_begin);
+		const TWELF = 43200000; // 12 hours in ms
+
+		if (current_metadata.timestamp_begin == '') {
+			for (let i = 0; i < net_cdf_times.length; i++) {
+				band_slider_values.push(parseFloat(net_cdf_times[i]));
+			}
+		} else {
+			for (let i = 0; i < net_cdf_times.length; i++) {
+				band_slider_values.push(
+					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELF * 2).getFullYear()
+				);
+			}
 		}
+
 		// console.log('band_slider_values: ', band_slider_values);
 		cg_picker.set_bounds(current_band_metainfo.min, current_band_metainfo.max);
 
@@ -279,12 +292,12 @@
 		// 	['interpolate', ['linear'], layerbandinfo, [...cg_picker.get_color_stops()]]
 		// ];
 
-		console.log('COLOR_THING: ', color_thing);
+		// console.log('COLOR_THING: ', color_thing);
 		// const color_thing = [
 		// 			// https://openlayers.org/workshop/en/cog/ndvi.html
 		// 			'interpolate', ['linear'], layerbandinfo, ...cg_picker.get_color_stops()
 		// 		]
-		console.log('color_thing: ', color_thing);
+		// console.log('color_thing: ', color_thing);
 		const layer = new TileLayer({
 			source: source,
 			style: {
