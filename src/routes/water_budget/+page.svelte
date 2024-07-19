@@ -159,7 +159,8 @@
 
 			let result = [];
 			if (!res.ok) {
-				throw new Error(`${res.status} ${res.statusText}`);
+				var err_msg = await res.text();
+				throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 			}
 
 			result = await res.json();

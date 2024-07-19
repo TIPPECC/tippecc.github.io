@@ -58,7 +58,7 @@
 
 	onMount(() => {
 		// REPLACE TYPE HERE to fetch specific folders
-		_fetch_foldercontent_by_type('water_budget')
+		_fetch_foldercontent_by_type('water_budget', true)
 			.then((result) => {
 				folder_data = result;
 				console.log(folder_data);
@@ -125,7 +125,8 @@
 
 		let result = [];
 		if (!res.ok) {
-			throw new Error(`${res.status} ${res.statusText}`);
+			var err_msg = await res.text();
+			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		}
 
 		result = await res.json();
@@ -138,7 +139,8 @@
 
 		let meta_result = [];
 		if (!meta_res.ok) {
-			throw new Error(`${meta_res.status} ${meta_res.statusText}`);
+			var err_msg = await res.text();
+			throw new Error(`${meta_res.status} ${meta_res.statusText}\nReason: ${err_msg}`);
 		}
 
 		meta_result = await meta_res.json();
@@ -164,8 +166,12 @@
 
 		// console.log("Tif result: ", result);
 		selected_tif_url = result.filedata.route;
+
+		// workaround for local testing
+		// selected_tif_url = result.filedata.filename;
+
 		visualize_band();
-		// console.log('selected_tif_url: ', selected_tif_url);
+		console.log('selected_tif_url: ', selected_tif_url);
 
 		// let selected_file_url =
 		// 	API_URL + '/tippecctmp/cache/water_budget/' + selected_file;
