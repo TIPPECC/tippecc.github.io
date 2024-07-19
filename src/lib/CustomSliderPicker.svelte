@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 	// Define custom slider steps
@@ -22,6 +22,10 @@
 	onMount(() => {
 		window.addEventListener('resize', handle_resize);
 		handle_resize();
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('resize', handle_resize);
 	});
 
 	function get_value_range(upper: number, lower: number, steps: number) {

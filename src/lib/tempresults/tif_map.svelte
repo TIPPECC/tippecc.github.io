@@ -58,7 +58,7 @@
 
 	onMount(() => {
 		// REPLACE TYPE HERE to fetch specific folders
-		_fetch_foldercontent_by_type('water_budget', true)
+		_fetch_foldercontent_by_type(foldertype, true)
 			.then((result) => {
 				folder_data = result;
 				console.log(folder_data);
@@ -319,7 +319,53 @@
 		// map.setView(layer.getSource().getView());
 		map.setView(base_view);
 	}
+
+	/**
+	 * @param {string} new_type
+	 */
+	function set_type(new_type) {
+		if (new_type == 'water_budget') {
+			foldertype = new_type;
+		} else if (new_type == 'water_budget_bias') {
+			foldertype = new_type;
+		} else if (new_type == 'kariba') {
+			foldertype = new_type;
+		} else if (new_type == 'vaal') {
+			foldertype = new_type;
+		}
+
+		_fetch_foldercontent_by_type(foldertype, true)
+			.then((result) => {
+				folder_data = result;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
 </script>
+
+<div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {foldertype == 'water_budget' ? 'font-bold' : ''}"
+		on:click={() => set_type('water_budget')}>Water Budget</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {foldertype == 'water_budget_bias' ? 'font-bold' : ''}"
+		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {foldertype == 'kariba' ? 'font-bold' : ''}"
+		on:click={() => set_type('kariba')}>Kariba</button
+	>
+	<button
+		type="button"
+		class="btn variant-filled-tertiary {foldertype == 'vaal' ? 'font-bold' : ''}"
+		on:click={() => set_type('vaal')}>Vaal</button
+	>
+</div>
 
 <div class="lg:flex px-4 pt-4 w-full">
 	<label
@@ -404,6 +450,17 @@
 				</div>
 			</div>
 		{/if}
+	{:else if band_slider_values.length == 1}
+		<div class="w-full px-4 mt-2">
+			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
+				<h2>Single band file metadata</h2>
+				<div id="band_min">MIN: {current_dif_band_metainfo['min']}</div>
+				<div id="band_min">MAX: {current_dif_band_metainfo['max']}</div>
+				<div id="band_timestamp">Start: {current_metadata.timestamp_begin}</div>
+			</div>
+		</div>
+	{:else}
+		SELECT BAND
 	{/if}
 {/if}
 
