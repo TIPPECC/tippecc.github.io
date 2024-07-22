@@ -3,8 +3,13 @@ import { API_URL } from '../app.config';
 /**
  * @param {string | undefined} [type]
  */
-export async function _fetch_foldercontent_by_type(type) {
-	const custom_url = API_URL + '/climate/get_content?type=' + type;
+export async function _fetch_foldercontent_by_type(type, convertable = false) {
+	var helper = API_URL + '/climate/get_content?type=' + type;
+	if (convertable) {
+		helper += '&convertable=true';
+	}
+
+	const custom_url = helper;
 
 	const res = await fetch(custom_url, {
 		method: 'GET'
@@ -12,7 +17,8 @@ export async function _fetch_foldercontent_by_type(type) {
 
 	let result = [];
 	if (!res.ok) {
-		throw new Error(`${res.status} ${res.statusText}`);
+		var msg = await res.text();
+		throw new Error(`${res.status} ${res.statusText}\nReason: ${msg}`);
 	}
 
 	result = await res.json();
