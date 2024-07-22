@@ -1,1 +1,0 @@
-import{A as r}from"./app.config.BO6XNHuD.js";async function c(o){const n=r+"/climate/get_content?type="+o,t=await fetch(n,{method:"GET"});let e=[];if(!t.ok)throw new Error(`${t.status} ${t.statusText}`);return e=await t.json(),e.content.sort(),e}export{c as _};
