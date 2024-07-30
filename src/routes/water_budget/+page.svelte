@@ -14,6 +14,7 @@
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: any = [];
+	let cat_folder_data: any = {};
 
 	// checked state of all folder_data_checkboxes
 	let folder_checkbox_bools: any[] = [];
@@ -118,8 +119,6 @@
 			}
 		}
 
-		console.log('CHECKED: ', checked_boxes);
-
 		// SEND REQUEST
 		try {
 			const res = await fetch(custom_url, {
@@ -135,7 +134,6 @@
 
 			result = await res.json();
 
-			console.log('RESULT: ', result);
 			wget_request_string = result['wget-command'];
 		} catch (error) {
 			console.log(error);
@@ -150,6 +148,9 @@
 		});
 
 		if (!res.ok) {
+			if (!folder_data[fc_index][3]) {
+				folder_data[fc_index][3] = {};
+			}
 			folder_data[fc_index][3]['tif_cached'] = false;
 			folder_data[fc_index][3]['tif_convertable'] = false;
 			folder_data = [...folder_data];
@@ -157,6 +158,9 @@
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		} else {
+			if (!folder_data[fc_index][3]) {
+				folder_data[fc_index][3] = {};
+			}
 			folder_data[fc_index][3]['tif_cached'] = true;
 			folder_data = [...folder_data];
 		}
@@ -170,11 +174,42 @@
 		goto('/view_geotiff');
 	}
 
+	function set_cat_folder_data() {
+		const filePattern = /^(.+)_v(\d+)_/; // Regex pattern to match filenames
+		cat_folder_data = {};
+		let categories: any = {};
+		categories['No Category'] = { files: [], toggled: false };
+
+		for (let x = 0; x < folder_data.length; x++) {
+			var filename: string = folder_data[x][0];
+			const match = filename.match(filePattern);
+
+			if (match && match.length >= 3) {
+				const version = `_v${match[2]}`;
+				const category = match[1] + version;
+
+				if (!categories[category]) {
+					categories[category] = { files: [], toggled: false };
+				}
+
+				categories[category].files.push({ filename: filename, index: x });
+			} else {
+				categories['No Category'].files.push({ filename: filename, index: x });
+			}
+		}
+
+		if (categories['No Category'].files.length == 0) {
+			delete categories['No Category'];
+		}
+		cat_folder_data = categories;
+	}
+
 	function refresh_foldercontent() {
 		// only_convertable false fetches all files
 		_fetch_foldercontent_by_type(foldertype, false /* convertable */)
 			.then((result) => {
 				folder_data = result.content;
+				set_cat_folder_data();
 			})
 			.catch((error) => {
 				console.log(error);
@@ -184,10 +219,7 @@
 	// array with current geo_data['facets']['file_id']
 </script>
 
-<FoldertypeChooser 
-	bind:foldertype={foldertype}
-	on:foldertype_changed={refresh_foldercontent}
-/>
+<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
 
 <div>
 	<input
@@ -198,123 +230,154 @@
 	/>
 </div>
 
-{#if folder_data != null}
+{#if folder_data}
 	{#key folder_data}
 		<div class="p-2">
-			<table class="table-fixed">
-				<thead>
-					<tr>
-						<th class="text-left">Filename</th>
-						<th class="text-left min-w-[80px] max-w-[80px]">Filesize</th>
-						<th class="text-left min-w-[140px] max-w-[140px]">Last modified</th>
-						<th class="text-left min-w-[122px] max-w-[122px]">Download Link</th>
-						<th class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each Object.values(folder_data) as datapoint, i}
-						{#if datapoint[0].toLowerCase().includes(search_term.toLowerCase())}
-							<tr class="hover:bg-slate-400">
-								<!-- Checkbox and filename -->
-								<td class="col-span-6 w-full break-all pl-1">
-									<input
-										type="checkbox"
-										value={i}
-										id={'checkbox_' + i}
-										on:change={on_folder_checkbox_change}
-									/>
-									&nbsp;{datapoint[0]}
-								</td>
-								<!-- filesize -->
-								<td>
-									{datapoint[1]}
-								</td>
-								<!-- creation date -->
-								<td>
-									{datapoint[2]}
-								</td>
-								<!-- download link -->
-								<td class="min-w-[122px]">
-									<div class="flex">
-										<button
-											class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-										>
-											<a
-												href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={foldertype}&filetype=nc"
-												class="flex"
-											>
-												<SquareCaretDown />
-												<div class="ml-1 flex place-items-center justify-items-center">.nc</div>
-											</a>
-										</button>
-										{#if !datapoint[3] || (datapoint[3]['tif_convertable'] && !datapoint[3]['tif_cached'])}
-											<!-- CASE 1: Try to generate tif. -->
-											<button
-												class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
-												on:click={() => try_to_access_tiff_file(datapoint[0], i)}
-											>
-												<CircleQuestion />
-												<div class="ml-1 flex text-white place-items-center justify-items-center">
-													.tif
-												</div>
-											</button>
-										{:else if datapoint[3]['tif_cached']}
-											<!-- CASE 2: Tif file exists. -->
-											<button
-												class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-											>
-												<a
-													href="{API_URL}/climate/get_temp_file?name={datapoint[0]}&type={foldertype}&filetype=tif"
-													class="flex"
-												>
-													<SquareCaretDown />
-													<div class="ml-1 flex place-items-center justify-center">.tif</div>
-												</a>
-											</button>
-										{:else}
-											<!-- CASE 3: Tif not creatable. -->
-											<div class="flex w-full pr-2 items-center justify-center">
-												<XDisabled />
-											</div>
-										{/if}
-									</div>
-								</td>
-								<td class="min-w-[86px] max-w-[86px]">
-									<!-- num bands (we could use basically any metadata from database/file here) -->
-									{#if !datapoint[3] || (datapoint[3]['tif_convertable'] && !datapoint[3]['tif_cached'])}
-										<!-- CASE 1: No data on the file. Try to generate tif. -->
-										<button
-											class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
-											on:click={() => try_to_access_tiff_file(datapoint[0], i)}
-										>
-											<FileQuestion />
-											<div class="ml-1 flex text-white place-items-center justify-items-center">
-												Fetch
-											</div>
-										</button>
-									{:else if datapoint[3]['tif_cached']}
-										<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
-										<button
-											class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
-											on:click={() => jump_to_vis(datapoint[0])}
-										>
-											<Earth />
-											<div class="ml-1 flex text-white place-items-center justify-items-center">
-												View
-											</div>
-										</button>
-									{:else}
-										<!-- CASE 3: Tif not creatable. -->
-										<div class="flex w-full pr-2 items-center justify-center">
-											<XDisabled />
-										</div>
-									{/if}
-								</td>
+			{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
+				<div
+					class="w-full flex items-center rounded-md h-8 pl-3 {cat_counter % 2 == 0
+						? 'bg-primary-500'
+						: 'bg-tertiary-500'} mb-1"
+				>
+					<button
+						class="w-full flex items-left"
+						on:click={() => {
+							cat_folder_data[folder_cat].toggled = !cat_folder_data[folder_cat].toggled;
+						}}
+					>
+						<h2 class="text-xl">{folder_cat} ({cat_obj.files.length})</h2>
+					</button>
+				</div>
+				{#if cat_obj.toggled}
+					<table class="table-fixed mb-1">
+						<thead>
+							<tr>
+								<th class="text-left">Filename</th>
+								<th class="text-left min-w-[80px] max-w-[80px]">Filesize</th>
+								<th class="text-left min-w-[140px] max-w-[140px]">Last modified</th>
+								<th class="text-left min-w-[122px] max-w-[122px]">Download Link</th>
+								<th class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
 							</tr>
-						{/if}
-					{/each}
-				</tbody>
-			</table>
+						</thead>
+						<tbody>
+							{#each cat_obj.files as file_obj}
+								{#if folder_data[file_obj.index][0]
+									.toLowerCase()
+									.includes(search_term.toLowerCase())}
+									<tr class="hover:bg-slate-400">
+										<!-- Checkbox and filename -->
+										<td class="col-span-6 w-full break-all pl-1">
+											<input
+												type="checkbox"
+												value={file_obj.index}
+												id={'checkbox_' + file_obj.index}
+												on:change={on_folder_checkbox_change}
+											/>
+											&nbsp;{folder_data[file_obj.index][0]}
+										</td>
+										<!-- filesize -->
+										<td>
+											{folder_data[file_obj.index][1]}
+										</td>
+										<!-- creation date -->
+										<td>
+											{folder_data[file_obj.index][2]}
+										</td>
+										<!-- download link -->
+										<td class="min-w-[122px]">
+											<div class="flex">
+												<button
+													class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+												>
+													<a
+														href="{API_URL}/climate/get_temp_file?name={folder_data[
+															file_obj.index
+														][0]}&type={foldertype}&filetype=nc"
+														class="flex"
+													>
+														<SquareCaretDown />
+														<div class="ml-1 flex place-items-center justify-items-center">.nc</div>
+													</a>
+												</button>
+												{#if !folder_data[file_obj.index][3] || (folder_data[file_obj.index][3]['tif_convertable'] && !folder_data[file_obj.index][3]['tif_cached'])}
+													<!-- CASE 1: Try to generate tif. -->
+													<button
+														class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+														on:click={() =>
+															try_to_access_tiff_file(
+																folder_data[file_obj.index][0],
+																file_obj.index
+															)}
+													>
+														<CircleQuestion />
+														<div
+															class="ml-1 flex text-white place-items-center justify-items-center"
+														>
+															.tif
+														</div>
+													</button>
+												{:else if folder_data[file_obj.index][3]['tif_cached']}
+													<!-- CASE 2: Tif file exists. -->
+													<button
+														class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+													>
+														<a
+															href="{API_URL}/climate/get_temp_file?name={folder_data[
+																file_obj.index
+															][0]}&type={foldertype}&filetype=tif"
+															class="flex"
+														>
+															<SquareCaretDown />
+															<div class="ml-1 flex place-items-center justify-center">.tif</div>
+														</a>
+													</button>
+												{:else}
+													<!-- CASE 3: Tif not creatable. -->
+													<div class="flex w-full pr-2 items-center justify-center">
+														<XDisabled />
+													</div>
+												{/if}
+											</div>
+										</td>
+										<td class="min-w-[86px] max-w-[86px]">
+											<!-- num bands (we could use basically any metadata from database/file here) -->
+											{#if !folder_data[file_obj.index][3] || (folder_data[file_obj.index][3]['tif_convertable'] && !folder_data[file_obj.index][3]['tif_cached'])}
+												<!-- CASE 1: No data on the file. Try to generate tif. -->
+												<button
+													class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
+													on:click={() =>
+														try_to_access_tiff_file(folder_data[file_obj.index][0], file_obj.index)}
+												>
+													<FileQuestion />
+													<div class="ml-1 flex text-white place-items-center justify-items-center">
+														Fetch
+													</div>
+												</button>
+											{:else if folder_data[file_obj.index][3]['tif_cached']}
+												<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
+												<button
+													class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
+													on:click={() => jump_to_vis(folder_data[file_obj.index][0])}
+												>
+													<Earth />
+													<div class="ml-1 flex text-white place-items-center justify-items-center">
+														View
+													</div>
+												</button>
+											{:else}
+												<!-- CASE 3: Tif not creatable. -->
+												<div class="flex w-full pr-2 items-center justify-center">
+													<XDisabled />
+												</div>
+											{/if}
+										</td>
+									</tr>
+								{/if}
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+			{/each}
 		</div>
 	{/key}
 
@@ -324,9 +387,7 @@
 		on:click|preventDefault={handle_checkbox_submit}>Generate Wget link for download</button
 	>
 {:else}
-	<div>
-		<p>Loading...</p>
-	</div>
+	... Loading
 {/if}
 
 {#if wget_request_string.length > 0}
