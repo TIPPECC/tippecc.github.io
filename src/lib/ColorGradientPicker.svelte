@@ -71,6 +71,11 @@
 				throw new Error('NaN value entered as custom abs max.');
 			}
 
+			// TODO:
+			//	- change so that you can reset to the original cmin/cmax
+			//	which was (most likely) read from the file metadata
+			//	- right now when a custom max is set, this information is lost
+			//	and it can not be reverted without reloading the file
 			cmin = -custom_abs_max;
 			cmax = custom_abs_max;
 

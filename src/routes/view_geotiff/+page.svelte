@@ -1,65 +1,46 @@
-<script>
-	import Geotiff_Map from '../../lib/Geotiff_Map.svelte';
-	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { tempresult_selection } from '../store/tempresult_store';
 	import TifMap from '$lib/tempresults/tif_map.svelte';
 
-	/**
-	 * @type {ColorGradientPicker}
-	 */
-	let cg_picker;
-	/**
-	 * @type {any}
-	 */
-	let color_stops;
+	let selected_filename: string = '';
+	let selected_foldertype: string = '';
+	let temp_res_check: boolean = false;
 
-	$: color_stops, rebuild_map();
+	onMount(() => {
+		if (browser) {
+			var temp_result: any;
+			tempresult_selection.subscribe((value) => {
+				temp_result = value;
 
-	function rebuild_map() {
-		if (!color_stops) {
-			return;
+				// selected_foldertype = value.foldertype + "";
+			});
+			if (!temp_result) {
+				temp_res_check = true;
+				return;
+			}
+
+			selected_filename = temp_result.filename;
+			selected_foldertype = temp_result.foldertype;
+			console.log('AA: ', selected_filename, ' ', selected_foldertype);
+
+			if (selected_filename == null || selected_foldertype == null) {
+				selected_filename = '';
+				selected_foldertype = '';
+			}
+
+			// clear selection from prior /goto call
+			tempresult_selection.set({
+				filename: null,
+				foldertype: null
+			});
+
+			temp_res_check = true;
 		}
-	}
+	});
 </script>
 
-<!-- <script>
-
-import 'ol/ol.css';
-import GeoTIFF from 'ol/source/GeoTIFF.js';
-import Map from 'ol/Map.js';
-import TileLayer from 'ol/layer/WebGLTile.js';
-import { Vector as VectorSource } from 'ol/source';
-import { Vector as VectorLayer } from 'ol/layer';
-
-// const source = new GeoTIFF({
-//   sources: [
-//     {
-//       url: 'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/GERICS-REMO2015_v1_MOHC-Ha[…]evspsblpot_all__yearsum_mean_1980_2000-2080_2099_COG.tif',
-//       bands: [1]
-//     },
-//   ],
-// });
-
-let vectorSource = new VectorSource({
-
-});
-
-let vectorLayer = new VectorLayer({
-    source: vectorSource
-});
-
-const map = new Map({
-  target: 'map',
-  layers: [
-      vectorLayer,
-  ]
-});
-
-</script>
-
-<div id="map" class="map"></div> -->
-
-<!-- <Map></Map> -->
-<!-- <Map2></Map2> -->
-<!-- <Geotiff_Map /> -->
-<!-- <ColorGradientPicker bind:this={cg_picker} bind:color_stops={color_stops}></ColorGradientPicker> -->
-<TifMap />
+{#if temp_res_check}
+	<TifMap foldertype={selected_foldertype} selected_file={selected_filename} />
+{/if}

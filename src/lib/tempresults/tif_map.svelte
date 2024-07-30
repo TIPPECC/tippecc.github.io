@@ -10,13 +10,14 @@
 	// import * as GeoTIFF_JS from 'geotiff';
 	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
+	import { browser } from '$app/environment';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
 	let metadata_loaded: boolean = false;
-	let selected_file: string = '';
+	export let selected_file: string = '';
+	export let foldertype: string = 'water_budget';
 	let folder_data: any[any] = [];
-	let foldertype: string = 'water_budget';
 	let selected_tif_url: string = '';
 	let horizontal_scala: boolean = true;
 	let old_layer: any = null;
@@ -61,18 +62,22 @@
 	}
 
 	onMount(() => {
-		_fetch_foldercontent_by_type(foldertype, true)
-			.then((result) => {
-				folder_data = result;
-				console.log(folder_data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		set_foldertype(foldertype);
 	});
 
 	onMount(() => {
 		initialize_map();
+	});
+
+	onMount(() => {
+		if (browser) {
+			// if we come from another page and already know the selected file:
+			//	- trigger file_selected
+			if (selected_file != '') {
+				// <Select> does not fire changed when setting selected_file manually
+				file_selected();
+			}
+		}
 	});
 
 	function initialize_map() {
@@ -231,12 +236,13 @@
 		const start_date = Date.parse(current_metadata.timestamp_begin);
 
 		if (isNaN(start_date)) {
-			throw new Error('Metadata timestamp is invalid.');
+			// console.log("Could not parse metadata timestamp.")
+			current_metadata.timestamp_begin = '';
+			// throw new Error('Metadata timestamp is invalid.');
 		}
 
 		try {
 			if (current_metadata.timestamp_begin == '') {
-				// TODO: - change this to check validity of timestamp
 				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
 				for (let i = 0; i < net_cdf_times.length; i++) {
 					band_slider_values.push(parseFloat(net_cdf_times[i]));
@@ -258,6 +264,7 @@
 
 		// assign direct file url
 		selected_tif_url = result.filedata.route;
+		// console.log("Fetching route for file: \n", selected_tif_url);
 
 		// fetch the full file with geotiff
 		fetch_file_as_blob(selected_tif_url)
@@ -380,6 +387,8 @@
 			}
 		});
 
+		// TODO: - maybe move that, or at least make sure that it is triggered
+		//		 during an error case, else map visualization can become inconsistent
 		// removing the old layer if there is one
 		if (old_layer != null) {
 			map.removeLayer(old_layer);
@@ -394,7 +403,7 @@
 		map.setView(base_view);
 	}
 
-	function set_type(new_type: string) {
+	function set_foldertype(new_type: string) {
 		if (new_type == 'water_budget') {
 			foldertype = new_type;
 		} else if (new_type == 'water_budget_bias') {
@@ -403,6 +412,8 @@
 			foldertype = new_type;
 		} else if (new_type == 'vaal') {
 			foldertype = new_type;
+		} else if (new_type == '') {
+			foldertype = 'water_budget';
 		}
 
 		_fetch_foldercontent_by_type(foldertype, true)
@@ -415,26 +426,27 @@
 	}
 </script>
 
+<!-- Backend Folder Content as checkboxes -->
 <div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
 	<button
 		type="button"
 		class="btn variant-filled-tertiary {foldertype == 'water_budget' ? 'font-bold' : ''}"
-		on:click={() => set_type('water_budget')}>Water Budget</button
+		on:click={() => set_foldertype('water_budget')}>Water Budget</button
 	>
 	<button
 		type="button"
 		class="btn variant-filled-tertiary {foldertype == 'water_budget_bias' ? 'font-bold' : ''}"
-		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
+		on:click={() => set_foldertype('water_budget_bias')}>Water Budget bias adjusted</button
 	>
 	<button
 		type="button"
 		class="btn variant-filled-tertiary {foldertype == 'kariba' ? 'font-bold' : ''}"
-		on:click={() => set_type('kariba')}>Kariba</button
+		on:click={() => set_foldertype('kariba')}>Kariba</button
 	>
 	<button
 		type="button"
 		class="btn variant-filled-tertiary {foldertype == 'vaal' ? 'font-bold' : ''}"
-		on:click={() => set_type('vaal')}>Vaal</button
+		on:click={() => set_foldertype('vaal')}>Vaal</button
 	>
 </div>
 
