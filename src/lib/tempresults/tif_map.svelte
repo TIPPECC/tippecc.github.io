@@ -404,7 +404,6 @@
 		map.setView(base_view);
 	}
 
-
 	function refresh_foldercontent() {
 		// only_convertable true only fetches convertable files
 		_fetch_foldercontent_by_type(foldertype, true /* convertable */)
@@ -415,14 +414,9 @@
 				console.log(error);
 			});
 	}
-
 </script>
 
-
-<FoldertypeChooser
-	bind:foldertype={foldertype}
-	on:foldertype_changed={refresh_foldercontent}
-/>
+<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
 
 <div class="lg:flex px-4 pt-4 w-full">
 	<label
