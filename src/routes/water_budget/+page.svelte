@@ -10,6 +10,7 @@
 	import XDisabled from '$lib/icons/x_disabled.svelte';
 	import SquareCaretDown from '$lib/icons/square_caret_down.svelte';
 	import CircleQuestion from '$lib/icons/circle_question.svelte';
+	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: any = [];
@@ -42,7 +43,7 @@
 	});
 
 	onMount(() => {
-		set_foldertype(foldertype);
+		refresh_foldercontent();
 	});
 
 	async function send_query() {
@@ -169,20 +170,9 @@
 		goto('/view_geotiff');
 	}
 
-	function set_foldertype(new_type: string) {
-		if (new_type == 'water_budget') {
-			foldertype = new_type;
-		} else if (new_type == 'water_budget_bias') {
-			foldertype = new_type;
-		} else if (new_type == 'kariba') {
-			foldertype = new_type;
-		} else if (new_type == 'vaal') {
-			foldertype = new_type;
-		} else if (new_type == '') {
-			foldertype = 'water_budget';
-		}
-
-		_fetch_foldercontent_by_type(foldertype, true)
+	function refresh_foldercontent() {
+		// only_convertable false fetches all files
+		_fetch_foldercontent_by_type(foldertype, false /* convertable */)
 			.then((result) => {
 				folder_data = result.content;
 			})
@@ -194,29 +184,10 @@
 	// array with current geo_data['facets']['file_id']
 </script>
 
-<!-- Backend Folder Content as checkboxes -->
-<div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('water_budget')}>Water Budget</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget_bias' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('water_budget_bias')}>Water Budget bias adjusted</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'kariba' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('kariba')}>Kariba</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'vaal' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('vaal')}>Vaal</button
-	>
-</div>
+<FoldertypeChooser 
+	bind:foldertype={foldertype}
+	on:foldertype_changed={refresh_foldercontent}
+/>
 
 <div>
 	<input

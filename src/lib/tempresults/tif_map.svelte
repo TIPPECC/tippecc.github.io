@@ -11,6 +11,7 @@
 	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
 	import { browser } from '$app/environment';
+	import FoldertypeChooser from './folderytpe_chooser.svelte';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
@@ -62,7 +63,7 @@
 	}
 
 	onMount(() => {
-		set_foldertype(foldertype);
+		refresh_foldercontent();
 	});
 
 	onMount(() => {
@@ -403,52 +404,25 @@
 		map.setView(base_view);
 	}
 
-	function set_foldertype(new_type: string) {
-		if (new_type == 'water_budget') {
-			foldertype = new_type;
-		} else if (new_type == 'water_budget_bias') {
-			foldertype = new_type;
-		} else if (new_type == 'kariba') {
-			foldertype = new_type;
-		} else if (new_type == 'vaal') {
-			foldertype = new_type;
-		} else if (new_type == '') {
-			foldertype = 'water_budget';
-		}
 
-		_fetch_foldercontent_by_type(foldertype, true)
+	function refresh_foldercontent() {
+		// only_convertable true only fetches convertable files
+		_fetch_foldercontent_by_type(foldertype, true /* convertable */)
 			.then((result) => {
-				folder_data = result;
+				folder_data = result.content;
 			})
 			.catch((error) => {
 				console.log(error);
 			});
 	}
+
 </script>
 
-<!-- Backend Folder Content as checkboxes -->
-<div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('water_budget')}>Water Budget</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget_bias' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('water_budget_bias')}>Water Budget bias adjusted</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'kariba' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('kariba')}>Kariba</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'vaal' ? 'font-bold' : ''}"
-		on:click={() => set_foldertype('vaal')}>Vaal</button
-	>
-</div>
+
+<FoldertypeChooser
+	bind:foldertype={foldertype}
+	on:foldertype_changed={refresh_foldercontent}
+/>
 
 <div class="lg:flex px-4 pt-4 w-full">
 	<label
@@ -464,8 +438,8 @@
 		bind:value={selected_file}
 		on:change={file_selected}
 	>
-		{#if folder_data['content']}
-			{#each folder_data['content'] as file_entry}
+		{#if folder_data}
+			{#each folder_data as file_entry}
 				<option value={file_entry[0]}>
 					{file_entry[0]}
 				</option>
