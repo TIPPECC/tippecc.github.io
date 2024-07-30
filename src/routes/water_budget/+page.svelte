@@ -175,7 +175,7 @@
 	}
 
 	function set_cat_folder_data() {
-		const filePattern = /^(.+)_v(\d+)_/; // Regex pattern to match filenames
+		const filePattern = /^(.+)_v(\d+)_([^_]+)/; // Regex pattern to match filenames
 		cat_folder_data = {};
 		let categories: any = {};
 		categories['No Category'] = { files: [], toggled: false };
@@ -185,8 +185,7 @@
 			const match = filename.match(filePattern);
 
 			if (match && match.length >= 3) {
-				const version = `_v${match[2]}`;
-				const category = match[1] + version;
+				const category = match[0];
 
 				if (!categories[category]) {
 					categories[category] = { files: [], toggled: false };
@@ -236,8 +235,8 @@
 			{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
 				<div
 					class="w-full flex items-center rounded-md h-8 pl-3 {cat_counter % 2 == 0
-						? 'bg-primary-500'
-						: 'bg-tertiary-500'} mb-1"
+						? 'bg-emerald-700'
+						: 'bg-emerald-900'} mb-1"
 				>
 					<button
 						class="w-full flex items-left"
