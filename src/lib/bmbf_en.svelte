@@ -1,5 +1,5 @@
 <script>
-	export let class_overwrite = ""
+	export let class_overwrite = '';
 </script>
 
 <svg
