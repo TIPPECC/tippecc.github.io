@@ -1,9 +1,14 @@
+<script>
+	export let class_overwrite = ""
+</script>
+
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 168 84"
 	id="svg-logo-bmbf"
 	width="168px"
 	height="84px"
+	class={class_overwrite}
 >
 	<g clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
 		<path
