@@ -7,28 +7,34 @@
 	import { _fetch_foldercontent_by_type } from '$lib/fetch_folder_content';
 	import { onMount } from 'svelte';
 	import { API_URL } from '../../app.config';
+	// import * as GeoTIFF_JS from 'geotiff';
 	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
+	import { browser } from '$app/environment';
+	import FoldertypeChooser from './folderytpe_chooser.svelte';
+
+	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
 	let metadata_loaded: boolean = false;
-	let selected_file: string = '';
+	export let selected_file: string = '';
+	export let foldertype: string = 'water_budget';
 	let folder_data: any[any] = [];
-	let foldertype: string = 'water_budget';
 	let selected_tif_url: string = '';
 	let horizontal_scala: boolean = true;
 	let old_layer: any = null;
 
+	let virtual_data_url: string = '';
 	let slider_value: any;
 	let slider_index: any;
-	let slider_value_dif: any;
-	let slider_index_dif: any;
+	let slider_value_diff: any;
+	let slider_index_diff: any;
 	let selected_band: number = 1;
-	let selected_band_dif: number = 1;
+	let selected_band_diff: number = 1;
 	let current_metadata: any = {};
 	let band_slider_values: any[] = [];
 
 	let map: Map;
-	let dif_mode: boolean = false;
+	let diff_mode: boolean = false;
 
 	let base_view = new View({
 		center: [0, 0],
@@ -40,7 +46,7 @@
 		max: 0
 	};
 
-	let current_dif_band_metainfo = {
+	let current_diff_band_metainfo = {
 		min: 0,
 		max: 0
 	};
@@ -57,19 +63,22 @@
 	}
 
 	onMount(() => {
-		// REPLACE TYPE HERE to fetch specific folders
-		_fetch_foldercontent_by_type(foldertype, true)
-			.then((result) => {
-				folder_data = result;
-				console.log(folder_data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		refresh_foldercontent();
 	});
 
 	onMount(() => {
 		initialize_map();
+	});
+
+	onMount(() => {
+		if (browser) {
+			// if we come from another page and already know the selected file:
+			//	- trigger file_selected
+			if (selected_file != '') {
+				// <Select> does not fire changed when setting selected_file manually
+				file_selected();
+			}
+		}
 	});
 
 	function initialize_map() {
@@ -84,15 +93,35 @@
 		});
 	}
 
-	function set_color_bounds() {
-		if (dif_mode) {
-			cg_picker.set_bounds(
-				current_band_metainfo.min - current_dif_band_metainfo.max,
-				current_band_metainfo.max - current_dif_band_metainfo.min
-			);
+	async function fetch_file_as_blob(geotiff_url: string) {
+		if (geotiff_url == '') {
+			throw new Error('Empty url!');
+		}
 
-			// cg_picker.set_bounds(current_dif_band_metainfo.min - current_band_metainfo.max,
-			// 					 current_dif_band_metainfo.max - current_band_metainfo.min);
+		const response = await fetch(geotiff_url); // fetch the file from the URL
+		const res_blob = await response.blob(); // create blob from fetched file
+
+		// create virtual url from blob
+		virtual_data_url = URL.createObjectURL(res_blob);
+
+		// not needed right now, but very useful
+		// const arrayBuffer = await response.arrayBuffer(); // Convert to array buffer
+		// const tiff = await GeoTIFF_JS.fromArrayBuffer(arrayBuffer); // Create a GeoTIFF instance
+		// const tiff = await GeoTIFF_JS.fromBlob(res_blob);
+		// const image = await tiff.getImage();
+
+		// actually the library geotiff does not seem to be needed at all
+		// but it is very very useful for more complex handling or reading of file metadata e.g.
+	}
+
+	function set_color_bounds() {
+		if (diff_mode) {
+			cg_picker.set_bounds(
+				// this metric is very unrealistic, but is ok for now
+				// maybe add a hint for the user to calibrate with custom max/min values
+				current_band_metainfo.min - current_diff_band_metainfo.max,
+				current_band_metainfo.max - current_diff_band_metainfo.min
+			);
 		} else {
 			cg_picker.set_bounds(current_band_metainfo.min, current_band_metainfo.max);
 		}
@@ -107,16 +136,17 @@
 
 	function refresh_dif_band_metadata() {
 		var band_metadata = current_metadata.band_metadata;
-		current_dif_band_metainfo.min = band_metadata[selected_band_dif].min;
-		current_dif_band_metainfo.max = band_metadata[selected_band_dif].max;
+		current_diff_band_metainfo.min = band_metadata[selected_band_diff].min;
+		current_diff_band_metainfo.max = band_metadata[selected_band_diff].max;
 		set_color_bounds();
 	}
 
 	async function file_selected(e?) {
 		// when a file is selected, we usually want to reset everything
-		metadata_loaded = false;
-		// console.log('Event: ', e);
 		console.log('Selected file: ', selected_file);
+		metadata_loaded = false;
+
+		// demand access to the tif file
 		var access_tif_url =
 			API_URL + '/climate/access_tif?type=' + foldertype + '&name=' + selected_file;
 		const res = await fetch(access_tif_url, {
@@ -131,6 +161,7 @@
 
 		result = await res.json();
 
+		// on success, fetch metadata of the currently selected file
 		var metadata_url =
 			API_URL + '/climate/get_temp_file_metadata?type=' + foldertype + '&name=' + selected_file;
 		const meta_res = await fetch(metadata_url, {
@@ -144,50 +175,115 @@
 		}
 
 		meta_result = await meta_res.json();
+		// console.log("Meta_result: ", meta_result);
+		// succesfully gained access to tif file and fetched metadata..
+		//		- -> now assemble metadata and visualize
+
+		if (!meta_result.metadata) {
+			throw new Error('No metadata on the current metadata response.');
+		}
 
 		current_metadata = meta_result.metadata;
 		// console.log("Current Metadata: ", current_metadata);
-		var band_metadata = meta_result.metadata.band_metadata;
-		var net_cdf_times = JSON.parse(meta_result.metadata.net_cdf_times);
+
+		// check keys
+		if (
+			!current_metadata.band_metadata ||
+			!current_metadata.net_cdf_times ||
+			!current_metadata.timestamp_begin
+		) {
+			throw new Error('Missing key-value pairs on metadata response object!');
+		}
+
+		// assign band_metadata and read net_cdf_times
+		var band_metadata = current_metadata.band_metadata;
+		try {
+			var net_cdf_times = JSON.parse(current_metadata.net_cdf_times);
+		} catch (error) {
+			console.log(`Could not parse net_cdf_times found in current_metadata:\n ${error}`);
+		}
+
+		// console.log("net_cdf_times: ", net_cdf_times);
+		// console.log("Type net_cdf_times: ", typeof(net_cdf_times));
+
+		// console.log("MIN: ", band_metadata[selected_band].min)
+		// console.log("MAX: ", band_metadata[selected_band].max)
+
+		// read minimum and maximum from metadata
+		try {
+			var meta_min = parseFloat(band_metadata[selected_band].min);
+			var meta_max = parseFloat(band_metadata[selected_band].max);
+
+			if (isNaN(meta_min) || isNaN(meta_max)) {
+				throw new Error('Meta_min or Meta_max evaluated to NaN.');
+			}
+
+			current_band_metainfo.min = meta_min;
+			current_band_metainfo.max = meta_max;
+		} catch (error) {
+			console.log(
+				`Could not parse meta_min ${band_metadata[selected_band].min} or meta_max ${band_metadata[selected_band].max}.`
+			);
+			console.log(`Reason: ${error}`);
+		}
 
 		current_band_metainfo.min = band_metadata[selected_band].min;
 		current_band_metainfo.max = band_metadata[selected_band].max;
 
-		// console.log('meta_result: ', meta_result);
-		// console.log('band_metadata: ', band_metadata);
-		// console.log('net_cdf_times: ', net_cdf_times);
-		// console.log('net_cdf_times TYPE: ', typeof net_cdf_times);
-
+		// read timestamp and calculated values for the bandslider
 		band_slider_values = [];
-		var start_date = Date.parse(current_metadata.timestamp_begin);
-		const TWELF = 43200000; // 12 hours in ms
 
-		if (current_metadata.timestamp_begin == '') {
-			for (let i = 0; i < net_cdf_times.length; i++) {
-				band_slider_values.push(parseFloat(net_cdf_times[i]));
-			}
-		} else {
-			for (let i = 0; i < net_cdf_times.length; i++) {
-				band_slider_values.push(
-					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELF * 2).getFullYear()
-				);
-			}
+		// start date of the metadata timestamp in milliseconds
+		const start_date = Date.parse(current_metadata.timestamp_begin);
+
+		if (isNaN(start_date)) {
+			// console.log("Could not parse metadata timestamp.")
+			current_metadata.timestamp_begin = '';
+			// throw new Error('Metadata timestamp is invalid.');
 		}
 
-		// console.log('band_slider_values: ', band_slider_values);
+		try {
+			if (current_metadata.timestamp_begin == '') {
+				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					band_slider_values.push(parseFloat(net_cdf_times[i]));
+				}
+			} else {
+				// valid timestamp -> calculate years (for now) and assign to bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					band_slider_values.push(
+						new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
+					);
+				}
+			}
+		} catch (error) {
+			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		}
+
+		// set ColorGradientPicker bounds to file metadata min and max
 		cg_picker.set_bounds(current_band_metainfo.min, current_band_metainfo.max);
 
-		// console.log("Tif result: ", result);
+		// assign direct file url
 		selected_tif_url = result.filedata.route;
+		// console.log("Fetching route for file: \n", selected_tif_url);
 
-		// workaround for local testing
-		// selected_tif_url = result.filedata.filename;
+		// fetch the full file with geotiff
+		fetch_file_as_blob(selected_tif_url)
+			.then(() => {
+				// console.log("Loading file metadata succeeded!")
+				// console.log("Virtual URL: ", virtual_data_url)
 
-		visualize_band();
-		console.log('selected_tif_url: ', selected_tif_url);
-
-		// let selected_file_url =
-		// 	API_URL + '/tippecctmp/cache/water_budget/' + selected_file;
+				// fetching file succesful -> visualize
+				metadata_loaded = true;
+				visualize_band();
+				// console.log('selected_tif_url: ', selected_tif_url);
+			})
+			.catch((error) => {
+				metadata_loaded = false;
+				console.log(
+					`Encountered an error while trying to fetch file ${selected_tif_url}:\n ${error}`
+				);
+			});
 	}
 
 	function on_slider_change(e?) {
@@ -197,7 +293,7 @@
 	}
 
 	function on_dif_slider_change(e?) {
-		selected_band_dif = parseInt(slider_index_dif) + 1;
+		selected_band_diff = parseInt(slider_index_diff) + 1;
 		refresh_dif_band_metadata();
 		visualize_band();
 	}
@@ -206,35 +302,39 @@
 		var color_cases = ['case', ['==', layerinfo, 0], [0, 0, 0, 0]];
 		for (let i = 0; i < color_stops.length; i++) {
 			if (i % 2 == 0) {
+				// current range of values
 				// console.log("Current UB: ", color_stops[i], " current LB: ", color_stops[i][1]);
 				color_cases.push(['between', layerinfo, color_stops[i][0], color_stops[i][1]]);
 			} else {
+				// corresponding color
 				color_cases.push(color_stops[i]);
 			}
 		}
 
-		// TODO:
-		// 	- maybe add case here for datapoints that exceed the min-/max-values (should only
-		//	be needed when custom min/max is set)
+		// adding limits
 		color_cases.push(['<', layerinfo, color_stops[0][0]]);
 		color_cases.push(color_stops[1]);
 
 		color_cases.push(['>', layerinfo, color_stops[color_stops.length - 2][1]]);
 		color_cases.push(color_stops[color_stops.length - 1]);
-		// adding limits
 
-		// fallback value for the 'case' operator
+		// fallback value for the 'case' operator (transparent)
 		color_cases.push([0, 0, 0, 0]);
 
-		// console.log("Generated ol-stops: ", color_cases)
 		return color_cases;
+	}
+
+	function color_stops_changes_helper() {
+		if (metadata_loaded) {
+			visualize_band();
+		}
 	}
 
 	function visualize_band() {
 		// console.log('Visualizing: ');
 		// console.log('selected_band: ', selected_band);
-		// console.log('selected_band_dif: ', selected_band_dif);
-		// console.log('dif_mode: ', dif_mode);
+		// console.log('selected_band_diff: ', selected_band_diff);
+		// console.log('diff_mode: ', diff_mode);
 		// console.log("selected url: ", selected_tif_url);
 
 		// Important note:
@@ -245,59 +345,42 @@
 		// 		- thus when loading 2 bands into the source with e.g. band-number 4 and 50,
 		//		they will be re-indexed in the TileLayer to 1 and 2 respectively
 
+		// band selection
 		var bands_helper = [];
-		if (dif_mode) {
-			bands_helper = [selected_band, selected_band_dif];
+		if (diff_mode) {
+			bands_helper = [selected_band, selected_band_diff];
 		} else {
 			bands_helper = [selected_band];
 		}
 
+		// create new source with current url and band selection
 		const source = new GeoTIFF_OL({
 			normalize: false,
 			sources: [
 				{
-					// Alle baender 1,2,3,4,5,6,.....
-					bands: [selected_band, selected_band_dif],
-					// TODO:
-					// 	- there are still some errors left with some tif files, (invalid byte order value, ..)
-					url: selected_tif_url
-					// url: "https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/" + "CLMcom-KIT-CCLM5-0-15_v1_MOHC-HadGEM2-ES__evspsblpot_all__mm__yearsum_mean_2080_2099.tif"
-					// url:
-					// 	'https://leutra.geogr.uni-jena.de/tippecc_data/tmp/water_budget/bias/' +
-					// 	'b_CLMcom-KIT-CCLM5-0-15_v1_MPI-M-MPI-ESM-LR__water_budget_all__mm__yearsum.tif'
-					// max: current_band_metainfo.max
+					bands: bands_helper,
+					// url: selected_tif_url
+					url: virtual_data_url
 				}
 			]
 		});
 
+		// band selection for color_stops
 		var info = [];
-		if (dif_mode) {
+		if (diff_mode) {
+			// (difference) band 1 - band 2
 			info = ['-', ['band', 1], ['band', 2]];
 		} else {
+			// raw values of band 1
 			info = ['band', 1];
 		}
 
 		const layerinfo = info;
 
+		// build a color object for openlayers based on the current configuration
 		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops(), layerinfo);
 
-		// const color_thing = [
-		// 	'case',
-		// 	['==', ['band', 1], 0],
-		// 	[0, 0, 0, 0],
-		// 	['>', ['band', 1], 0],
-		// 	[0, 0, 0, 0],
-
-		// 	// https://openlayers.org/workshop/en/cog/ndvi.html
-		// 	['interpolate', ['linear'], layerbandinfo, [...cg_picker.get_color_stops()]]
-		// ];
-
-		// console.log('COLOR_THING: ', color_thing);
-		// const color_thing = [
-		// 			// https://openlayers.org/workshop/en/cog/ndvi.html
-		// 			'interpolate', ['linear'], layerbandinfo, ...cg_picker.get_color_stops()
-		// 		]
-		// console.log('color_thing: ', color_thing);
+		// create new layer, with the newly created source and style
 		const layer = new TileLayer({
 			source: source,
 			style: {
@@ -305,6 +388,9 @@
 			}
 		});
 
+		// TODO: - maybe move that, or at least make sure that it is triggered
+		//		 during an error case, else map visualization can become inconsistent
+		// removing the old layer if there is one
 		if (old_layer != null) {
 			map.removeLayer(old_layer);
 			map.addLayer(layer);
@@ -314,29 +400,15 @@
 			old_layer = layer;
 		}
 
-		console.log('MAPLAYERS: ', map.getLayers());
-
-		// map.setView(layer.getSource().getView());
+		// setting the view (not the intended way, but works)
 		map.setView(base_view);
 	}
 
-	/**
-	 * @param {string} new_type
-	 */
-	function set_type(new_type) {
-		if (new_type == 'water_budget') {
-			foldertype = new_type;
-		} else if (new_type == 'water_budget_bias') {
-			foldertype = new_type;
-		} else if (new_type == 'kariba') {
-			foldertype = new_type;
-		} else if (new_type == 'vaal') {
-			foldertype = new_type;
-		}
-
-		_fetch_foldercontent_by_type(foldertype, true)
+	function refresh_foldercontent() {
+		// only_convertable true only fetches convertable files
+		_fetch_foldercontent_by_type(foldertype, true /* convertable */)
 			.then((result) => {
-				folder_data = result;
+				folder_data = result.content;
 			})
 			.catch((error) => {
 				console.log(error);
@@ -344,28 +416,7 @@
 	}
 </script>
 
-<div class="btn-group variant-ghost-primary [&>*+*]:border-red-500 h-6">
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget' ? 'font-bold' : ''}"
-		on:click={() => set_type('water_budget')}>Water Budget</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'water_budget_bias' ? 'font-bold' : ''}"
-		on:click={() => set_type('water_budget_bias')}>Water Budget bias adjusted</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'kariba' ? 'font-bold' : ''}"
-		on:click={() => set_type('kariba')}>Kariba</button
-	>
-	<button
-		type="button"
-		class="btn variant-filled-tertiary {foldertype == 'vaal' ? 'font-bold' : ''}"
-		on:click={() => set_type('vaal')}>Vaal</button
-	>
-</div>
+<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
 
 <div class="lg:flex px-4 pt-4 w-full">
 	<label
@@ -381,8 +432,8 @@
 		bind:value={selected_file}
 		on:change={file_selected}
 	>
-		{#if folder_data['content']}
-			{#each folder_data['content'] as file_entry}
+		{#if folder_data}
+			{#each folder_data as file_entry}
 				<option value={file_entry[0]}>
 					{file_entry[0]}
 				</option>
@@ -390,12 +441,12 @@
 		{/if}
 	</select>
 
-	{#if dif_mode}
+	{#if diff_mode}
 		<div>
 			<button
 				class="variant-filled-tertiary p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
 				on:click={() => {
-					dif_mode = !dif_mode;
+					diff_mode = !diff_mode;
 				}}>Normal mode</button
 			>
 		</div>
@@ -404,14 +455,14 @@
 			<button
 				class="variant-filled-tertiary hover:bg-tertiary-600 p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
 				on:click={() => {
-					dif_mode = !dif_mode;
-				}}>Dif mode</button
+					diff_mode = !diff_mode;
+				}}>Diff mode</button
 			>
 		</div>
 	{/if}
 </div>
 
-{#if band_slider_values}
+{#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
 			<div
@@ -431,20 +482,21 @@
 			</div>
 		</div>
 
-		{#if dif_mode}
+		<!-- If in diff mode .. display a second bandslider to choose the diff band. -->
+		{#if diff_mode}
 			<div class="md:flex w-full pl-4 pr-4">
 				<div
 					class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 				>
-					<h2>Band meta data <b>#{selected_band_dif}:</b></h2>
-					<div id="band_min">MIN: {current_dif_band_metainfo['min']}</div>
-					<div id="band_min">MAX: {current_dif_band_metainfo['max']}</div>
+					<h2>Band meta data <b>#{selected_band_diff}:</b></h2>
+					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
+					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
 				</div>
 				<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 					<CustomSliderPicker
 						valMap={band_slider_values}
-						bind:slider_value={slider_value_dif}
-						bind:slider_index={slider_index_dif}
+						bind:slider_value={slider_value_diff}
+						bind:slider_index={slider_index_diff}
 						on:slider_changed={on_dif_slider_change}
 					/>
 				</div>
@@ -454,13 +506,11 @@
 		<div class="w-full px-4 mt-2">
 			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
 				<h2>Single band file metadata</h2>
-				<div id="band_min">MIN: {current_dif_band_metainfo['min']}</div>
-				<div id="band_min">MAX: {current_dif_band_metainfo['max']}</div>
+				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
+				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
 				<div id="band_timestamp">Start: {current_metadata.timestamp_begin}</div>
 			</div>
 		</div>
-	{:else}
-		SELECT BAND
 	{/if}
 {/if}
 
@@ -470,7 +520,7 @@
 			bind:this={cg_picker}
 			bind:color_steps
 			bind:horizontal={horizontal_scala}
-			on:color_stops_changed={visualize_band}
+			on:color_stops_changed={color_stops_changes_helper}
 		/>
 	</div>
 
