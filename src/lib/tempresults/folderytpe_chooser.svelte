@@ -23,14 +23,14 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class="btn-group variant-ghost-primary h-10 px-2 m-1">
-	<div class="flex gap-1 items-center btn-group">
+<div class=" h-10">
+	<div class="flex gap-2 items-center">
 		{#each foldertypes as ftype}
 			<button
 				type="button"
-				class="btn h-[28px] variant-filled-tertiary {foldertype == ftype
-					? 'font-bold border-l-2 border-cyan-300'
-					: 'border-l-2 border-red-500'}"
+				class="btn bg-[#D17208] m-2 rounded-md {foldertype == ftype
+					? 'font-bold bg-[#D17208] text-white'
+					: ''}"
 				on:click={() => set_foldertype(ftype)}>{ftype}</button
 			>
 		{/each}
