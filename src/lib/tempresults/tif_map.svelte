@@ -13,10 +13,12 @@
 	import { browser } from '$app/environment';
 	import FoldertypeChooser from './folderytpe_chooser.svelte';
 	import EarthAfrica from '$lib/icons/earth_africa.svelte';
+	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
 	let metadata_loaded: boolean = false;
+	let loading_map: boolean = false;
 	export let selected_file: string = '';
 	export let foldertype: string = 'water_budget';
 	let folder_data: any[any] = [];
@@ -146,6 +148,7 @@
 		// when a file is selected, we usually want to reset everything
 		console.log('Selected file: ', selected_file);
 		metadata_loaded = false;
+		loading_map = true;
 
 		// demand access to the tif file
 		var access_tif_url =
@@ -156,6 +159,8 @@
 
 		let result = [];
 		if (!res.ok) {
+			loading_map = false;
+
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		}
@@ -171,6 +176,8 @@
 
 		let meta_result = [];
 		if (!meta_res.ok) {
+			loading_map = false;
+
 			var err_msg = await res.text();
 			throw new Error(`${meta_res.status} ${meta_res.statusText}\nReason: ${err_msg}`);
 		}
@@ -181,6 +188,7 @@
 		//		- -> now assemble metadata and visualize
 
 		if (!meta_result.metadata) {
+			loading_map = false;
 			throw new Error('No metadata on the current metadata response.');
 		}
 
@@ -193,6 +201,7 @@
 			!current_metadata.net_cdf_times ||
 			!current_metadata.timestamp_begin
 		) {
+			loading_map = false;
 			throw new Error('Missing key-value pairs on metadata response object!');
 		}
 
@@ -216,6 +225,7 @@
 			var meta_max = parseFloat(band_metadata[selected_band].max);
 
 			if (isNaN(meta_min) || isNaN(meta_max)) {
+				loading_map = false;
 				throw new Error('Meta_min or Meta_max evaluated to NaN.');
 			}
 
@@ -277,10 +287,13 @@
 				// fetching file succesful -> visualize
 				metadata_loaded = true;
 				visualize_band();
+
+				loading_map = false;
 				// console.log('selected_tif_url: ', selected_tif_url);
 			})
 			.catch((error) => {
 				metadata_loaded = false;
+				loading_map = false;
 				console.log(
 					`Encountered an error while trying to fetch file ${selected_tif_url}:\n ${error}`
 				);
@@ -468,6 +481,12 @@
 					diff_mode = !diff_mode;
 				}}>Diff mode</button
 			>
+		</div>
+	{/if}
+
+	{#if loading_map}
+		<div class="flex-center ml-2">
+			<LoadingRing size="24px" />
 		</div>
 	{/if}
 </div>

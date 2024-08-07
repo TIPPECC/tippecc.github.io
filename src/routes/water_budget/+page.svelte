@@ -17,6 +17,7 @@
 	import CaretRight from '$lib/icons/caret_right.svelte';
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
+	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: Array = [];
@@ -488,7 +489,9 @@
 			>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 		>
 	{:else}
-		<div>... Loading</div>
+		<div class="flex-center">
+			<LoadingRing />
+		</div>
 	{/if}
 
 	{#if wget_request_string.length > 0}
