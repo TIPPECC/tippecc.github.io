@@ -14,11 +14,11 @@
 	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
 
 	// folder_data ... filenames of the target backend folder
-	let folder_data: any = [];
+	let folder_data: Array = [];
 	let cat_folder_data: any = {};
 
 	// checked state of all folder_data_checkboxes
-	let folder_checkbox_bools: any[] = [];
+	let selected_files: any;
 
 	$: wget_request_string = '';
 
@@ -95,14 +95,9 @@
 	}
 
 	/**
-	 * @param {{ srcElement: { value: string; checked: any; }; }} e
+	 * @param {{ srcElement: { value: string; checked: any; }; }} _e
 	 */
-	function on_folder_checkbox_change(e) {
-		// just for better readability, bcs. this is a nightmare :)
-		let helper_index = parseInt(e.srcElement.value);
-		let checked_state = e.srcElement.checked;
-
-		folder_checkbox_bools[helper_index] = checked_state;
+	function on_folder_checkbox_change(_e: any) {
 		wget_request_string = '';
 	}
 
@@ -115,8 +110,8 @@
 		const custom_url = API_URL + '/climate/select_temp_urls?type=' + foldertype;
 		let checked_boxes = [];
 
-		for (let i = 0; i < folder_checkbox_bools.length; i++) {
-			if (folder_checkbox_bools[i]) {
+		for (let i = 0; i < selected_files.length; i++) {
+			if (selected_files[i]) {
 				checked_boxes.push(folder_data[i][0]);
 			}
 		}
@@ -205,17 +200,24 @@
 		cat_folder_data = categories;
 	}
 
-	function refresh_foldercontent() {
+	async function refresh_foldercontent() {
 		folder_data = {};
 		// only_convertable false fetches all files
-		_fetch_foldercontent_by_type(foldertype, false /* convertable */)
-			.then((result) => {
-				folder_data = result.content;
-				set_cat_folder_data();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+
+		try {
+			var result = await _fetch_foldercontent_by_type(foldertype, false);
+
+			folder_data = result.content;
+			set_cat_folder_data();
+			// reset selected files after fetching new folder
+			selected_files = folder_data.map(() => false);
+		} catch (error) {
+			console.log('Refreshing foldercontent failed.');
+		}
+	}
+
+	function toggle_folder_category(category) {
+		cat_folder_data[category].toggled = !cat_folder_data[category].toggled;
 	}
 
 	// array with current geo_data['facets']['file_id']
@@ -251,9 +253,7 @@
 						>
 							<button
 								class="w-full flex items-left"
-								on:click={() => {
-									cat_folder_data[folder_cat].toggled = !cat_folder_data[folder_cat].toggled;
-								}}
+								on:click={() => toggle_folder_category(folder_cat)}
 							>
 								<h2 class="text-xl">
 									{folder_cat} ({cat_obj.files.filter((a) =>
@@ -289,6 +289,7 @@
 															type="checkbox"
 															value={file_obj.index}
 															id={'checkbox_' + file_obj.index}
+															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
 
@@ -417,8 +418,7 @@
 			type="button"
 			class="btn bg-[#D17208] rounded-md"
 			on:click|preventDefault={handle_checkbox_submit}
-			>Generate Wget link for download ({folder_checkbox_bools.filter((value) => value == true)
-				.length} selected)</button
+			>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 		>
 	{:else}
 		<div>... Loading</div>
@@ -455,7 +455,7 @@
 		</div>
 		<div class="flex items-center mb-2"><Earth />&nbsp; View file on map</div>
 		<div class="flex items-center mb-2">
-			<FileQuestion />&nbsp;  Generate TIFF file and visualize (might fail)
+			<FileQuestion />&nbsp; Generate TIFF file and visualize (might fail)
 		</div>
 		<div class="flex items-center mb-2">
 			<CircleQuestion />&nbsp; Generate TIFF file and download (might fail)
