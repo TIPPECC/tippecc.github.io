@@ -6,19 +6,25 @@
 	import { tempresult_selection } from '../store/tempresult_store';
 	import { goto } from '$app/navigation';
 	import networking from '$lib/icons/networking-collaboration-svgrepo-com.svg';
+	import FolderTree from '$lib/icons/folder_tree.svelte';
 	import FileQuestion from '$lib/icons/file_question.svelte';
 	import Earth from '$lib/icons/earth.svelte';
 	import XDisabled from '$lib/icons/x_disabled.svelte';
 	import SquareCaretDown from '$lib/icons/square_caret_down.svelte';
 	import CircleQuestion from '$lib/icons/circle_question.svelte';
 	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
+	import CaretDown from '$lib/icons/caret_down.svelte';
+	import CaretRight from '$lib/icons/caret_right.svelte';
+	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
+	import SquareEmpty from '$lib/icons/square_empty.svelte';
+	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	// folder_data ... filenames of the target backend folder
-	let folder_data: any = [];
+	let folder_data: Array = [];
 	let cat_folder_data: any = {};
 
 	// checked state of all folder_data_checkboxes
-	let folder_checkbox_bools: any[] = [];
+	let selected_files: any;
 
 	$: wget_request_string = '';
 
@@ -95,15 +101,36 @@
 	}
 
 	/**
-	 * @param {{ srcElement: { value: string; checked: any; }; }} e
+	 * @param {{ srcElement: { value: string; checked: any; }; }} _e
 	 */
-	function on_folder_checkbox_change(e) {
-		// just for better readability, bcs. this is a nightmare :)
-		let helper_index = parseInt(e.srcElement.value);
-		let checked_state = e.srcElement.checked;
-
-		folder_checkbox_bools[helper_index] = checked_state;
+	function on_folder_checkbox_change(_e: any) {
 		wget_request_string = '';
+	}
+
+	function select_all_files() {
+		for (var i = 0; i < selected_files.length; i++) {
+			selected_files[i] = true;
+		}
+	}
+
+	function unselect_all_files() {
+		for (var i = 0; i < selected_files.length; i++) {
+			selected_files[i] = false;
+		}
+	}
+
+	function expand_all_categories() {
+		console.log('expand_all_categories');
+
+		for (const [key, value] of Object.entries(cat_folder_data)) {
+			cat_folder_data[key].toggled = true;
+		}
+	}
+
+	function close_all_categories() {
+		for (const [key, value] of Object.entries(cat_folder_data)) {
+			cat_folder_data[key].toggled = false;
+		}
 	}
 
 	// submit all checkboxes with checked state true
@@ -115,8 +142,8 @@
 		const custom_url = API_URL + '/climate/select_temp_urls?type=' + foldertype;
 		let checked_boxes = [];
 
-		for (let i = 0; i < folder_checkbox_bools.length; i++) {
-			if (folder_checkbox_bools[i]) {
+		for (let i = 0; i < selected_files.length; i++) {
+			if (selected_files[i]) {
 				checked_boxes.push(folder_data[i][0]);
 			}
 		}
@@ -205,17 +232,24 @@
 		cat_folder_data = categories;
 	}
 
-	function refresh_foldercontent() {
+	async function refresh_foldercontent() {
 		folder_data = {};
 		// only_convertable false fetches all files
-		_fetch_foldercontent_by_type(foldertype, false /* convertable */)
-			.then((result) => {
-				folder_data = result.content;
-				set_cat_folder_data();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+
+		try {
+			var result = await _fetch_foldercontent_by_type(foldertype, false);
+
+			folder_data = result.content;
+			set_cat_folder_data();
+			// reset selected files after fetching new folder
+			selected_files = folder_data.map(() => false);
+		} catch (error) {
+			console.log('Refreshing foldercontent failed.');
+		}
+	}
+
+	function toggle_folder_category(category) {
+		cat_folder_data[category].toggled = !cat_folder_data[category].toggled;
 	}
 
 	// array with current geo_data['facets']['file_id']
@@ -224,11 +258,47 @@
 <div class="content-div">
 	<div class="flex">
 		<h1 class="content-heading">Available Collections</h1>
-		<img src={networking} alt="..." width="30px" />
+		<div class="flex-center">
+			<FolderTree />
+		</div>
 	</div>
 	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+	<div class="flex gap-4 mt-2 p-2">
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => expand_all_categories()}
+			>
+				<CaretRight /> &nbsp; Expand All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => close_all_categories()}
+			>
+				<CaretDown /> &nbsp; Close All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => select_all_files()}
+			>
+				<SquareCheckmark /> &nbsp; Select All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => unselect_all_files()}
+			>
+				<SquareEmpty /> &nbsp; Unselect All
+			</button>
+		</div>
+	</div>
 
-	<div class="mt-4 p-2">
+	<div class="p-2">
 		<input
 			class="input w-full mt-4 p-2"
 			type="text"
@@ -251,9 +321,7 @@
 						>
 							<button
 								class="w-full flex items-left"
-								on:click={() => {
-									cat_folder_data[folder_cat].toggled = !cat_folder_data[folder_cat].toggled;
-								}}
+								on:click={() => toggle_folder_category(folder_cat)}
 							>
 								<h2 class="text-xl">
 									{folder_cat} ({cat_obj.files.filter((a) =>
@@ -289,6 +357,7 @@
 															type="checkbox"
 															value={file_obj.index}
 															id={'checkbox_' + file_obj.index}
+															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
 
@@ -417,11 +486,12 @@
 			type="button"
 			class="btn bg-[#D17208] rounded-md"
 			on:click|preventDefault={handle_checkbox_submit}
-			>Generate Wget link for download ({folder_checkbox_bools.filter((value) => value == true)
-				.length} selected)</button
+			>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 		>
 	{:else}
-		<div>... Loading</div>
+		<div class="flex-center">
+			<LoadingRing />
+		</div>
 	{/if}
 
 	{#if wget_request_string.length > 0}
@@ -455,7 +525,7 @@
 		</div>
 		<div class="flex items-center mb-2"><Earth />&nbsp; View file on map</div>
 		<div class="flex items-center mb-2">
-			<FileQuestion />&nbsp;  Generate TIFF file and visualize (might fail)
+			<FileQuestion />&nbsp; Generate TIFF file and visualize (might fail)
 		</div>
 		<div class="flex items-center mb-2">
 			<CircleQuestion />&nbsp; Generate TIFF file and download (might fail)
