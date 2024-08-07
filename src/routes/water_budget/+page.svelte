@@ -6,6 +6,7 @@
 	import { tempresult_selection } from '../store/tempresult_store';
 	import { goto } from '$app/navigation';
 	import networking from '$lib/icons/networking-collaboration-svgrepo-com.svg';
+	import FolderTree from '$lib/icons/folder_tree.svelte';
 	import FileQuestion from '$lib/icons/file_question.svelte';
 	import Earth from '$lib/icons/earth.svelte';
 	import XDisabled from '$lib/icons/x_disabled.svelte';
@@ -256,7 +257,9 @@
 <div class="content-div">
 	<div class="flex">
 		<h1 class="content-heading">Available Collections</h1>
-		<img src={networking} alt="..." width="30px" />
+		<div class="flex-center">
+			<FolderTree />
+		</div>
 	</div>
 	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
 	<div class="flex gap-4 mt-2 p-2">

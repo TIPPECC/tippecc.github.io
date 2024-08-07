@@ -12,6 +12,7 @@
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
 	import { browser } from '$app/environment';
 	import FoldertypeChooser from './folderytpe_chooser.svelte';
+	import EarthAfrica from '$lib/icons/earth_africa.svelte';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
@@ -416,7 +417,16 @@
 	}
 </script>
 
-<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+<div class="flex px-4">
+	<h1 class="content-heading">Data Visualization</h1>
+	<div class="flex-center">
+		<EarthAfrica w="38" />
+	</div>
+</div>
+
+<div class="px-2">
+	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+</div>
 
 <div class="lg:flex px-4 pt-4 w-full">
 	<label
