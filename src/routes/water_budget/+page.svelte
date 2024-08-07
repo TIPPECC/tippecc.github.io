@@ -12,6 +12,10 @@
 	import SquareCaretDown from '$lib/icons/square_caret_down.svelte';
 	import CircleQuestion from '$lib/icons/circle_question.svelte';
 	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
+	import CaretDown from '$lib/icons/caret_down.svelte';
+	import CaretRight from '$lib/icons/caret_right.svelte';
+	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
+	import SquareEmpty from '$lib/icons/square_empty.svelte';
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: Array = [];
@@ -99,6 +103,32 @@
 	 */
 	function on_folder_checkbox_change(_e: any) {
 		wget_request_string = '';
+	}
+
+	function select_all_files() {
+		for (var i = 0; i < selected_files.length; i++) {
+			selected_files[i] = true;
+		}
+	}
+
+	function unselect_all_files() {
+		for (var i = 0; i < selected_files.length; i++) {
+			selected_files[i] = false;
+		}
+	}
+
+	function expand_all_categories() {
+		console.log('expand_all_categories');
+
+		for (const [key, value] of Object.entries(cat_folder_data)) {
+			cat_folder_data[key].toggled = true;
+		}
+	}
+
+	function close_all_categories() {
+		for (const [key, value] of Object.entries(cat_folder_data)) {
+			cat_folder_data[key].toggled = false;
+		}
 	}
 
 	// submit all checkboxes with checked state true
@@ -229,8 +259,42 @@
 		<img src={networking} alt="..." width="30px" />
 	</div>
 	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+	<div class="flex gap-4 mt-2 p-2">
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => expand_all_categories()}
+			>
+				<CaretRight /> &nbsp; Expand All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => close_all_categories()}
+			>
+				<CaretDown /> &nbsp; Close All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => select_all_files()}
+			>
+				<SquareCheckmark /> &nbsp; Select All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+				on:click={() => unselect_all_files()}
+			>
+				<SquareEmpty /> &nbsp; Unselect All
+			</button>
+		</div>
+	</div>
 
-	<div class="mt-4 p-2">
+	<div class="p-2">
 		<input
 			class="input w-full mt-4 p-2"
 			type="text"

@@ -23,7 +23,7 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class=" h-10">
+<div class="h-14">
 	<div class="flex gap-2 items-center">
 		{#each foldertypes as ftype}
 			<button
