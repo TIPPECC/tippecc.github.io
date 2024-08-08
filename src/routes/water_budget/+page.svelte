@@ -315,7 +315,7 @@
 								.toLowerCase()
 								.includes(search_term.toLowerCase())).length > 0}
 						<div
-							class="w-full flex items-center rounded-md h-8 pl-3 {cat_counter % 2 == 0
+							class="w-full h-[36px] flex items-center rounded-md pl-3 {cat_counter % 2 == 0
 								? 'bg-emerald-700'
 								: 'bg-emerald-900'} mb-1"
 						>
@@ -323,7 +323,14 @@
 								class="w-full flex items-left"
 								on:click={() => toggle_folder_category(folder_cat)}
 							>
-								<h2 class="text-xl">
+								<div class="flex-center w-[18px] h-[28px]">
+									{#if cat_obj.toggled}
+										<CaretDown h="28px" w="26px" />
+									{:else}
+										<CaretRight h="24px" />
+									{/if}
+								</div>
+								<h2 class="text-xl ml-2">
 									{folder_cat} ({cat_obj.files.filter((a) =>
 										a.filename.toLowerCase().includes(search_term.toLowerCase())
 									).length})
