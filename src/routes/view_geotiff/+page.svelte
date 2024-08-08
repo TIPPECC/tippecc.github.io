@@ -42,10 +42,12 @@
 	});
 </script>
 
-{#if temp_res_check}
-	<TifMap foldertype={selected_foldertype} selected_file={selected_filename} />
-{:else}
-	<div class="flex-center mt-8">
-		<LoadingRing />
-	</div>
-{/if}
+<div class="content-div">
+	{#if temp_res_check}
+		<TifMap foldertype={selected_foldertype} selected_file={selected_filename} />
+	{:else}
+		<div class="flex-center mt-8">
+			<LoadingRing />
+		</div>
+	{/if}
+</div>

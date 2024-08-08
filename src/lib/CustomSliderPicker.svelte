@@ -92,7 +92,7 @@
 
 {#if valMap}
 	<div class="md:px-20 max-md:px-4">
-		<h4 class="h4 text-center">Bandslider</h4>
+		<h4 class="h4 text-center">Layer slider</h4>
 		<div class="relative h-[40px] mt-6">
 			<!-- Slider input with custom steps -->
 			<input

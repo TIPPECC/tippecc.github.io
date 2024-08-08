@@ -40,8 +40,9 @@
 	let diff_mode: boolean = false;
 
 	let base_view = new View({
-		center: [0, 0],
-		zoom: 2
+		center: [25, -15],
+		projection: 'EPSG:4326',
+		zoom: 4.7
 	});
 
 	let current_band_metainfo = {
@@ -442,46 +443,50 @@
 </div>
 
 <div class="lg:flex px-4 pt-4 w-full">
-	<label
-		class="flex max-w-[100px] place-items-center justify-center variant-outline-tertiary p-1"
-		for="fileselect">Select file:</label
-	>
+	{#if foldertype}
+		<label
+			class="flex max-w-[100px] place-items-center justify-center variant-outline-tertiary p-1"
+			for="fileselect">Select file:</label
+		>
 
-	<!--TODO: Bare Select will probably not be enough for mobile
+		<!--TODO: Bare Select will probably not be enough for mobile
 	layouts if needed here. Needs replacement by something better. -->
-	<select
-		id="fileselect"
-		class="bg-primary-500 rounded-md p-1 max-lg:max-w-[100%] max-w-[80%] max-lg:mt-1 lg:ml-2"
-		bind:value={selected_file}
-		on:change={file_selected}
-	>
-		{#if folder_data}
-			{#each folder_data as file_entry}
-				<option value={file_entry[0]}>
-					{file_entry[0]}
-				</option>
-			{/each}
-		{/if}
-	</select>
+		<select
+			id="fileselect"
+			class="bg-primary-500 rounded-md p-1 max-lg:max-w-[100%] max-w-[80%] max-lg:mt-1 lg:ml-2"
+			bind:value={selected_file}
+			on:change={file_selected}
+		>
+			{#if folder_data}
+				{#each folder_data as file_entry}
+					<option value={file_entry[0]}>
+						{file_entry[0]}
+					</option>
+				{/each}
+			{/if}
+		</select>
 
-	{#if diff_mode}
-		<div>
-			<button
-				class="variant-filled-tertiary p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
-				on:click={() => {
-					diff_mode = !diff_mode;
-				}}>Normal mode</button
-			>
-		</div>
-	{:else}
-		<div>
-			<button
-				class="variant-filled-tertiary hover:bg-tertiary-600 p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
-				on:click={() => {
-					diff_mode = !diff_mode;
-				}}>Diff mode</button
-			>
-		</div>
+		{#if metadata_loaded && band_slider_values.length > 1}
+			{#if diff_mode}
+				<div>
+					<button
+						class="variant-filled-tertiary p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+						on:click={() => {
+							diff_mode = !diff_mode;
+						}}>Normal mode</button
+					>
+				</div>
+			{:else}
+				<div>
+					<button
+						class="variant-filled-tertiary hover:bg-tertiary-600 p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+						on:click={() => {
+							diff_mode = !diff_mode;
+						}}>Compare layer</button
+					>
+				</div>
+			{/if}
+		{/if}
 	{/if}
 
 	{#if loading_map}
@@ -497,7 +502,7 @@
 			<div
 				class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 			>
-				<h2>Band meta data <b>#{selected_band}:</b></h2>
+				<h2>Layer meta data <b>#{selected_band}:</b></h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
 			</div>
@@ -517,7 +522,7 @@
 				<div
 					class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 				>
-					<h2>Band meta data <b>#{selected_band_diff}:</b></h2>
+					<h2>Layer meta data <b>#{selected_band_diff}:</b></h2>
 					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
 					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
 				</div>
@@ -534,7 +539,7 @@
 	{:else if band_slider_values.length == 1}
 		<div class="w-full px-4 mt-2">
 			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
-				<h2>Single band file metadata</h2>
+				<h2>Single layer metadata</h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
 				<div id="band_timestamp">Start: {current_metadata.timestamp_begin}</div>

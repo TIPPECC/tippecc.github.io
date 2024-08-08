@@ -39,7 +39,7 @@
 
 	<div class="mt-1">
 		Selected Value: {valMap[sliderValue]}
-		SliderValue: {sliderValue}
+		Slider Value: {sliderValue}
 	</div>
 {/if}
 

@@ -320,6 +320,7 @@
 							on:click={() => {
 								show_in_bounds = !show_in_bounds;
 							}}
+							title="Show all color stops"
 							>Show all
 						</button>
 					{:else}
@@ -328,6 +329,7 @@
 							on:click={() => {
 								show_in_bounds = !show_in_bounds;
 							}}
+							title="Show only color stops within bounds"
 							>Show bounds
 						</button>
 					{/if}
@@ -341,6 +343,7 @@
 							on:click={() => {
 								horizontal = !horizontal;
 							}}
+							title="Switch to horizontal legend layout"
 							>Horizontal
 						</button>
 					{:else}
@@ -349,6 +352,7 @@
 							on:click={() => {
 								horizontal = !horizontal;
 							}}
+							title="Switch to vertical legend layout"
 							>Vertical
 						</button>
 					{/if}
@@ -357,8 +361,10 @@
 				<!--Custom Max-->
 				<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
 					<nobr>
-						<label for="custom_bounds_input" class="flex variant-outline-tertiary p-1"
-							>Custom Max:</label
+						<label
+							for="custom_bounds_input"
+							class="flex variant-outline-tertiary p-1"
+							title="Set custom maximum bound">Custom Max:</label
 						>
 					</nobr>
 					<input
@@ -381,14 +387,17 @@
 						class="flex-1 text-black ml-1 max-w-[40px] pl-1"
 						max="21"
 						min="0"
+						title="Number of color stops"
 					/>
 				</div>
 
 				<!--Color Scheme-->
 				<div class="flex">
 					<nobr>
-						<label for="color_scheme_select" class="flex variant-outline-tertiary p-1"
-							>Color Scheme:</label
+						<label
+							for="color_scheme_select"
+							class="flex variant-outline-tertiary p-1"
+							title="Select color scheme">Color Scheme:</label
 						>
 					</nobr>
 					<select
