@@ -3,7 +3,6 @@
 	import { browser } from '$app/environment';
 	import { tempresult_selection } from '../store/tempresult_store';
 	import TifMap from '$lib/tempresults/tif_map.svelte';
-	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	let selected_filename: string = '';
 	let selected_foldertype: string = '';
@@ -24,7 +23,6 @@
 
 			selected_filename = temp_result.filename;
 			selected_foldertype = temp_result.foldertype;
-			console.log('AA: ', selected_filename, ' ', selected_foldertype);
 
 			if (selected_filename == null || selected_foldertype == null) {
 				selected_filename = '';
@@ -45,9 +43,5 @@
 <div class="content-div">
 	{#if temp_res_check}
 		<TifMap foldertype={selected_foldertype} selected_file={selected_filename} />
-	{:else}
-		<div class="flex-center mt-8">
-			<LoadingRing />
-		</div>
 	{/if}
 </div>

@@ -14,13 +14,17 @@
 	import FoldertypeChooser from './folderytpe_chooser.svelte';
 	import EarthAfrica from '$lib/icons/earth_africa.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
+	import SvgXMark from '$lib/icons/svg_x_mark.svelte';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 
 	let metadata_loaded: boolean = false;
 	let loading_map: boolean = false;
+	let loading_folder: boolean = false;
 	export let selected_file: string = '';
 	export let foldertype: string = 'water_budget';
+	let fetch_err_msg: string = '';
+
 	let folder_data: any[any] = [];
 	let selected_tif_url: string = '';
 	let horizontal_scala: boolean = true;
@@ -35,6 +39,9 @@
 	let selected_band_diff: number = 1;
 	let current_metadata: any = {};
 	let band_slider_values: any[] = [];
+
+	const metadata_err_msg = `Metadata could not be parsed. The information about the error
+							 has been saved and we try to fix the issue. Sorry!`;
 
 	let map: Map;
 	let diff_mode: boolean = false;
@@ -147,9 +154,9 @@
 
 	async function file_selected(e?) {
 		// when a file is selected, we usually want to reset everything
-		console.log('Selected file: ', selected_file);
 		metadata_loaded = false;
 		loading_map = true;
+		fetch_err_msg = '';
 
 		// demand access to the tif file
 		var access_tif_url =
@@ -161,8 +168,8 @@
 		let result = [];
 		if (!res.ok) {
 			loading_map = false;
-
 			var err_msg = await res.text();
+			fetch_err_msg = `Tif file could not be accessed. ${err_msg}`;
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		}
 
@@ -180,6 +187,8 @@
 			loading_map = false;
 
 			var err_msg = await res.text();
+
+			fetch_err_msg = `File Metadata could not be read. ${err_msg}`;
 			throw new Error(`${meta_res.status} ${meta_res.statusText}\nReason: ${err_msg}`);
 		}
 
@@ -190,6 +199,10 @@
 
 		if (!meta_result.metadata) {
 			loading_map = false;
+
+			// our frontend handling can not parse the file metadata
+			// maybe log, or post a fail information to the backend server
+			fetch_err_msg = metadata_err_msg;
 			throw new Error('No metadata on the current metadata response.');
 		}
 
@@ -203,6 +216,8 @@
 			!current_metadata.timestamp_begin
 		) {
 			loading_map = false;
+			fetch_err_msg = metadata_err_msg;
+
 			throw new Error('Missing key-value pairs on metadata response object!');
 		}
 
@@ -211,6 +226,7 @@
 		try {
 			var net_cdf_times = JSON.parse(current_metadata.net_cdf_times);
 		} catch (error) {
+			fetch_err_msg = metadata_err_msg;
 			console.log(`Could not parse net_cdf_times found in current_metadata:\n ${error}`);
 		}
 
@@ -227,12 +243,14 @@
 
 			if (isNaN(meta_min) || isNaN(meta_max)) {
 				loading_map = false;
+				fetch_err_msg = metadata_err_msg;
 				throw new Error('Meta_min or Meta_max evaluated to NaN.');
 			}
 
 			current_band_metainfo.min = meta_min;
 			current_band_metainfo.max = meta_max;
 		} catch (error) {
+			fetch_err_msg = metadata_err_msg;
 			console.log(
 				`Could not parse meta_min ${band_metadata[selected_band].min} or meta_max ${band_metadata[selected_band].max}.`
 			);
@@ -269,6 +287,8 @@
 				}
 			}
 		} catch (error) {
+			fetch_err_msg =
+				'Issues while reading file dates. The time values on your band slider might defective.';
 			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
 		}
 
@@ -278,7 +298,6 @@
 		// assign direct file url
 		selected_tif_url = result.filedata.route;
 		// console.log("Fetching route for file: \n", selected_tif_url);
-
 		// fetch the full file with geotiff
 		fetch_file_as_blob(selected_tif_url)
 			.then(() => {
@@ -295,6 +314,7 @@
 			.catch((error) => {
 				metadata_loaded = false;
 				loading_map = false;
+				fetch_err_msg = 'Unexpected error while loading the file.';
 				console.log(
 					`Encountered an error while trying to fetch file ${selected_tif_url}:\n ${error}`
 				);
@@ -419,15 +439,31 @@
 		map.setView(base_view);
 	}
 
-	function refresh_foldercontent() {
-		// only_convertable true only fetches convertable files
-		_fetch_foldercontent_by_type(foldertype, true /* convertable */)
-			.then((result) => {
-				folder_data = result.content;
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+	async function refresh_foldercontent() {
+		fetch_err_msg = '';
+		loading_folder = true;
+
+		try {
+			var res = await _fetch_foldercontent_by_type(foldertype, true /* convertable */);
+
+			let result = [];
+			if (!res.ok) {
+				var msg = await res.text();
+				fetch_err_msg = `We could not load the folder due to an error on our side: ${msg}`;
+				throw new Error(`${res.status} ${res.statusText}\nReason: ${msg}`);
+			}
+
+			result = await res.json();
+
+			// sort array
+			result['content'].sort();
+
+			folder_data = result.content;
+		} catch (error) {
+			console.log(error);
+		}
+
+		loading_folder = false;
 	}
 </script>
 
@@ -438,8 +474,14 @@
 	</div>
 </div>
 
-<div class="px-2">
+<div class="px-2 flex place-items-center">
 	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+
+	{#if loading_folder}
+		<div class="flex place-items-center pt-1 pl-2">
+			<LoadingRing size="24px" />
+		</div>
+	{/if}
 </div>
 
 <div class="lg:flex px-4 pt-4 w-full">
@@ -496,6 +538,22 @@
 	{/if}
 </div>
 
+<div class="flex-center mx-8 {fetch_err_msg ? 'mt-4' : ''}">
+	{#if fetch_err_msg}
+		<div class="fetch-error">
+			<button
+				class="btn-icon ml-8 float-right align-top"
+				on:click={() => {
+					fetch_err_msg = '';
+				}}
+			>
+				<SvgXMark />
+			</button>
+			{fetch_err_msg}
+		</div>
+	{/if}
+</div>
+
 {#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
@@ -548,7 +606,7 @@
 	{/if}
 {/if}
 
-<div class={horizontal_scala ? '' : 'flex'}>
+<div class={horizontal_scala ? '' : 'flex mt-4'}>
 	<div class="flex justify-center items-center">
 		<ColorGradientPicker
 			bind:this={cg_picker}
@@ -558,7 +616,7 @@
 		/>
 	</div>
 
-	<div class="px-4 pt-4 w-full">
+	<div class="px-4 w-full">
 		<div id="map" class="map" />
 	</div>
 </div>

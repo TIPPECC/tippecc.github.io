@@ -18,6 +18,7 @@
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
+	import SvgXMark from '$lib/icons/svg_x_mark.svelte';
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: Array = [];
@@ -25,6 +26,8 @@
 
 	// checked state of all folder_data_checkboxes
 	let selected_files: any;
+	let fetch_err_msg: string = '';
+	let loading_folder: boolean = false;
 
 	$: wget_request_string = '';
 
@@ -120,8 +123,6 @@
 	}
 
 	function expand_all_categories() {
-		console.log('expand_all_categories');
-
 		for (const [key, value] of Object.entries(cat_folder_data)) {
 			cat_folder_data[key].toggled = true;
 		}
@@ -235,9 +236,24 @@
 	async function refresh_foldercontent() {
 		folder_data = {};
 		// only_convertable false fetches all files
+		fetch_err_msg = '';
+		loading_folder = true;
 
 		try {
-			var result = await _fetch_foldercontent_by_type(foldertype, false);
+			var res = await _fetch_foldercontent_by_type(foldertype, false);
+
+			let result = [];
+			if (!res.ok) {
+				var msg = await res.text();
+				fetch_err_msg = `We could not load load the folder due to an error on our side: ${msg}`;
+
+				throw new Error(`${res.status} ${res.statusText}\nReason: ${msg}`);
+			}
+
+			result = await res.json();
+
+			// sort array
+			result['content'].sort();
 
 			folder_data = result.content;
 			set_cat_folder_data();
@@ -246,6 +262,8 @@
 		} catch (error) {
 			console.log('Refreshing foldercontent failed.');
 		}
+
+		loading_folder = false;
 	}
 
 	function toggle_folder_category(category) {
@@ -495,9 +513,25 @@
 			on:click|preventDefault={handle_checkbox_submit}
 			>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 		>
-	{:else}
+	{:else if loading_folder}
 		<div class="flex-center">
 			<LoadingRing />
+		</div>
+	{:else if fetch_err_msg}
+		<div class="flex-center mx-8 {fetch_err_msg ? 'mt-4' : ''}">
+			{#if fetch_err_msg}
+				<div class="fetch-error">
+					<button
+						class="btn-icon ml-8 float-right align-top"
+						on:click={() => {
+							fetch_err_msg = '';
+						}}
+					>
+						<SvgXMark />
+					</button>
+					{fetch_err_msg}
+				</div>
+			{/if}
 		</div>
 	{/if}
 

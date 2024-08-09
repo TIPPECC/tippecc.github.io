@@ -4,12 +4,17 @@
 	export var foldertype: string = 'water_budget';
 	var foldertypes: any[] = ['water_budget', 'water_budget_bias', 'kariba', 'vaal'];
 
+	$: {
+		if (!foldertypes.includes(foldertype)) {
+			foldertype = foldertypes[0];
+		}
+	}
+
 	const dispatch = createEventDispatcher();
 
 	function set_foldertype(new_type: string) {
 		for (let x = 0; x < foldertypes.length; x++) {
 			if (new_type == foldertypes[x]) {
-				console.log('NEW: ', new_type, ' ftype: ', foldertypes[x]);
 				foldertype = new_type;
 				dispatch('foldertype_changed', foldertype);
 				return;
