@@ -25,6 +25,7 @@
 	let selected_tif_url: string = '';
 	let horizontal_scala: boolean = true;
 	let old_layer: any = null;
+	let layer: any = null;
 
 	let virtual_data_url: string = '';
 	let slider_value: any;
@@ -60,6 +61,15 @@
 
 	$: color_steps, rebuild_map();
 
+	let opacity_value = 1.0;
+
+	function update_layer_opacity() {
+		if (!layer) {
+			return;
+		}
+		layer.setOpacity(opacity_value);
+	}
+
 	function rebuild_map() {
 		if (!color_steps) {
 			return;
@@ -72,6 +82,12 @@
 
 	onMount(() => {
 		initialize_map();
+	});
+
+	onMount(() => {
+		if (browser) {
+			update_layer_opacity();
+		}
 	});
 
 	onMount(() => {
@@ -396,7 +412,7 @@
 		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops(), layerinfo);
 
 		// create new layer, with the newly created source and style
-		const layer = new TileLayer({
+		layer = new TileLayer({
 			source: source,
 			style: {
 				color: color_thing
@@ -414,6 +430,8 @@
 			map.addLayer(layer);
 			old_layer = layer;
 		}
+
+		layer.setOpacity(opacity_value);
 
 		// setting the view (not the intended way, but works)
 		map.setView(base_view);
@@ -558,7 +576,21 @@
 		/>
 	</div>
 
-	<div class="px-4 pt-4 w-full">
+	<div class="px-4 pt-4 w-full relative">
+		<div class="absolute z-10 align-top right-[16px] px-1 text-black bg-[#ffffff88]">
+			<label>
+				Layer opacity {opacity_value.toFixed(2)}
+				<input
+					on:input={update_layer_opacity}
+					bind:value={opacity_value}
+					id="opacity-input"
+					type="range"
+					min="0"
+					max="1"
+					step="0.01"
+				/>
+			</label>
+		</div>
 		<div id="map" class="map" />
 	</div>
 </div>
