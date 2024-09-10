@@ -19,8 +19,8 @@
 
 {#if verticality}
 	<div class="z-40 bg-primary-900 grow w-full overflow-hidden bg-opacity-60 flex">
-		<ul>
-			<div class="grow-0 float-left">
+		<div class="grow-0 float-left">
+			<ul>
 				{#each nav_elements as el}
 					<li
 						class="float-left {current === el['label']
@@ -34,8 +34,9 @@
 						</a>
 					</li>
 				{/each}
-			</div>
-		</ul>
+			</ul>
+		</div>
+
 		<div class="grow">
 			<div class="float-right pr-10">
 				<figure>
@@ -130,8 +131,8 @@
 	</div>
 {:else}
 	<div class="z-40 bg-primary-600 grow overflow-hidden">
-		<ul>
-			<div class="grow">
+		<div class="grow">
+			<ul>
 				{#each nav_elements as el}
 					<li
 						class="grow flex items-center {current === el['label']
@@ -145,7 +146,7 @@
 						</a>
 					</li>
 				{/each}
-			</div>
-		</ul>
+			</ul>
+		</div>
 	</div>
 {/if}

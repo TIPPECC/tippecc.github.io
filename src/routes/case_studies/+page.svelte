@@ -38,8 +38,8 @@
 			color="#D17208"
 			icon={water}
 			title="Rural water supply (Upper Zambezi / Barotse floodplain)"
-			description="."
-			image="{base}/IMG_2338.JPEG"
+			description=""
+			image="{base}/IMG_2338.webp"
 		/>
 
 		<CaseStudy
@@ -48,7 +48,7 @@
 			icon={income}
 			title="Livelihoods of communities living in semi-arid regions"
 			description=""
-			image="{base}/IMG_2338.JPEG"
+			image="{base}/case_study_2.webp"
 		/>
 		<CaseStudy
 			wp="Case Study 3"
@@ -56,31 +56,31 @@
 			icon={fence}
 			title="Transboundary conservation"
 			description=""
-			image="{base}/IMG_2338.JPEG"
+			image="{base}/IMG_2338.webp"
 		/>
 		<CaseStudy
 			wp="Case Study 4"
 			color="#98B1D8"
 			icon={no_water}
 			title="“day zero” events"
-			description=""
-			image="{base}/IMG_2338.JPEG"
+			description="no"
+			image="{base}/IMG_2338.webp"
 		/>
 		<CaseStudy
 			wp="Case Study 5"
 			color="#98B1D8"
 			icon={cow}
 			title="cattle industry"
-			description=""
-			image="{base}/IMG_2338.JPEG"
+			description="no"
+			image="{base}/IMG_2338.webp"
 		/>
 		<CaseStudy
 			wp="Case Study 6"
 			color="#98B1D8"
 			icon={maize}
 			title="maize crop"
-			description=""
-			image="{base}/IMG_2338.JPEG"
+			description="no"
+			image="{base}/IMG_2338.webp"
 		/>
 	</div>
 </div>

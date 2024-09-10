@@ -7,6 +7,8 @@
 	import background from '$lib/icons/background-svgrepo-com.svg';
 	import { fade, fly, scale, blur } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import icon from '$lib/tippecc_icon.svg';
+	import { Source } from 'ol/source';
 
 	let visible = false;
 	let carousel; // for calling methods of the carousel instance
@@ -51,11 +53,18 @@
 </script>
 
 {#if browser}
-	<div class="relative w-full grow flex h-[30rem]">
+	<div class="relative w-full grow flex h-[15rem]">
 		<div class="absolute z-30 grow flex justify-center w-full pt-2 pointer-events-none">
-			<h1 class="max-sm:text-3xl max-lg:text-4xl lg:text-4xl">Welcome to the TIPPECC project</h1>
+			<!--<h1 class="max-sm:text-3xl max-lg:text-4xl lg:text-4xl">Welcome to the TIPPECC project</h1>-->
+			<div class="flex items-center grow w-full justify-center max-h-[10rem]">
+				<div class="space-y-10 text-center flex flex-col items-center">
+					<h3 class="h3" />
+
+					<img src={icon} alt="..." />
+				</div>
+			</div>
 		</div>
-		<Carousel
+		<!--	<Carousel
 			bind:this={carousel}
 			arrows={false}
 			autoplay={true}
@@ -65,9 +74,9 @@
 		>
 			<div class="flex items-center grow w-full justify-center max-h-[30rem]">
 				<div class="space-y-10 text-center flex flex-col items-center max-h-96">
-					<!--<h2 class="h2">Welcome to the TIPPECC project</h2>-->
+
 					<h3 class="h3" />
-					<!-- Animated Logo -->
+
 					<figure>
 						<section class="img-bg" />
 						<svg
@@ -157,7 +166,7 @@
 							/></svg
 						>
 					</figure>
-					<!-- / -->
+
 				</div>
 			</div>
 			<div class="flex items-center grow w-full justify-center max-h-[30rem]">
@@ -184,7 +193,7 @@
 					alt="..."
 				/>
 			</div>
-		</Carousel>
+		</Carousel>-->
 	</div>
 {/if}
 <div class="grow flex w-full justify-center py-2 bg-primary-900/80">
@@ -214,7 +223,7 @@
 		in southern Africa, in an accessible and understandable format.
 	</blockquote>
 
-	<div class="flex pt-4">
+	<!--<div class="flex pt-4">
 		<h1 class="content-heading">Background</h1>
 		<img src={background} alt="..." width="25px" />
 	</div>
@@ -258,7 +267,7 @@
 		strategies for adaptation to selected threshold-based changes. A special focus of will be regional-scale
 		adaptation, through which SADC countries can collaborate across national boundaries to enhance their
 		collective resilience to climate change.
-	</div>
+	</div>-->
 </div>
 
 <style lang="postcss">
@@ -269,7 +278,7 @@
 	.img-bg {
 		@apply w-64 h-64 md:w-80 md:h-80;
 	}
-	.img-bg {
+	/*	.img-bg {
 		@apply absolute z-[-1] rounded-full blur-[50px] transition-all;
 		animation: pulse 5s cubic-bezier(0, 0, 0, 0.5) infinite, glow 5s linear infinite;
 	}
@@ -291,5 +300,5 @@
 		50% {
 			transform: scale(1.5);
 		}
-	}
+	}*/
 </style>
