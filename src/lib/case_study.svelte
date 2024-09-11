@@ -18,7 +18,7 @@
 		<!--<img src={image} alt="..." class="mt-2" />-->
 
 		<blockquote class="mt-1 text-sm">
-			{description}
+
 		</blockquote>
 	</div>
 {:else}
