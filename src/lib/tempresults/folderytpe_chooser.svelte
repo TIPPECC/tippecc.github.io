@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export var foldertype: string = 'water_budget';
-	var foldertypes: any[] = ['water_budget', 'water_budget_bias', 'kariba', 'vaal' ,'cmip6', 'paper', 'luanginga'];
+	var foldertypes: any[] = ['water_budget', 'water_budget_bias', 'kariba', 'vaal' ,'cmip6', 'paper', 'luanginga', 'ind_full', 'ind_slices20', 'ind_slices30'];
 
 	const dispatch = createEventDispatcher();
 
