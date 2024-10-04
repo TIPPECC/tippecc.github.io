@@ -20,13 +20,15 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	// folder_data ... filenames of the target backend folder
-	let folder_data: Array = [];
+	let folder_data: Array<Array<any>> = [];
 	let cat_folder_data: any = {};
 
 	// checked state of all folder_data_checkboxes
-	let selected_files: any;
+	let selected_files: Array<Boolean>;
 
 	$: wget_request_string = '';
+	let download_tiff = false;
+	let num_download_dropped = 0;
 
 	let query_parameter: any[] = [];
 	let geo_data: any = [];
@@ -142,9 +144,26 @@
 		const custom_url = API_URL + '/climate/select_temp_urls?type=' + foldertype;
 		let checked_boxes = [];
 
+		num_download_dropped = 0;
+
 		for (let i = 0; i < selected_files.length; i++) {
 			if (selected_files[i]) {
-				checked_boxes.push(folder_data[i][0]);
+				var f_type = folder_data[i][4];
+				var requested_filetype = folder_data[i][0].split('.').pop();
+				var requested_filename = folder_data[i][0];
+				var file_meta = folder_data[i][3];
+
+				if (download_tiff && f_type == '.nc') {
+					if (file_meta) {
+						if (!file_meta.in_size_limit) {
+							// requested file too big to convert
+							num_download_dropped += 1;
+							continue;
+						}
+					}
+					requested_filetype = 'tif';
+				}
+				checked_boxes.push([requested_filename, requested_filetype]);
 			}
 		}
 
@@ -243,9 +262,14 @@
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
+			console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
 		} catch (error) {
 			console.log('Refreshing foldercontent failed.');
 		}
+	}
+
+	function toggle_download_tiff(event) {
+		download_tiff = !download_tiff;
 	}
 
 	function toggle_folder_category(category) {
@@ -353,7 +377,15 @@
 										{#if folder_data[file_obj.index][0]
 											.toLowerCase()
 											.includes(search_term.toLowerCase())}
-											<tr class="hover:bg-slate-400">
+											<tr
+												class="hover:bg-slate-400"
+												style={download_tiff &&
+												folder_data[file_obj.index][3] &&
+												!folder_data[file_obj.index][3].in_size_limit &&
+												selected_files[file_obj.index]
+													? 'background: #000000'
+													: ''}
+											>
 												<!-- Checkbox and filename -->
 												<td class="col-span-6 w-full break-all pl-1">
 													<label
@@ -364,7 +396,6 @@
 															type="checkbox"
 															value={file_obj.index}
 															id={'checkbox_' + file_obj.index}
-															disabled={folder_data[file_obj.index][4] != '.nc'}
 															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
@@ -510,12 +541,35 @@
 			</div>
 		{/key}
 
-		<button
-			type="button"
-			class="btn bg-[#D17208] rounded-md"
-			on:click|preventDefault={handle_checkbox_submit}
-			>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
-		>
+		<div class="flex gap-x-1">
+			<button
+				type="button"
+				class="btn bg-[#D17208] rounded-md"
+				on:click|preventDefault={handle_checkbox_submit}
+				>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
+			>
+			<button
+				type="button"
+				class="btn bg-tertiary-500 hover:bg-tertiary-900 rounded-md"
+				on:click|preventDefault={toggle_download_tiff}
+				>{download_tiff ? 'Filetype .nc as .tiff' : 'Filetype .nc as .nc'}
+			</button>
+
+			<!-- TODO CHECKBOX -->
+			<!-- <label
+				for={'checkbox_' + file_obj.index}
+				title="Select for download: {folder_data[file_obj.index][0]}"
+			>
+				<input
+					type="checkbox"
+					value={file_obj.index}
+					id={'checkbox_' + file_obj.index}
+					bind:checked={selected_files[file_obj.index]}
+					on:change={on_folder_checkbox_change}
+				/>
+				&nbsp;{}
+			</label> -->
+		</div>
 	{:else}
 		<div class="flex-center">
 			<LoadingRing />
@@ -525,6 +579,10 @@
 	{#if wget_request_string.length > 0}
 		<div style="display:flex">
 			<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
+				{#if num_download_dropped > 0}
+					({num_download_dropped}) of your selected files were too big and are thus dropped from the
+					download.
+				{/if}
 				<div class="mb-2">
 					<span> To download all objects using Wget: </span>
 				</div>
