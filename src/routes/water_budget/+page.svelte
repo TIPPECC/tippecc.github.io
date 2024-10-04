@@ -204,7 +204,7 @@
 	}
 
 	function set_cat_folder_data() {
-		const filePattern = /^(.+)_v(\d+)_([^_]+)/; // Regex pattern to match filenames
+		const filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
 		cat_folder_data = {};
 		let categories: any = {};
 		categories['No Category'] = { files: [], toggled: false };
