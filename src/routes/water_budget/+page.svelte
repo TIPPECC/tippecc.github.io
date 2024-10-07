@@ -18,6 +18,7 @@
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
+	import folder_types from '$lib/tempresults/folder_types.json';
 
 	// folder_data ... filenames of the target backend folder
 	let folder_data: Array<Array<any>> = [];
@@ -223,7 +224,15 @@
 	}
 
 	function set_cat_folder_data() {
-		const filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
+		// Regex pattern to match filenames
+		let filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
+		const folder_type = folder_types.find((x) => x.key == foldertype);
+		if (folder_type && folder_type.header_regex.length > 2) {
+			filePattern = new RegExp(folder_type.header_regex.replace(/\\/g, '\\'));
+		} else {
+			console.error(`Folder type ${foldertype} not found.`);
+		}
+		console.log('filePattern', filePattern);
 		cat_folder_data = {};
 		let categories: any = {};
 		categories['No Category'] = { files: [], toggled: false };
@@ -326,7 +335,7 @@
 		<input
 			class="input w-full mt-4 p-2"
 			type="text"
-			placeholder="Filter filenames..."
+			placeholder="Type to filter filenames..."
 			bind:value={search_term}
 		/>
 	</div>
