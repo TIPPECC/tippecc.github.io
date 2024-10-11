@@ -6,6 +6,7 @@
 	import { API_URL } from '../../app.config';
 	//	import team from '../team/team.json';
 
+	// For fetching the data, it might be nessacary to use a unblock cors extension in the browser
 	/** @type {import('./$types').PageData} */
 	export let data;
 

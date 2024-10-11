@@ -168,6 +168,13 @@
 			console.log(error);
 		}
 	}
+	async function generate_dat(filename: string){
+		var api_dat = API_URL+ '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype
+		console.log(api_dat)
+		const res = await fetch(api_dat, {
+			method: 'GET'
+		});
+	}
 
 	async function try_to_access_tiff_file(filename: string, fc_index: number) {
 		// demand access to the tif file
@@ -230,6 +237,7 @@
 			delete categories['No Category'];
 		}
 		cat_folder_data = categories;
+		console.log(cat_folder_data)
 	}
 
 	async function refresh_foldercontent() {
@@ -240,6 +248,7 @@
 			var result = await _fetch_foldercontent_by_type(foldertype, false);
 
 			folder_data = result.content;
+			console.log(folder_data)
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
@@ -397,6 +406,42 @@
 																</div>
 															</a>
 														</button>
+														{#if folder_data[file_obj.index][5]}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+															<a
+																href="{API_URL}/climate/get_temp_file?name={folder_data[
+																	file_obj.index
+																][0]}&type={foldertype}&filetype=dat"
+																class="flex"
+															>
+																	<SquareCaretDown />
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		.dat
+																	</div>
+																</a>
+															</button>
+															{:else}
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																	on:click={() =>generate_dat(folder_data[
+																		file_obj.index
+																	][0])}
+																>
+																<!-- <a
+																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
+																		file_obj.index
+																	][0]}&type={foldertype}"
+																	class="flex"
+																> -->
+																		<CircleQuestion  />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.dat
+																		</div>
+																	<!-- </a> -->
+																</button>
+															{/if}
 														{#if !folder_data[file_obj.index][3] || (folder_data[file_obj.index][3]['tif_convertable'] && !folder_data[file_obj.index][3]['tif_cached'])}
 															<!-- CASE 1: Try to generate tif. -->
 															<button
