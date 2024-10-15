@@ -20,9 +20,39 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
 
+	type FileinfoFormat = {
+		fileversion: string;
+		in_size_limit: boolean;
+		num_bands: number;
+		tif_cached: boolean;
+		tif_convertable: boolean;
+	};
+
+	type FilerowFormat = {
+		creation_date: string;
+		fileinfo: FileinfoFormat;
+		filename: string;
+		filesize: string;
+		filesuffix: string;
+	};
+
+	type CatfilesItem = {
+		filename: string;
+		index: number;
+	};
+
+	type CatfolderItem = {
+		files: Array<CatfilesItem>;
+		toggled: boolean;
+	};
+
+	interface CatFormat {
+		[key: string]: CatfolderItem;
+	}
+
 	// folder_data ... filenames of the target backend folder
-	let folder_data: Array<Array<any>> = [];
-	let cat_folder_data: any = {};
+	let folder_data: Array<FilerowFormat> = [];
+	let cat_folder_data: CatFormat = {};
 
 	// checked state of all folder_data_checkboxes
 	let selected_files: Array<Boolean>;
@@ -49,7 +79,7 @@
 
 	onMount(() => {
 		if (browser) {
-			tempresult_selection.subscribe((value) => {});
+			tempresult_selection.subscribe((_value: any) => {});
 		}
 	});
 
@@ -98,7 +128,7 @@
 	function filter_folder_data() {
 		//folder_data.filter(( /** @type {(string | string[])[]} */ data) => data[0].includes(search_term));
 		const folder_data_new = Object.values(folder_data).filter((item) =>
-			item[0].includes(search_term)
+			item['filename'].includes(search_term)
 		);
 		folder_data = folder_data_new;
 	}
@@ -149,10 +179,10 @@
 
 		for (let i = 0; i < selected_files.length; i++) {
 			if (selected_files[i]) {
-				var f_type = folder_data[i][4];
-				var requested_filetype = folder_data[i][0].split('.').pop();
-				var requested_filename = folder_data[i][0];
-				var file_meta = folder_data[i][3];
+				var f_type = folder_data[i]['filesuffix'];
+				var requested_filetype = folder_data[i]['filename'].split('.').pop();
+				var requested_filename = folder_data[i]['filename'];
+				var file_meta = folder_data[i]['fileinfo'];
 
 				if (download_tiff && f_type == '.nc') {
 					if (file_meta) {
@@ -197,20 +227,20 @@
 		});
 
 		if (!res.ok) {
-			if (!folder_data[fc_index][3]) {
-				folder_data[fc_index][3] = {};
+			if (!folder_data[fc_index]['fileinfo']) {
+				folder_data[fc_index]['fileinfo'] = {};
 			}
-			folder_data[fc_index][3]['tif_cached'] = false;
-			folder_data[fc_index][3]['tif_convertable'] = false;
+			folder_data[fc_index]['fileinfo']['tif_cached'] = false;
+			folder_data[fc_index]['fileinfo']['tif_convertable'] = false;
 			folder_data = [...folder_data];
 
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		} else {
-			if (!folder_data[fc_index][3]) {
-				folder_data[fc_index][3] = {};
+			if (!folder_data[fc_index]['fileinfo']) {
+				folder_data[fc_index]['fileinfo'] = {};
 			}
-			folder_data[fc_index][3]['tif_cached'] = true;
+			folder_data[fc_index]['fileinfo']['tif_cached'] = true;
 			folder_data = [...folder_data];
 		}
 	}
@@ -238,7 +268,7 @@
 		categories['No Category'] = { files: [], toggled: false };
 
 		for (let x = 0; x < folder_data.length; x++) {
-			var filename: string = folder_data[x][0];
+			var filename: string = folder_data[x]['filename'];
 			const match = filename.match(filePattern);
 
 			if (match && match.length >= 3) {
@@ -277,11 +307,11 @@
 		}
 	}
 
-	function toggle_download_tiff(event) {
+	function toggle_download_tiff(_event: any) {
 		download_tiff = !download_tiff;
 	}
 
-	function toggle_folder_category(category) {
+	function toggle_folder_category(category: string) {
 		cat_folder_data[category].toggled = !cat_folder_data[category].toggled;
 	}
 
@@ -383,14 +413,14 @@
 								</thead>
 								<tbody>
 									{#each cat_obj.files as file_obj}
-										{#if folder_data[file_obj.index][0]
+										{#if folder_data[file_obj.index]['filename']
 											.toLowerCase()
 											.includes(search_term.toLowerCase())}
 											<tr
 												class="hover:bg-slate-400"
 												style={download_tiff &&
-												folder_data[file_obj.index][3] &&
-												!folder_data[file_obj.index][3].in_size_limit &&
+												folder_data[file_obj.index]['fileinfo'] &&
+												!folder_data[file_obj.index]['fileinfo']['in_size_limit'] &&
 												selected_files[file_obj.index]
 													? 'background: #000000'
 													: ''}
@@ -399,7 +429,7 @@
 												<td class="col-span-6 w-full break-all pl-1">
 													<label
 														for={'checkbox_' + file_obj.index}
-														title="Select for download: {folder_data[file_obj.index][0]}"
+														title="Select for download: {folder_data[file_obj.index]['filename']}"
 													>
 														<input
 															type="checkbox"
@@ -408,28 +438,31 @@
 															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
-														&nbsp;{folder_data[file_obj.index][0].replace(folder_cat, '... ')}
+														&nbsp;{folder_data[file_obj.index]['filename'].replace(
+															folder_cat,
+															'... '
+														)}
 													</label>
 												</td>
 												<!-- filesize -->
 												<td>
-													{folder_data[file_obj.index][1]}
+													{folder_data[file_obj.index]['filesize']}
 												</td>
 												<!-- creation date -->
 												<td>
-													{folder_data[file_obj.index][2]}
+													{folder_data[file_obj.index]['creation_date']}
 												</td>
 												<!-- download link -->
 												<td class="min-w-[122px]">
 													<div class="flex">
-														{#if folder_data[file_obj.index][4] == '.nc'}
+														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
 																		file_obj.index
-																	][0]}&type={foldertype}&filetype=nc"
+																	]['filename']}&type={foldertype}&filetype=nc"
 																	class="flex"
 																>
 																	<SquareCaretDown />
@@ -438,13 +471,13 @@
 																	</div>
 																</a>
 															</button>
-															{#if !folder_data[file_obj.index][3] || (folder_data[file_obj.index][3]['tif_convertable'] && !folder_data[file_obj.index][3]['tif_cached'])}
+															{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
 																	on:click={() =>
 																		try_to_access_tiff_file(
-																			folder_data[file_obj.index][0],
+																			folder_data[file_obj.index]['filename'],
 																			file_obj.index
 																		)}
 																>
@@ -455,7 +488,7 @@
 																		.tif
 																	</div>
 																</button>
-															{:else if folder_data[file_obj.index][3]['tif_cached']}
+															{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
 																<!-- CASE 2: Tif file exists. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -463,7 +496,7 @@
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
-																		][0]}&type={foldertype}&filetype=tif"
+																		]['filename']}&type={foldertype}&filetype=tif"
 																		class="flex"
 																	>
 																		<SquareCaretDown />
@@ -486,12 +519,12 @@
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
 																		file_obj.index
-																	][0]}&type={foldertype}&filetype=dat"
+																	]['filename']}&type={foldertype}&filetype=dat"
 																	class="flex"
 																>
 																	<SquareCaretDown />
 																	<div class="ml-1 flex place-items-center justify-items-center">
-																		{folder_data[file_obj.index][4]}
+																		{folder_data[file_obj.index]['filesuffix']}
 																	</div>
 																</a>
 															</button>
@@ -499,15 +532,15 @@
 													</div>
 												</td>
 												<td class="min-w-[86px] max-w-[86px]">
-													{#if folder_data[file_obj.index][4] == '.nc'}
+													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 														<!-- num bands (we could use basically any metadata from database/file here) -->
-														{#if !folder_data[file_obj.index][3] || (folder_data[file_obj.index][3]['tif_convertable'] && !folder_data[file_obj.index][3]['tif_cached'])}
+														{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 															<!-- CASE 1: No data on the file. Try to generate tif. -->
 															<button
 																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
 																on:click={() =>
 																	try_to_access_tiff_file(
-																		folder_data[file_obj.index][0],
+																		folder_data[file_obj.index]['filename'],
 																		file_obj.index
 																	)}
 															>
@@ -518,11 +551,12 @@
 																	Fetch
 																</div>
 															</button>
-														{:else if folder_data[file_obj.index][3]['tif_cached']}
+														{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
 															<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 															<button
 																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
-																on:click={() => jump_to_vis(folder_data[file_obj.index][0])}
+																on:click={() =>
+																	jump_to_vis(folder_data[file_obj.index]['filename'])}
 															>
 																<Earth />
 																<div
@@ -567,7 +601,7 @@
 			<!-- TODO CHECKBOX -->
 			<!-- <label
 				for={'checkbox_' + file_obj.index}
-				title="Select for download: {folder_data[file_obj.index][0]}"
+				title="Select for download: {folder_data[file_obj.index]['filename']}"
 			>
 				<input
 					type="checkbox"
