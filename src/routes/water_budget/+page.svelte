@@ -498,7 +498,7 @@
 															</button>
 															{:else}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																	class="mr-1 max-h-[3px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
 																	on:click={() =>generate_dat(folder_data[
 																		file_obj.index
 																	]['filename'])}
@@ -509,10 +509,7 @@
 																	][0]}&type={foldertype}"
 																	class="flex"
 																> -->
-																		<CircleQuestion  />
-																		<div class="ml-1 flex place-items-center justify-items-center">
-																			.dat
-																		</div>
+																		
 																	<!-- </a> -->
 																</button>
 															{/if}
