@@ -477,8 +477,8 @@
 		>
 			{#if folder_data}
 				{#each folder_data as file_entry}
-					<option value={file_entry[0]}>
-						{file_entry[0]}
+					<option value={file_entry['filename']}>
+						{file_entry['filename']}
 					</option>
 				{/each}
 			{/if}
