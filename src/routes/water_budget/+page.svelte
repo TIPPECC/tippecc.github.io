@@ -34,6 +34,7 @@
 		filename: string;
 		filesize: string;
 		filesuffix: string;
+		dat_exists: boolean;
 	};
 
 	type CatfilesItem = {
@@ -122,6 +123,14 @@
 			console.log(error);
 			return [];
 		}
+	}
+
+	async function generate_dat(filename: string){
+		var api_dat = API_URL+ '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype
+		console.log(api_dat)
+		const res = await fetch(api_dat, {
+			method: 'GET'
+		});
 	}
 
 	let search_term = '';
@@ -471,6 +480,42 @@
 																	</div>
 																</a>
 															</button>
+															{#if folder_data[file_obj.index]['dat_exists']}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+															<a
+																href="{API_URL}/climate/get_temp_file?name={folder_data[
+																	file_obj.index
+																]['filename']}&type={foldertype}&filetype=dat"
+																class="flex"
+															>
+																	<SquareCaretDown />
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		.dat
+																	</div>
+																</a>
+															</button>
+															{:else}
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																	on:click={() =>generate_dat(folder_data[
+																		file_obj.index
+																	]['filename'])}
+																>
+																<!-- <a
+																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
+																		file_obj.index
+																	][0]}&type={foldertype}"
+																	class="flex"
+																> -->
+																		<CircleQuestion  />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.dat
+																		</div>
+																	<!-- </a> -->
+																</button>
+															{/if}
 															{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
