@@ -99,14 +99,14 @@
 
 		try {
 			const res = await fetch(url + query);
-			console.log(res);
+			// console.log(res);
 			let result = [];
 			if (!res.ok) {
 				throw new Error(`${res.status} ${res.statusText}`);
 			}
 
 			result = await res.json();
-			console.log('result', result);
+			// console.log('result', result);
 			if (result.hasOwnProperty('hits')) {
 				geo_data['hits'] = result.hits;
 			}
@@ -165,8 +165,6 @@
 	}
 
 	function expand_all_categories() {
-		console.log('expand_all_categories');
-
 		for (const [key, value] of Object.entries(cat_folder_data)) {
 			cat_folder_data[key].toggled = true;
 		}
@@ -272,9 +270,9 @@
 		if (folder_type && folder_type.header_regex.length > 2) {
 			filePattern = new RegExp(folder_type.header_regex.replace(/\\/g, '\\'));
 		} else {
-			console.error(`Folder type ${foldertype} not found.`);
+			// console.error(`Folder type ${foldertype} not found.`);
 		}
-		console.log('filePattern', filePattern);
+		console.log('filePattern: ', filePattern);
 		cat_folder_data = {};
 		let categories: any = {};
 		categories['No Category'] = { files: [], toggled: false };
@@ -317,7 +315,7 @@
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
-			console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
+			// console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
 		} catch (error) {
 			console.log('Refreshing foldercontent failed.');
 		}

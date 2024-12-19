@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { API_URL } from '../../app.config';
 	// import * as GeoTIFF_JS from 'geotiff';
-	import ColorGradientPicker from '$lib/ColorGradientPicker.svelte';
+	import CustomGradientPicker from '$lib/CustomGradientPicker.svelte';
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
 	import { browser } from '$app/environment';
 	import FoldertypeChooser from './folderytpe_chooser.svelte';
@@ -16,6 +16,7 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
+	let time_interval_mode = 0; // 0 .. years, 1 .. months, 2 .. days
 
 	let metadata_loaded: boolean = false;
 	let loading_map: boolean = false;
@@ -34,8 +35,9 @@
 	let slider_index_diff: any;
 	let selected_band: number = 1;
 	let selected_band_diff: number = 1;
-	let current_metadata: any = {};
+	let file_metadata: any = {};
 	let band_slider_values: any[] = [];
+	let band_slider_dates: any[] = [];
 
 	let map: Map;
 	let diff_mode: boolean = false;
@@ -56,10 +58,7 @@
 		max: 0
 	};
 
-	let cg_picker: ColorGradientPicker;
-	let color_steps: any;
-
-	$: color_steps, rebuild_map();
+	let cg_picker: CustomGradientPicker;
 
 	let opacity_value = 1.0;
 
@@ -68,12 +67,6 @@
 			return;
 		}
 		layer.setOpacity(opacity_value);
-	}
-
-	function rebuild_map() {
-		if (!color_steps) {
-			return;
-		}
 	}
 
 	onMount(() => {
@@ -148,22 +141,125 @@
 	}
 
 	function refresh_band_metadata() {
-		var band_metadata = current_metadata.band_metadata;
+		var band_metadata = file_metadata['bands'];
 		current_band_metainfo.min = band_metadata[selected_band].min;
 		current_band_metainfo.max = band_metadata[selected_band].max;
 		set_color_bounds();
 	}
 
 	function refresh_dif_band_metadata() {
-		var band_metadata = current_metadata.band_metadata;
+		var band_metadata = file_metadata['bands'];
 		current_diff_band_metainfo.min = band_metadata[selected_band_diff].min;
 		current_diff_band_metainfo.max = band_metadata[selected_band_diff].max;
 		set_color_bounds();
 	}
 
+	async function evaluate_file_metadata() {
+		// check keys
+		if (
+			!file_metadata.bands ||
+			!file_metadata.NETCDF_DIM_time_VALUES ||
+			!file_metadata['time#units']
+		) {
+			loading_map = false;
+			throw new Error('Missing key-value pairs on metadata response object!');
+		}
+
+		// assign band_metadata and read net_cdf_times
+		var band_metadata = file_metadata.bands;
+		try {
+			var net_cdf_times = file_metadata.NETCDF_DIM_time_VALUES;
+		} catch (error) {
+			console.log(`Could not parse net_cdf_times found in file metadata:\n ${error}`);
+		}
+
+		// console.log("net_cdf_times: ", net_cdf_times);
+		// console.log("Type net_cdf_times: ", typeof(net_cdf_times));
+
+		// console.log("MIN: ", band_metadata[selected_band].min)
+		// console.log("MAX: ", band_metadata[selected_band].max)
+
+		// read minimum and maximum from metadata
+		try {
+			var meta_min = parseFloat(band_metadata[selected_band].min);
+			var meta_max = parseFloat(band_metadata[selected_band].max);
+
+			if (isNaN(meta_min) || isNaN(meta_max)) {
+				loading_map = false;
+				throw new Error('Meta_min or Meta_max evaluated to NaN.');
+			}
+
+			current_band_metainfo.min = meta_min;
+			current_band_metainfo.max = meta_max;
+		} catch (error) {
+			console.log(
+				`Could not parse meta_min ${band_metadata[selected_band].min} or meta_max ${band_metadata[selected_band].max}.`
+			);
+			console.log(`Reason: ${error}`);
+		}
+
+		current_band_metainfo.min = band_metadata[selected_band].min;
+		current_band_metainfo.max = band_metadata[selected_band].max;
+
+		// read timestamp and calculated values for the bandslider
+		band_slider_values = [];
+
+		var timestamp_begin = file_metadata['time#units'];
+
+		var timestamp_data = timestamp_begin.split(' ');
+		// start date of the metadata timestamp in milliseconds
+		var start_date = NaN;
+		for (var i = 0; i < timestamp_data.length; i++) {
+			start_date = Date.parse(timestamp_data[i]);
+			if (!isNaN(start_date)) {
+				break;
+			}
+		}
+
+		if (isNaN(start_date)) {
+			console.log('Could not parse metadata timestamp.');
+			timestamp_begin = '';
+			throw new Error('Metadata timestamp is invalid.');
+		}
+
+		try {
+			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
+			if (last_date > 365.0) {
+				time_interval_mode = 0;
+			} else {
+				time_interval_mode = 1;
+			}
+			if (timestamp_begin == '') {
+				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					band_slider_values.push(parseFloat(net_cdf_times[i]));
+				}
+			} else {
+				// valid timestamp -> calculate years (for now) and assign to bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					if (time_interval_mode == 0) {
+						band_slider_values.push(
+							new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
+						);
+					} else if (time_interval_mode == 1) {
+						band_slider_values.push(
+							new Date(
+								start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
+							).toLocaleDateString()
+						);
+					}
+
+					band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+				}
+			}
+		} catch (error) {
+			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		}
+	}
+
 	async function file_selected(e?) {
 		// when a file is selected, we usually want to reset everything
-		console.log('Selected file: ', selected_file);
+		// console.log('Selected file: ', selected_file);
 		metadata_loaded = false;
 		loading_map = true;
 
@@ -209,91 +305,19 @@
 			throw new Error('No metadata on the current metadata response.');
 		}
 
-		current_metadata = meta_result.metadata;
-		// console.log("Current Metadata: ", current_metadata);
+		file_metadata = meta_result.metadata;
+		evaluate_file_metadata();
 
-		// check keys
-		if (
-			!current_metadata.band_metadata ||
-			!current_metadata.net_cdf_times ||
-			!current_metadata.timestamp_begin
-		) {
-			loading_map = false;
-			throw new Error('Missing key-value pairs on metadata response object!');
-		}
-
-		// assign band_metadata and read net_cdf_times
-		var band_metadata = current_metadata.band_metadata;
-		try {
-			var net_cdf_times = JSON.parse(current_metadata.net_cdf_times);
-		} catch (error) {
-			console.log(`Could not parse net_cdf_times found in current_metadata:\n ${error}`);
-		}
-
-		// console.log("net_cdf_times: ", net_cdf_times);
-		// console.log("Type net_cdf_times: ", typeof(net_cdf_times));
-
-		// console.log("MIN: ", band_metadata[selected_band].min)
-		// console.log("MAX: ", band_metadata[selected_band].max)
-
-		// read minimum and maximum from metadata
-		try {
-			var meta_min = parseFloat(band_metadata[selected_band].min);
-			var meta_max = parseFloat(band_metadata[selected_band].max);
-
-			if (isNaN(meta_min) || isNaN(meta_max)) {
-				loading_map = false;
-				throw new Error('Meta_min or Meta_max evaluated to NaN.');
-			}
-
-			current_band_metainfo.min = meta_min;
-			current_band_metainfo.max = meta_max;
-		} catch (error) {
-			console.log(
-				`Could not parse meta_min ${band_metadata[selected_band].min} or meta_max ${band_metadata[selected_band].max}.`
-			);
-			console.log(`Reason: ${error}`);
-		}
-
-		current_band_metainfo.min = band_metadata[selected_band].min;
-		current_band_metainfo.max = band_metadata[selected_band].max;
-
-		// read timestamp and calculated values for the bandslider
-		band_slider_values = [];
-
-		// start date of the metadata timestamp in milliseconds
-		const start_date = Date.parse(current_metadata.timestamp_begin);
-
-		if (isNaN(start_date)) {
-			// console.log("Could not parse metadata timestamp.")
-			current_metadata.timestamp_begin = '';
-			// throw new Error('Metadata timestamp is invalid.');
-		}
-
-		try {
-			if (current_metadata.timestamp_begin == '') {
-				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(parseFloat(net_cdf_times[i]));
-				}
-			} else {
-				// valid timestamp -> calculate years (for now) and assign to bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(
-						new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
-					);
-				}
-			}
-		} catch (error) {
-			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
-		}
-
-		// set ColorGradientPicker bounds to file metadata min and max
+		// set CustomGradientPicker bounds to file metadata min and max
 		cg_picker.set_bounds(current_band_metainfo.min, current_band_metainfo.max);
 
 		// assign direct file url
 		selected_tif_url = result.filedata.route;
 		// console.log("Fetching route for file: \n", selected_tif_url);
+
+		// TEST
+		metadata_loaded = true;
+		loading_map = false;
 
 		// fetch the full file with geotiff
 		fetch_file_as_blob(selected_tif_url)
@@ -408,8 +432,18 @@
 
 		const layerinfo = info;
 
+		console.log('TRYING VIZ');
 		// build a color object for openlayers based on the current configuration
-		const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops(), layerinfo);
+
+		// console.log("CG_STOPS: \n", cg_picker.get_color_stops());
+		// const color_thing = generate_openlayers_case_stops(cg_picker.get_color_stops(), layerinfo);
+
+		console.log('CG_STOPS: \n', cg_picker.get_color_boundaries('rgb'));
+		const color_thing = generate_openlayers_case_stops(
+			cg_picker.get_color_boundaries('rgb'),
+			layerinfo
+		);
+		console.log('GENERATED STOPS: \n', color_thing);
 
 		// create new layer, with the newly created source and style
 		layer = new TileLayer({
@@ -527,6 +561,7 @@
 			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 				<CustomSliderPicker
 					valMap={band_slider_values}
+					dateMap={band_slider_dates}
 					bind:slider_value
 					bind:slider_index
 					on:slider_changed={on_slider_change}
@@ -547,6 +582,7 @@
 				<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 					<CustomSliderPicker
 						valMap={band_slider_values}
+						dateMap={band_slider_dates}
 						bind:slider_value={slider_value_diff}
 						bind:slider_index={slider_index_diff}
 						on:slider_changed={on_dif_slider_change}
@@ -560,7 +596,7 @@
 				<h2>Single layer metadata</h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
-				<div id="band_timestamp">Start: {current_metadata.timestamp_begin}</div>
+				<div id="band_timestamp">Start: {file_metadata['time#units']}</div>
 			</div>
 		</div>
 	{/if}
@@ -568,10 +604,12 @@
 
 <div class={horizontal_scala ? '' : 'flex'}>
 	<div class="flex justify-center items-center">
-		<ColorGradientPicker
+		<CustomGradientPicker
+			bind:cmin_real={current_band_metainfo.min}
+			bind:cmax_real={current_band_metainfo.max}
 			bind:this={cg_picker}
-			bind:color_steps
 			bind:horizontal={horizontal_scala}
+			init_color_scheme="prec_div"
 			on:color_stops_changed={color_stops_changes_helper}
 		/>
 	</div>

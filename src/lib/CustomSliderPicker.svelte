@@ -5,6 +5,7 @@
 	const dispatch = createEventDispatcher();
 	// Define custom slider steps
 	export let valMap: any[];
+	export let dateMap: any[];
 	export let onSliderChangeFunction = onSliderChange;
 	// const valMap = [0, 1, 3, 5, 10, 15, 20, 30, 50];
 
@@ -109,7 +110,7 @@
 			{#each valMap as val, idx}
 				{#if visible_value_ids.includes(idx) || idx == valMap.length - 1}
 					<div
-						class="top-[-20px] translate-x-[-50%] absolute"
+						class="top-[-20px] translate-x-[-50%] absolute flex select-none"
 						style="left: {(idx / (valMap.length - 1)) * 100}%"
 					>
 						{val}
@@ -118,7 +119,7 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-1 place-items-center">
-			Value: {valMap[slider_index]} || Band: {slider_index}
+			Value: {new Date(dateMap[slider_index]).toDateString()} || Band: {slider_index}
 		</div>
 	</div>
 {/if}
