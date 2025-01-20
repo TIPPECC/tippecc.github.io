@@ -3,8 +3,14 @@
 	import folder_types from './folder_types.json';
 
 	export var foldertype: string = 'water_budget';
-	var foldertypes: { key: string; display_name: string; description: string; citation: string; header_regex: string; lineage: string}[] = folder_types
-
+	var foldertypes: {
+		key: string;
+		display_name: string;
+		description: string;
+		citation: string;
+		header_regex: string;
+		lineage: string;
+	}[] = folder_types;
 
 	const dispatch = createEventDispatcher();
 
@@ -38,6 +44,12 @@
 		{/each}
 	</div>
 </div>
-<div class="text-sm m-2">{foldertypes.find((x) => x.key == foldertype)?.description ?? 'No description available'}</div>
-<div class="text-sm m-2">{foldertypes.find((x) => x.key == foldertype)?.lineage ?? 'No lineage available'}</div>
-<div class="text-sm m-2">{foldertypes.find((x) => x.key == foldertype)?.citation ?? 'No citation available'}</div>
+<div class="text-sm m-2">
+	{foldertypes.find((x) => x.key == foldertype)?.description ?? 'No description available'}
+</div>
+<div class="text-sm m-2">
+	{foldertypes.find((x) => x.key == foldertype)?.lineage ?? 'No lineage available'}
+</div>
+<div class="text-sm m-2">
+	{foldertypes.find((x) => x.key == foldertype)?.citation ?? 'No citation available'}
+</div>

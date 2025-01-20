@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { API_URL } from '../../app.config';
-	import { _fetch_foldercontent_by_type } from '$lib/fetch_folder_content';
+	import {
+		_fetch_foldercontent_by_type,
+		_fetch_foldercontent_force_update
+	} from '$lib/fetch_folder_content';
 	import { browser } from '$app/environment';
 	import { tempresult_selection } from '../store/tempresult_store';
 	import { goto } from '$app/navigation';
@@ -85,7 +88,7 @@
 	});
 
 	onMount(() => {
-		refresh_foldercontent();
+		refresh_foldercontent(false);
 	});
 
 	async function send_query() {
@@ -96,14 +99,14 @@
 
 		try {
 			const res = await fetch(url + query);
-			console.log(res);
+			// console.log(res);
 			let result = [];
 			if (!res.ok) {
 				throw new Error(`${res.status} ${res.statusText}`);
 			}
 
 			result = await res.json();
-			console.log('result', result);
+			// console.log('result', result);
 			if (result.hasOwnProperty('hits')) {
 				geo_data['hits'] = result.hits;
 			}
@@ -125,9 +128,9 @@
 		}
 	}
 
-	async function generate_dat(filename: string){
-		var api_dat = API_URL+ '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype
-		console.log(api_dat)
+	async function generate_dat(filename: string) {
+		var api_dat = API_URL + '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype;
+		console.log(api_dat);
 		const res = await fetch(api_dat, {
 			method: 'GET'
 		});
@@ -162,8 +165,6 @@
 	}
 
 	function expand_all_categories() {
-		console.log('expand_all_categories');
-
 		for (const [key, value] of Object.entries(cat_folder_data)) {
 			cat_folder_data[key].toggled = true;
 		}
@@ -269,9 +270,9 @@
 		if (folder_type && folder_type.header_regex.length > 2) {
 			filePattern = new RegExp(folder_type.header_regex.replace(/\\/g, '\\'));
 		} else {
-			console.error(`Folder type ${foldertype} not found.`);
+			// console.error(`Folder type ${foldertype} not found.`);
 		}
-		console.log('filePattern', filePattern);
+		console.log('filePattern: ', filePattern);
 		cat_folder_data = {};
 		let categories: any = {};
 		categories['No Category'] = { files: [], toggled: false };
@@ -299,18 +300,22 @@
 		cat_folder_data = categories;
 	}
 
-	async function refresh_foldercontent() {
+	async function refresh_foldercontent(force_update = false) {
 		folder_data = {};
 		// only_convertable false fetches all files
 
 		try {
-			var result = await _fetch_foldercontent_by_type(foldertype, false);
+			if (force_update) {
+				var result = await _fetch_foldercontent_force_update(foldertype, false);
+			} else {
+				var result = await _fetch_foldercontent_by_type(foldertype, false);
+			}
 
 			folder_data = result.content;
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
-			console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
+			// console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
 		} catch (error) {
 			console.log('Refreshing foldercontent failed.');
 		}
@@ -334,7 +339,15 @@
 			<FolderTree />
 		</div>
 	</div>
-	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
+	<FoldertypeChooser bind:foldertype on:foldertype_changed={() => refresh_foldercontent(false)} />
+	<div>
+		<button
+			class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+			on:click={() => refresh_foldercontent(true)}
+		>
+			Force Update
+		</button>
+	</div>
 	<div class="flex gap-4 mt-2 p-2">
 		<div>
 			<button
@@ -481,35 +494,34 @@
 																</a>
 															</button>
 															{#if folder_data[file_obj.index]['dat_exists']}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-															<a
-																href="{API_URL}/climate/get_temp_file?name={folder_data[
-																	file_obj.index
-																]['filename']}&type={foldertype}&filetype=dat"
-																class="flex"
-															>
-																	<SquareCaretDown />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		.dat
-																	</div>
-																</a>
-															</button>
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																>
+																	<a
+																		href="{API_URL}/climate/get_temp_file?name={folder_data[
+																			file_obj.index
+																		]['filename']}&type={foldertype}&filetype=dat"
+																		class="flex"
+																	>
+																		<SquareCaretDown />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.dat
+																		</div>
+																	</a>
+																</button>
 															{:else}
 																<button
 																	class="mr-1 max-h-[3px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
-																	on:click={() =>generate_dat(folder_data[
-																		file_obj.index
-																	]['filename'])}
+																	on:click={() =>
+																		generate_dat(folder_data[file_obj.index]['filename'])}
 																>
-																<!-- <a
+																	<!-- <a
 																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
 																		file_obj.index
 																	][0]}&type={foldertype}"
 																	class="flex"
 																> -->
-																		
+
 																	<!-- </a> -->
 																</button>
 															{/if}
