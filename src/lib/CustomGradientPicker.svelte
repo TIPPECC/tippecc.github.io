@@ -58,10 +58,12 @@
 	let steps = 21;
 	let input_steps = 21;
 
-	export let cmin = -100;
-	export let cmax = 100;
-	export let cmin_real = -100;
-	export let cmax_real = 100;
+	export let cmin = -100; // value steps minimum
+	export let cmax = 100; // value steps maximum
+	export let cmin_real = -100; // real data minimum
+	export let cmax_real = 100; // real data maximum
+	let custom_min = 0.0;
+	let custom_max = 0.0;
 	export let show_in_bounds = false;
 	export let horizontal = true;
 
@@ -149,24 +151,47 @@
 		}
 	}
 
+	/**
+	 * Sets cmin_real, cmax_real and updates color- and value-stops. Used from
+	 * outside of the component.
+	 * @param min
+	 * @param max
+	 */
+	export function set_bounds_real(min: number, max: number, trigger_update: boolean = false) {
+		cmin_real = min;
+		cmax_real = max;
+
+		var abs_max = Math.max(Math.abs(cmin_real), Math.abs(cmax_real));
+		cmin = -abs_max;
+		cmax = abs_max;
+
+		if (trigger_update) {
+			update_color_and_value_steps();
+		}
+	}
+
 	function set_custom_max(e: Event) {
 		if (!e.target) {
 			return;
 		}
 
-		try {
-			const target = e.target as HTMLInputElement;
-			var custom_max = Math.abs(parseFloat(target.value));
+		const target = e.target as HTMLInputElement;
+		var helper = Math.abs(parseFloat(target.value));
 
-			if (isNaN(custom_max)) {
-				throw new Error('NaN value entered as custom abs max.');
-			}
-
-			cmax = custom_max;
-
+		if (isNaN(helper)) {
+			custom_max = 0.0;
 			update_color_and_value_steps();
-		} catch (error) {
-			console.log(error);
+			return;
+		}
+
+		if (Math.abs(helper) >= 0.01) {
+			custom_max = Math.abs(helper);
+			update_color_and_value_steps();
+			return;
+		} else {
+			custom_max = 0.0;
+			update_color_and_value_steps();
+			return;
 		}
 	}
 
@@ -175,19 +200,23 @@
 			return;
 		}
 
-		try {
-			const target = e.target as HTMLInputElement;
-			var custom_min = parseFloat(target.value);
+		const target = e.target as HTMLInputElement;
+		var helper = parseFloat(target.value);
 
-			if (isNaN(custom_min)) {
-				throw new Error('NaN value entered as custom abs max.');
-			}
-
-			cmin = custom_min;
-
+		if (isNaN(helper)) {
+			custom_min = 0.0;
 			update_color_and_value_steps();
-		} catch (error) {
-			console.log(error);
+			return;
+		}
+
+		if (-1 * Math.abs(helper) <= -0.01) {
+			custom_min = -1 * Math.abs(helper);
+			update_color_and_value_steps();
+			return;
+		} else {
+			custom_min = 0.0;
+			update_color_and_value_steps();
+			return;
 		}
 	}
 
@@ -280,7 +309,6 @@
 			// console.log("RGB FORMAT")
 			for (let i = 0; i < steps; i++) {
 				stops[i * 2] = [value_steps[i], value_steps[i + 1]];
-				console.log(h2r(color_steps[i]), ' ', color_steps[i]);
 				stops[i * 2 + 1] = h2r(color_steps[i]);
 			}
 		} /** hex */ else {
@@ -290,8 +318,6 @@
 				stops[i * 2 + 1] = color_steps[i];
 			}
 		}
-
-		console.log('LOOOOOOOOOOL');
 
 		return stops;
 	}
@@ -343,16 +369,6 @@
 	 * Dispatches 'color_stops_changed' event.
 	 */
 	function update_color_and_value_steps() {
-		console.log(
-			'cmin: ',
-			cmin,
-			' cmax: ',
-			cmax,
-			' cmin_real: ',
-			cmin_real,
-			' cmax_real: ',
-			cmax_real
-		);
 		if (data_mode == 'divergent') {
 			update_color_steps_div();
 			update_value_steps_div();
@@ -427,13 +443,35 @@
 	 * Evenly distributed between the abs_max in -/+ direction.
 	 */
 	function update_value_steps_div() {
+		if (cmin > cmax) return;
+
+		var lower_l = 0.0;
+		var upper_l = 0.0;
+
+		if (custom_min <= -0.01) {
+			lower_l = custom_min;
+		} else {
+			lower_l = cmin;
+		}
+
+		if (custom_max >= 0.01) {
+			upper_l = custom_max;
+		} else {
+			upper_l = cmax;
+		}
+
 		value_steps = [];
 
-		value_steps = [...value_steps, cmin];
-		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, cmin + i * ((cmax - cmin) / steps)];
+		var step_half = Math.floor(steps / 2);
+		value_steps = [...value_steps, lower_l];
+		for (let i = 1; i < step_half; i++) {
+			value_steps = [...value_steps, lower_l + i * (Math.abs(lower_l) / step_half)];
 		}
-		value_steps = [...value_steps, cmax];
+		value_steps = [...value_steps, 0.0];
+		for (let j = 1; j < step_half + 1; j++) {
+			value_steps = [...value_steps, j * (Math.abs(upper_l) / (step_half + 1))];
+		}
+		value_steps = [...value_steps, upper_l];
 	}
 
 	/**
@@ -563,7 +601,9 @@
 						<div class="flex {horizontal ? 'md:mr-1 max-md:mb-1' : 'mb-1'}">
 							{#if show_in_bounds}
 								<button
-									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
+									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 {horizontal
+										? 'h-[28px]'
+										: ''}"
 									on:click={() => {
 										show_in_bounds = !show_in_bounds;
 									}}
@@ -572,7 +612,9 @@
 								</button>
 							{:else}
 								<button
-									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
+									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 {horizontal
+										? 'h-[28px]'
+										: ''}"
 									on:click={() => {
 										show_in_bounds = !show_in_bounds;
 									}}
@@ -583,42 +625,26 @@
 						</div>
 
 						<!--Verticality-->
-						<!-- <div class="flex-1 {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
-					{#if horizontal}
-						<button
-							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
-							on:click={() => {
-								horizontal = !horizontal;
-							}}
-							title="Switch to horizontal legend layout"
-							>Horizontal
-						</button>
-					{:else}
-						<button
-							class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
-							on:click={() => {
-								horizontal = !horizontal;
-							}}
-							title="Switch to vertical legend layout"
-							>Vertical
-						</button>
-					{/if}
-				</div> -->
-
-						<!--Custom Max-->
-						<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
-							<nobr>
-								<label
-									for="custom_bounds_input"
-									class="flex variant-outline-tertiary p-1"
-									title="Set custom maximum bound">Custom Max:</label
-								>
-							</nobr>
-							<input
-								id="custom_bounds_input"
-								class="flex-1 text-black ml-1 max-w-[96px] pl-1"
-								on:change={set_custom_max}
-							/>
+						<div class="flex-1 {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
+							{#if horizontal}
+								<button
+									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 h-[28px]"
+									on:click={() => {
+										horizontal = !horizontal;
+									}}
+									title="Switch to horizontal legend layout"
+									>Horizontal
+								</button>
+							{:else}
+								<button
+									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28"
+									on:click={() => {
+										horizontal = !horizontal;
+									}}
+									title="Switch to vertical legend layout"
+									>Vertical
+								</button>
+							{/if}
 						</div>
 
 						<!--Custom Min-->
@@ -634,6 +660,22 @@
 								id="custom_bounds_input"
 								class="flex-1 text-black ml-1 max-w-[96px] pl-1"
 								on:change={set_custom_min}
+							/>
+						</div>
+
+						<!--Custom Max-->
+						<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
+							<nobr>
+								<label
+									for="custom_bounds_input"
+									class="flex variant-outline-tertiary p-1"
+									title="Set custom maximum bound">Custom Max:</label
+								>
+							</nobr>
+							<input
+								id="custom_bounds_input"
+								class="flex-1 text-black ml-1 max-w-[96px] pl-1"
+								on:change={set_custom_max}
 							/>
 						</div>
 
@@ -655,7 +697,7 @@
 						</div>
 
 						<!--Color Scheme-->
-						<div class="flex">
+						<div class={horizontal ? 'flex' : ''}>
 							<nobr>
 								<div
 									class="flex variant-outline-tertiary p-1 h-full flex-center"
@@ -668,7 +710,9 @@
 								on:change={set_color_scheme}
 								bind:value={color_scheme_key}
 								id={frame_id + 'color_scheme_select'}
-								class="flex-1 text-black ml-1 py-0 px-2 pr-7 text-xs font-bold"
+								class="flex-1 text-black py-0 pr-7 text-xs font-bold {horizontal
+									? 'px-2 ml-1'
+									: 'w-[176px] h-[32px] mt-1'}"
 							>
 								{#if data_mode == 'divergent' || data_mode == 'divergent_individual'}
 									{#each Object.entries(color_schemes).filter(([key, value]) => value['orientation'] === 'div') as [key, value]}
@@ -697,7 +741,7 @@
 			{:else if obj_element == 'colors'}
 				<div
 					class="grid grid-cols-1 {horizontal ? 'grid-cols-1' : 'grid-cols-[40px_40px] p-1'}
-						{object_order_flip ? '' : 'mt-[2px]'}
+						{object_order_flip ? '' : 'mt-1'}
 						place-items-center"
 				>
 					{#each colorbar_order as bar_element}
@@ -721,7 +765,7 @@
 															i
 														]}:{typeof cmin}
 														<svg width="{crect_w}px" height="20">
-															{#if show_in_bounds && (cmin_real > value_steps[i] || cmax_real < value_steps[i])}
+															{#if show_in_bounds && (cmin_real >= value_steps[i] || cmax_real <= value_steps[i])}
 																<rect
 																	width="{crect_w}px"
 																	height="20"
@@ -756,7 +800,13 @@
 										{#key color_steps}
 											{#each color_steps as color, i}
 												<svg width="{crect_w}px" height="20">
-													{#if show_in_bounds && (cmin_real > value_steps[i] || cmax_real < value_steps[i])}
+													{#if i == color_steps.length - 1}
+														{#if show_in_bounds && cmax_real < value_steps[i]}
+															<rect width="{crect_w}px" height="20" fill={'#444444'} x="0" y="0" />
+														{:else}
+															<rect width="{crect_w}px" height="20" fill={r2h(color)} x="0" y="0" />
+														{/if}
+													{:else if show_in_bounds && (cmin_real > value_steps[i + 1] || cmax_real < value_steps[i])}
 														<rect width="{crect_w}px" height="20" fill={'#444444'} x="0" y="0" />
 													{:else}
 														<rect width="{crect_w}px" height="20" fill={r2h(color)} x="0" y="0" />
@@ -780,12 +830,19 @@
 														<div style="width: {crect_w}px;">
 															{value.toFixed(num_digits)}
 														</div>
-													{:else if i == Math.floor(value_steps.length / 2) && (data_mode == 'divergent' || data_mode == 'divergent_individual')}
+													{:else if Math.floor(value_steps.length / 2) - 2 == i || i == Math.floor(value_steps.length / 2)}
 														<div
 															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
 																8}px;"
 														>
 															{value.toFixed(num_digits)}
+														</div>
+													{:else if i == Math.floor(value_steps.length / 2) - 1}
+														<div
+															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
+																8}px;"
+														>
+															&nbsp;&nbsp;|
 														</div>
 													{:else if i == value_steps.length - 1}
 														<div style="width: {crect_w}px;">

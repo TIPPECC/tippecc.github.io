@@ -24,11 +24,10 @@
 
 			selected_filename = temp_result.filename;
 			selected_foldertype = temp_result.foldertype;
-			console.log('AA: ', selected_filename, ' ', selected_foldertype);
 
 			if (selected_filename == null || selected_foldertype == null) {
 				selected_filename = '';
-				selected_foldertype = '';
+				selected_foldertype = 'water_budget';
 			}
 
 			// clear selection from prior /goto call
