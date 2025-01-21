@@ -139,8 +139,7 @@
 			if (!folder_data[fc_index]['fileinfo']) {
 				folder_data[fc_index]['fileinfo'] = {};
 			}
-			folder_data[fc_index]['fileinfo']['tif_cached'] = false;
-			folder_data[fc_index]['fileinfo']['tif_convertable'] = false;
+			folder_data[fc_index]['fileinfo']['dat_exists'] = false;
 			folder_data = [...folder_data];
 
 			var err_msg = await res.text();
@@ -149,7 +148,7 @@
 			if (!folder_data[fc_index]['fileinfo']) {
 				folder_data[fc_index]['fileinfo'] = {};
 			}
-			folder_data[fc_index]['fileinfo']['tif_cached'] = true;
+			folder_data[fc_index]['fileinfo']['dat_exists'] = true;
 			folder_data = [...folder_data];
 		}
 
