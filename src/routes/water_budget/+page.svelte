@@ -59,7 +59,7 @@
 	let cat_folder_data: CatFormat = {};
 
 	// checked state of all folder_data_checkboxes
-	let selected_files: Array<Boolean>;
+	let selected_files: Array<boolean>;
 
 	$: wget_request_string = '';
 	let download_tiff = false;
@@ -77,7 +77,7 @@
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	let foldertype = 'water_budget';
-
+	let variables: any = [] = [];
 	// initial query
 	// send_query();
 
@@ -128,12 +128,32 @@
 		}
 	}
 
-	async function generate_dat(filename: string) {
+	async function try_to_generate_dat_file(filename: string, fc_index: number) {
 		var api_dat = API_URL + '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype;
 		console.log(api_dat);
 		const res = await fetch(api_dat, {
 			method: 'GET'
 		});
+
+		if (!res.ok) {
+			if (!folder_data[fc_index]['fileinfo']) {
+				folder_data[fc_index]['fileinfo'] = {};
+			}
+			folder_data[fc_index]['fileinfo']['tif_cached'] = false;
+			folder_data[fc_index]['fileinfo']['tif_convertable'] = false;
+			folder_data = [...folder_data];
+
+			var err_msg = await res.text();
+			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
+		} else {
+			if (!folder_data[fc_index]['fileinfo']) {
+				folder_data[fc_index]['fileinfo'] = {};
+			}
+			folder_data[fc_index]['fileinfo']['tif_cached'] = true;
+			folder_data = [...folder_data];
+		}
+
+
 	}
 
 	let search_term = '';
@@ -275,6 +295,8 @@
 		console.log('filePattern: ', filePattern);
 		cat_folder_data = {};
 		let categories: any = {};
+		variables = [];
+
 		categories['No Category'] = { files: [], toggled: false };
 
 		for (let x = 0; x < folder_data.length; x++) {
@@ -283,12 +305,26 @@
 
 			if (match && match.length >= 3) {
 				const category = match[0];
+				// match first part of filename under first "__" and save it as variable ( e.g. __evspsblpot_all__mm__yearsum_mean_2080_2099.nc, __water_budget_all__mm__yearsum_mean_1981_2000.nc, ...)
+				const regex = /^(_+[^_]+_[^_]+)/g;
+				let matches = filename.replace(match[0], "").replace(".nc", "").match(regex);
+				let variable = "";
+				if (matches) {
+					// console.log('matches: ', matches[0].replace(/_\d{4}/g, '').replace(/^_+/, ''));
+					variable = matches[0].replace(/_\d{4}/g, '').replace(/^_+/, '').replace("_Afr", "")
+					if (!variables.includes(variable)) {
+						variables.push(variable);
+					}
+				}
+				// console.log('matches: ', match[1]);
+
 
 				if (!categories[category]) {
 					categories[category] = { files: [], toggled: false };
 				}
 
 				categories[category].files.push({ filename: filename, index: x });
+
 			} else {
 				categories['No Category'].files.push({ filename: filename, index: x });
 			}
@@ -298,6 +334,7 @@
 			delete categories['No Category'];
 		}
 		cat_folder_data = categories;
+		variables = [...variables];
 	}
 
 	async function refresh_foldercontent(force_update = false) {
@@ -329,6 +366,10 @@
 		cat_folder_data[category].toggled = !cat_folder_data[category].toggled;
 	}
 
+	function set_search_term(variable: string) {
+		search_term = variable;
+	}
+
 	// array with current geo_data['facets']['file_id']
 </script>
 
@@ -339,6 +380,7 @@
 			<FolderTree />
 		</div>
 	</div>
+
 	<FoldertypeChooser bind:foldertype on:foldertype_changed={() => refresh_foldercontent(false)} />
 	<div>
 		<button
@@ -391,6 +433,18 @@
 			bind:value={search_term}
 		/>
 	</div>
+	{#if variables.length > 0}
+<div  >
+	<div class="flow gap-2 items-center">
+
+		{#each variables as variable}
+
+			<button class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2" on:click={set_search_term(variable)}>{variable}</button>
+
+		{/each}
+	</div>
+</div>
+	{/if}
 
 	{#if folder_data.length > 0}
 		{#key folder_data}
@@ -486,6 +540,7 @@
 																		file_obj.index
 																	]['filename']}&type={foldertype}&filetype=nc"
 																	class="flex"
+																	title="Download .nc file"
 																>
 																	<SquareCaretDown />
 																	<div class="ml-1 flex place-items-center justify-items-center">
@@ -502,6 +557,7 @@
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=dat"
 																		class="flex"
+																		title="Download .dat file"
 																	>
 																		<SquareCaretDown />
 																		<div class="ml-1 flex place-items-center justify-items-center">
@@ -511,9 +567,11 @@
 																</button>
 															{:else}
 																<button
-																	class="mr-1 max-h-[3px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
 																	on:click={() =>
-																		generate_dat(folder_data[file_obj.index]['filename'])}
+																		try_to_generate_dat_file(folder_data[file_obj.index]['filename'],
+																		file_obj.index)}
+																	title="Generate .dat file for download"
 																>
 																	<!-- <a
 																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
@@ -521,7 +579,8 @@
 																	][0]}&type={foldertype}"
 																	class="flex"
 																> -->
-
+																<CircleQuestion  />
+																<div class="ml-1 flex place-items-center justify-items-center"> .dat
 																	<!-- </a> -->
 																</button>
 															{/if}
@@ -534,6 +593,7 @@
 																			folder_data[file_obj.index]['filename'],
 																			file_obj.index
 																		)}
+																	title="Generate TIFF file for download (might fail)"
 																>
 																	<CircleQuestion />
 																	<div
@@ -552,6 +612,7 @@
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=tif"
 																		class="flex"
+																		title="Download TIFF file"
 																	>
 																		<SquareCaretDown />
 																		<div class="ml-1 flex place-items-center justify-center">
@@ -591,18 +652,19 @@
 														{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 															<!-- CASE 1: No data on the file. Try to generate tif. -->
 															<button
-																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
+																class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
 																on:click={() =>
 																	try_to_access_tiff_file(
 																		folder_data[file_obj.index]['filename'],
 																		file_obj.index
 																	)}
+																title="Generate TIFF file and visualize (might fail)"
 															>
 																<FileQuestion />
 																<div
 																	class="ml-1 flex text-white place-items-center justify-items-center"
 																>
-																	Fetch
+																	Generate
 																</div>
 															</button>
 														{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
