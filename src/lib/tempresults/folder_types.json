@@ -48,6 +48,22 @@
 		"lineage": "Derived from CMIP6 data"
 	},
 	{
+		"key": "cmip6_raw",
+		"display_name": "CMIP6 Raw",
+		"description": "CMIP6 raw data for TIPPECC area",
+		"citation": "tbd",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
+		"key": "cmip6_raw_ind",
+		"display_name": "CMIP6 Indicator",
+		"description": "CMIP6 indicator data",
+		"citation": "tbd",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
 		"key": "paper",
 		"display_name": "Paper",
 		"description": "Research papers and articles",
