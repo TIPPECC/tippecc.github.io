@@ -23,9 +23,13 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
 
+	// TODO:
+	// - file metadata from db is usually always present,
+	// - make Fileinfo and Filerow 1 type and adapt the logic to check for existence/trueth
+	// - this will reduce code and line length drastically and provide easier access to checks
+	// since then they are all on one level 
 	type FileinfoFormat = {
 		fileversion: string;
-		in_size_limit: boolean;
 		num_bands: number;
 		tif_cached: boolean;
 		tif_convertable: boolean;
@@ -36,6 +40,8 @@
 		fileinfo: FileinfoFormat;
 		filename: string;
 		filesize: string;
+		in_size_limit: boolean;
+		dirty: boolean;
 		filesuffix: string;
 		dat_exists: boolean;
 	};
@@ -136,19 +142,13 @@
 		});
 
 		if (!res.ok) {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['dat_exists'] = false;
+			folder_data[fc_index]['dat_exists'] = false;
 			folder_data = [...folder_data];
 
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		} else {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['dat_exists'] = true;
+			folder_data[fc_index]['dat_exists'] = true;
 			folder_data = [...folder_data];
 		}
 
@@ -215,7 +215,7 @@
 
 				if (download_tiff && f_type == '.nc') {
 					if (file_meta) {
-						if (!file_meta.in_size_limit) {
+						if (!folder_data[i]['in_size_limit']) {
 							// requested file too big to convert
 							num_download_dropped += 1;
 							continue;
@@ -495,7 +495,7 @@
 												class="hover:bg-slate-400"
 												style={download_tiff &&
 												folder_data[file_obj.index]['fileinfo'] &&
-												!folder_data[file_obj.index]['fileinfo']['in_size_limit'] &&
+												!folder_data[file_obj.index]['in_size_limit'] &&
 												selected_files[file_obj.index]
 													? 'background: #000000'
 													: ''}
@@ -530,6 +530,7 @@
 												<!-- download link -->
 												<td class="min-w-[122px]">
 													<div class="flex">
+														{#if folder_data[file_obj.index]['fileinfo']}
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -564,7 +565,7 @@
 																		</div>
 																	</a>
 																</button>
-															{:else}
+															{:else if folder_data[file_obj.index]['in_size_limit']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
 																	on:click={() =>
@@ -582,8 +583,13 @@
 																<div class="ml-1 flex place-items-center justify-items-center"> .dat
 																	<!-- </a> -->
 																</button>
+															{:else}
+																<div class="flex w-full pr-2 items-center justify-center">
+																	<XDisabled />
+																</div>
 															{/if}
-															{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
+
+															{#if (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
@@ -643,12 +649,13 @@
 																</a>
 															</button>
 														{/if}
+														{/if}
 													</div>
 												</td>
 												<td class="min-w-[86px] max-w-[86px]">
 													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
-														<!-- num bands (we could use basically any metadata from database/file here) -->
-														{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
+														{#if folder_data[file_obj.index]['fileinfo']}
+														{#if (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
 															<!-- CASE 1: No data on the file. Try to generate tif. -->
 															<button
 																class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
@@ -685,6 +692,7 @@
 															<div class="flex w-full pr-2 items-center justify-center">
 																<XDisabled />
 															</div>
+														{/if}
 														{/if}
 													{/if}
 												</td>
