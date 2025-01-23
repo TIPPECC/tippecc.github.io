@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { API_URL } from '../../app.config';
 	import {
 		_fetch_foldercontent_by_type,
@@ -14,6 +14,7 @@
 	import Earth from '$lib/icons/earth.svelte';
 	import XDisabled from '$lib/icons/x_disabled.svelte';
 	import SquareCaretDown from '$lib/icons/square_caret_down.svelte';
+	import Download from '$lib/icons/download.svelte';
 	import CircleQuestion from '$lib/icons/circle_question.svelte';
 	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
 	import CaretDown from '$lib/icons/caret_down.svelte';
@@ -22,6 +23,7 @@
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
+	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 
 	// TODO:
 	// - file metadata from db is usually always present,
@@ -33,6 +35,7 @@
 		num_bands: number;
 		tif_cached: boolean;
 		tif_convertable: boolean;
+		metadata_exists: boolean;
 	};
 
 	type FilerowFormat = {
@@ -44,6 +47,11 @@
 		dirty: boolean;
 		filesuffix: string;
 		dat_exists: boolean;
+		metadata_exists: boolean;
+		metadata: any;
+		metadata_prov: any;
+		metadata_prov_exists: boolean;
+		metadata_show?: boolean;
 	};
 
 	type CatfilesItem = {
@@ -84,6 +92,7 @@
 
 	let foldertype = 'water_budget';
 	let variables: any = ([] = []);
+	let metadata: any = ([] = []);
 	// initial query
 	// send_query();
 
@@ -246,6 +255,83 @@
 		}
 	}
 
+	async function get_metadata_and_prov(filename: string, foldertype: string, file_obj: any) {
+		const res = await fetch(
+			API_URL +
+				'/climate/get_temp_file?name=' +
+				filename +
+				'&type' +
+				'=' +
+				foldertype +
+				'&filetype=meta',
+			{
+				method: 'GET'
+			}
+		);
+		if (!res.ok) {
+			if (!folder_data[file_obj.index]['metadata']) {
+				folder_data[file_obj.index]['metadata'] = {};
+			}
+			folder_data[file_obj.index]['metadata'] = {
+				'currently no metadata available': 'for this file'
+			};
+			folder_data[file_obj.index]['metadata_exists'] = false;
+			console.log(folder_data[file_obj.index]['metadata']);
+			folder_data = [...folder_data];
+			// throw new Error(`${res.status} ${res.statusText}`);
+		} else {
+			const result = await res.json();
+			metadata = result;
+			await tick();
+			if (!folder_data[file_obj.index]['metadata']) {
+				folder_data[file_obj.index]['metadata'] = {};
+			}
+			folder_data[file_obj.index]['metadata_exists'] = true;
+			folder_data[file_obj.index]['metadata'] = result;
+			await tick();
+			folder_data = [...folder_data];
+			console.log(metadata);
+		}
+
+		const res2 = await fetch(
+			API_URL +
+				'/climate/get_temp_file?name=' +
+				filename +
+				'&type' +
+				'=' +
+				foldertype +
+				'&filetype=prov',
+			{
+				method: 'GET'
+			}
+		);
+		if (!res2.ok) {
+			if (!folder_data[file_obj.index]['metadata_prov']) {
+				folder_data[file_obj.index]['metadata_prov'] = {};
+			}
+			folder_data[file_obj.index]['metadata_prov_exists'] = false;
+			folder_data[file_obj.index]['metadata_prov'] = {
+				'currently no provenance information available': 'for this file'
+			};
+			console.log(folder_data[file_obj.index]['metadata_prov']);
+			folder_data = [...folder_data];
+			// throw new Error(`${res.status} ${res.statusText}`);
+		} else {
+			const result = await res2.json();
+			metadata = result;
+			await tick();
+			if (!folder_data[file_obj.index]['metadata_prov']) {
+				folder_data[file_obj.index]['metadata_prov'] = {};
+			}
+			folder_data[file_obj.index]['metadata_prov_exists'] = true;
+			folder_data[file_obj.index]['metadata_prov'] = result;
+			await tick();
+			folder_data = [...folder_data];
+			console.log(metadata);
+		}
+		folder_data[file_obj.index]['metadata_show'] = true;
+	}
+
 	async function try_to_access_tiff_file(filename: string, fc_index: number) {
 		// demand access to the tif file
 		var access_tif_url = API_URL + '/climate/access_tif?type=' + foldertype + '&name=' + filename;
@@ -347,12 +433,15 @@
 			}
 
 			folder_data = result.content;
+			// sort by filename
+			folder_data.sort((a, b) => a.filename.localeCompare(b.filename));
+
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
 			// console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
 		} catch (error) {
-			console.log('Refreshing foldercontent failed.');
+			console.log('Refreshing folder content failed.');
 		}
 	}
 
@@ -479,6 +568,7 @@
 								<thead>
 									<tr>
 										<th class="text-left">Filename</th>
+										<th class="text-left min-w-[80px] max-w-[80px]">Metadata</th>
 										<th class="text-left min-w-[80px] max-w-[80px]">Filesize</th>
 										<th class="text-left min-w-[140px] max-w-[140px]">Last modified</th>
 										<th class="text-left min-w-[122px] max-w-[122px]">Download Link</th>
@@ -500,7 +590,7 @@
 													: ''}
 											>
 												<!-- Checkbox and filename -->
-												<td class="col-span-6 w-full break-all pl-1">
+												<td class="col-span-7 w-full break-all pl-1">
 													<label
 														for={'checkbox_' + file_obj.index}
 														title="Select for download: {folder_data[file_obj.index]['filename']}"
@@ -512,11 +602,33 @@
 															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
-														&nbsp;{folder_data[file_obj.index]['filename'].replace(
-															folder_cat,
-															'... '
-														)}
+														&nbsp; ... {folder_data[file_obj.index]['filename']
+															.replace(folder_cat, '')
+															.replace(/^_+/, '')}
 													</label>
+												</td>
+												<td>
+													{#if !folder_data[file_obj.index]['metadata_show']}
+														<button
+															class="ml-5 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+															title="Show metadata and provenance information"
+															on:click={() =>
+																get_metadata_and_prov(
+																	folder_data[file_obj.index]['filename'],
+																	foldertype,
+																	file_obj
+																)}
+															>Show
+														</button>
+													{:else}
+														<button
+															class="ml-5 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+															title="Show metadata and provenance information"
+															on:click={() =>
+																(folder_data[file_obj.index]['metadata_show'] = false)}
+															>Hide
+														</button>
+													{/if}
 												</td>
 												<!-- filesize -->
 												<td>
@@ -541,7 +653,7 @@
 																		class="flex"
 																		title="Download .nc file"
 																	>
-																		<SquareCaretDown />
+																		<Download />
 																		<div class="ml-1 flex place-items-center justify-items-center">
 																			.nc
 																		</div>
@@ -558,7 +670,7 @@
 																			class="flex"
 																			title="Download .dat file"
 																		>
-																			<SquareCaretDown />
+																			<Download />
 																			<div
 																				class="ml-1 flex place-items-center justify-items-center"
 																			>
@@ -582,7 +694,7 @@
 																	][0]}&type={foldertype}"
 																	class="flex"
 																> -->
-																		<CircleQuestion />
+																		<Download />
 																		<div class="ml-1 flex place-items-center justify-items-center">
 																			.dat
 																			<!-- </a> -->
@@ -605,7 +717,7 @@
 																			)}
 																		title="Generate TIFF file for download (might fail)"
 																	>
-																		<CircleQuestion />
+																		<Download />
 																		<div
 																			class="ml-1 flex text-white place-items-center justify-items-center"
 																		>
@@ -624,7 +736,7 @@
 																			class="flex"
 																			title="Download TIFF file"
 																		>
-																			<SquareCaretDown />
+																			<Download />
 																			<div class="ml-1 flex place-items-center justify-center">
 																				.tif
 																			</div>
@@ -647,7 +759,7 @@
 																		]['filename']}&type={foldertype}&filetype=dat"
 																		class="flex"
 																	>
-																		<SquareCaretDown />
+																		<Download />
 																		<div class="ml-1 flex place-items-center justify-items-center">
 																			{folder_data[file_obj.index]['filesuffix']}
 																		</div>
@@ -698,6 +810,75 @@
 																	<XDisabled />
 																</div>
 															{/if}
+														{/if}
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<td colspan="7" class="p-2">
+													{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+														{#if folder_data[file_obj.index]['metadata_exists']}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+																<a
+																	href="{API_URL}/climate/get_temp_file?name={folder_data[
+																		file_obj.index
+																	]['filename']}&type={foldertype}&filetype=meta"
+																	class="flex"
+																	title="Download metadata file"
+																>
+																	<Download />
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		metadata
+																	</div>
+																</a>
+															</button>
+														{/if}
+														{#if folder_data[file_obj.index]['metadata_prov_exists'] && folder_data[file_obj.index]['metadata_show']}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+																<a
+																	href="{API_URL}/climate/get_temp_file?name={folder_data[
+																		file_obj.index
+																	]['filename']}&type={foldertype}&filetype=prov"
+																	class="flex"
+																	title="Download metadata file"
+																>
+																	<Download />
+																	<!--icon download-->
+
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		provenance
+																	</div>
+																</a>
+															</button>
+														{/if}
+														<!--tab select metadata or provenance object content-->
+														{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+															<!-- print object-->
+															{#each Object.entries(folder_data[file_obj.index]['metadata']) as [key, value]}
+																{#if key != 'file_id'}
+																	<!--<tr>
+														<td>{key}</td>
+														<td colspan="4">{value}</td>
+													</tr>-->
+																	<div class="flex gap-x-2">
+																		<div class="">{key}:</div>
+																		<div>{value}</div>
+																	</div>
+																{/if}
+															{/each}
+														{/if}
+													{/if}
+													{#if folder_data[file_obj.index]['metadata_prov'] && folder_data[file_obj.index]['metadata_show']}
+														<!--tab select metadata or provenance object content-->
+														{#if folder_data[file_obj.index]['metadata_prov']}
+															<!-- print object-->
+															<RecursiveDisplay
+																data={folder_data[file_obj.index]['metadata_prov']}
+															/>
 														{/if}
 													{/if}
 												</td>
