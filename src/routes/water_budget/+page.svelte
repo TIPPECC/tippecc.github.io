@@ -23,9 +23,13 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
 
+	// TODO:
+	// - file metadata from db is usually always present,
+	// - make Fileinfo and Filerow 1 type and adapt the logic to check for existence/trueth
+	// - this will reduce code and line length drastically and provide easier access to checks
+	// since then they are all on one level
 	type FileinfoFormat = {
 		fileversion: string;
-		in_size_limit: boolean;
 		num_bands: number;
 		tif_cached: boolean;
 		tif_convertable: boolean;
@@ -36,6 +40,8 @@
 		fileinfo: FileinfoFormat;
 		filename: string;
 		filesize: string;
+		in_size_limit: boolean;
+		dirty: boolean;
 		filesuffix: string;
 		dat_exists: boolean;
 	};
@@ -77,7 +83,7 @@
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	let foldertype = 'water_budget';
-	let variables: any = [] = [];
+	let variables: any = ([] = []);
 	// initial query
 	// send_query();
 
@@ -136,23 +142,15 @@
 		});
 
 		if (!res.ok) {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['dat_exists'] = false;
+			folder_data[fc_index]['dat_exists'] = false;
 			folder_data = [...folder_data];
 
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		} else {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['dat_exists'] = true;
+			folder_data[fc_index]['dat_exists'] = true;
 			folder_data = [...folder_data];
 		}
-
-
 	}
 
 	let search_term = '';
@@ -215,7 +213,7 @@
 
 				if (download_tiff && f_type == '.nc') {
 					if (file_meta) {
-						if (!file_meta.in_size_limit) {
+						if (!folder_data[i]['in_size_limit']) {
 							// requested file too big to convert
 							num_download_dropped += 1;
 							continue;
@@ -306,24 +304,25 @@
 				const category = match[0];
 				// match first part of filename under first "__" and save it as variable ( e.g. __evspsblpot_all__mm__yearsum_mean_2080_2099.nc, __water_budget_all__mm__yearsum_mean_1981_2000.nc, ...)
 				const regex = /^(_+[^_]+_[^_]+)/g;
-				let matches = filename.replace(match[0], "").replace(".nc", "").match(regex);
-				let variable = "";
+				let matches = filename.replace(match[0], '').replace('.nc', '').match(regex);
+				let variable = '';
 				if (matches) {
 					// console.log('matches: ', matches[0].replace(/_\d{4}/g, '').replace(/^_+/, ''));
-					variable = matches[0].replace(/_\d{4}/g, '').replace(/^_+/, '').replace("_Afr", "")
+					variable = matches[0]
+						.replace(/_\d{4}/g, '')
+						.replace(/^_+/, '')
+						.replace('_Afr', '');
 					if (!variables.includes(variable)) {
 						variables.push(variable);
 					}
 				}
 				// console.log('matches: ', match[1]);
 
-
 				if (!categories[category]) {
 					categories[category] = { files: [], toggled: false };
 				}
 
 				categories[category].files.push({ filename: filename, index: x });
-
 			} else {
 				categories['No Category'].files.push({ filename: filename, index: x });
 			}
@@ -433,16 +432,16 @@
 		/>
 	</div>
 	{#if variables.length > 0}
-<div  >
-	<div class="flow gap-2 items-center">
-
-		{#each variables as variable}
-
-			<button class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2" on:click={set_search_term(variable)}>{variable}</button>
-
-		{/each}
-	</div>
-</div>
+		<div>
+			<div class="flow gap-2 items-center">
+				{#each variables as variable}
+					<button
+						class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+						on:click={set_search_term(variable)}>{variable}</button
+					>
+				{/each}
+			</div>
+		</div>
 	{/if}
 
 	{#if folder_data.length > 0}
@@ -495,7 +494,7 @@
 												class="hover:bg-slate-400"
 												style={download_tiff &&
 												folder_data[file_obj.index]['fileinfo'] &&
-												!folder_data[file_obj.index]['fileinfo']['in_size_limit'] &&
+												!folder_data[file_obj.index]['in_size_limit'] &&
 												selected_files[file_obj.index]
 													? 'background: #000000'
 													: ''}
@@ -530,24 +529,115 @@
 												<!-- download link -->
 												<td class="min-w-[122px]">
 													<div class="flex">
-														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=nc"
-																	class="flex"
-																	title="Download .nc file"
+														{#if folder_data[file_obj.index]['fileinfo']}
+															{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 																>
-																	<SquareCaretDown />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		.nc
+																	<a
+																		href="{API_URL}/climate/get_temp_file?name={folder_data[
+																			file_obj.index
+																		]['filename']}&type={foldertype}&filetype=nc"
+																		class="flex"
+																		title="Download .nc file"
+																	>
+																		<SquareCaretDown />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.nc
+																		</div>
+																	</a>
+																</button>
+																{#if folder_data[file_obj.index]['dat_exists']}
+																	<button
+																		class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	>
+																		<a
+																			href="{API_URL}/climate/get_temp_file?name={folder_data[
+																				file_obj.index
+																			]['filename']}&type={foldertype}&filetype=dat"
+																			class="flex"
+																			title="Download .dat file"
+																		>
+																			<SquareCaretDown />
+																			<div
+																				class="ml-1 flex place-items-center justify-items-center"
+																			>
+																				.dat
+																			</div>
+																		</a>
+																	</button>
+																{:else if folder_data[file_obj.index]['in_size_limit']}
+																	<button
+																		class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																		on:click={() =>
+																			try_to_generate_dat_file(
+																				folder_data[file_obj.index]['filename'],
+																				file_obj.index
+																			)}
+																		title="Generate .dat file for download"
+																	>
+																		<!-- <a
+																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
+																		file_obj.index
+																	][0]}&type={foldertype}"
+																	class="flex"
+																> -->
+																		<CircleQuestion />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.dat
+																			<!-- </a> -->
+																		</div></button
+																	>
+																{:else}
+																	<div class="flex w-full pr-2 items-center justify-center">
+																		<XDisabled />
 																	</div>
-																</a>
-															</button>
-															{#if folder_data[file_obj.index]['dat_exists']}
+																{/if}
+
+																{#if folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached']}
+																	<!-- CASE 1: Try to generate tif. -->
+																	<button
+																		class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																		on:click={() =>
+																			try_to_access_tiff_file(
+																				folder_data[file_obj.index]['filename'],
+																				file_obj.index
+																			)}
+																		title="Generate TIFF file for download (might fail)"
+																	>
+																		<CircleQuestion />
+																		<div
+																			class="ml-1 flex text-white place-items-center justify-items-center"
+																		>
+																			.tif
+																		</div>
+																	</button>
+																{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
+																	<!-- CASE 2: Tif file exists. -->
+																	<button
+																		class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	>
+																		<a
+																			href="{API_URL}/climate/get_temp_file?name={folder_data[
+																				file_obj.index
+																			]['filename']}&type={foldertype}&filetype=tif"
+																			class="flex"
+																			title="Download TIFF file"
+																		>
+																			<SquareCaretDown />
+																			<div class="ml-1 flex place-items-center justify-center">
+																				.tif
+																			</div>
+																		</a>
+																	</button>
+																{:else}
+																	<!-- CASE 3: Tif not creatable. -->
+																	<div class="flex w-full pr-2 items-center justify-center">
+																		<XDisabled />
+																	</div>
+																{/if}
+																<!-- Other Filetypes -->
+															{:else}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 																>
@@ -556,68 +646,51 @@
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=dat"
 																		class="flex"
-																		title="Download .dat file"
 																	>
 																		<SquareCaretDown />
 																		<div class="ml-1 flex place-items-center justify-items-center">
-																			.dat
+																			{folder_data[file_obj.index]['filesuffix']}
 																		</div>
 																	</a>
 																</button>
-															{:else}
-																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
-																	on:click={() =>
-																		try_to_generate_dat_file(folder_data[file_obj.index]['filename'],
-																		file_obj.index)}
-																	title="Generate .dat file for download"
-																>
-																	<!-- <a
-																	href="{API_URL}/climate/generate_dat_file?name={folder_data[
-																		file_obj.index
-																	][0]}&type={foldertype}"
-																	class="flex"
-																> -->
-																<CircleQuestion  />
-																<div class="ml-1 flex place-items-center justify-items-center"> .dat
-																	<!-- </a> -->
-																</button>
 															{/if}
-															{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
-																<!-- CASE 1: Try to generate tif. -->
+														{/if}
+													</div>
+												</td>
+												<td class="min-w-[86px] max-w-[86px]">
+													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
+														{#if folder_data[file_obj.index]['fileinfo']}
+															{#if folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached']}
+																<!-- CASE 1: No data on the file. Try to generate tif. -->
 																<button
-																	class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+																	class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
 																	on:click={() =>
 																		try_to_access_tiff_file(
 																			folder_data[file_obj.index]['filename'],
 																			file_obj.index
 																		)}
-																	title="Generate TIFF file for download (might fail)"
+																	title="Generate TIFF file and visualize (might fail)"
 																>
-																	<CircleQuestion />
+																	<FileQuestion />
 																	<div
 																		class="ml-1 flex text-white place-items-center justify-items-center"
 																	>
-																		.tif
+																		Generate
 																	</div>
 																</button>
 															{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
-																<!-- CASE 2: Tif file exists. -->
+																<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 																<button
-																	class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
+																	on:click={() =>
+																		jump_to_vis(folder_data[file_obj.index]['filename'])}
 																>
-																	<a
-																		href="{API_URL}/climate/get_temp_file?name={folder_data[
-																			file_obj.index
-																		]['filename']}&type={foldertype}&filetype=tif"
-																		class="flex"
-																		title="Download TIFF file"
+																	<Earth />
+																	<div
+																		class="ml-1 flex text-white place-items-center justify-items-center"
 																	>
-																		<SquareCaretDown />
-																		<div class="ml-1 flex place-items-center justify-center">
-																			.tif
-																		</div>
-																	</a>
+																		View
+																	</div>
 																</button>
 															{:else}
 																<!-- CASE 3: Tif not creatable. -->
@@ -625,66 +698,6 @@
 																	<XDisabled />
 																</div>
 															{/if}
-															<!-- Other Filetypes -->
-														{:else}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=dat"
-																	class="flex"
-																>
-																	<SquareCaretDown />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		{folder_data[file_obj.index]['filesuffix']}
-																	</div>
-																</a>
-															</button>
-														{/if}
-													</div>
-												</td>
-												<td class="min-w-[86px] max-w-[86px]">
-													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
-														<!-- num bands (we could use basically any metadata from database/file here) -->
-														{#if !folder_data[file_obj.index]['fileinfo'] || (folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached'])}
-															<!-- CASE 1: No data on the file. Try to generate tif. -->
-															<button
-																class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
-																on:click={() =>
-																	try_to_access_tiff_file(
-																		folder_data[file_obj.index]['filename'],
-																		file_obj.index
-																	)}
-																title="Generate TIFF file and visualize (might fail)"
-															>
-																<FileQuestion />
-																<div
-																	class="ml-1 flex text-white place-items-center justify-items-center"
-																>
-																	Generate
-																</div>
-															</button>
-														{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
-															<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
-															<button
-																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
-																on:click={() =>
-																	jump_to_vis(folder_data[file_obj.index]['filename'])}
-															>
-																<Earth />
-																<div
-																	class="ml-1 flex text-white place-items-center justify-items-center"
-																>
-																	View
-																</div>
-															</button>
-														{:else}
-															<!-- CASE 3: Tif not creatable. -->
-															<div class="flex w-full pr-2 items-center justify-center">
-																<XDisabled />
-															</div>
 														{/if}
 													{/if}
 												</td>
