@@ -91,6 +91,17 @@
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
 	let foldertype = 'water_budget';
+	// set from URL url type ?type=cmip6_raw
+	$: if (browser) {
+		const urlParams = new URLSearchParams(window.location.search);
+		const type = urlParams.get('type');
+		if (type) {
+			foldertype = type;
+		}
+	}
+
+	let loading = false;
+
 	let variables: any = ([] = []);
 	let metadata: any = ([] = []);
 	// initial query
@@ -389,11 +400,11 @@
 			if (match && match.length >= 3) {
 				const category = match[0];
 				// match first part of filename under first "__" and save it as variable ( e.g. __evspsblpot_all__mm__yearsum_mean_2080_2099.nc, __water_budget_all__mm__yearsum_mean_1981_2000.nc, ...)
-				const regex = /^(_+[^_]+_[^_]+)/g;
+				const regex = /^(_*[^_]*_[^_]+)/g;
 				let matches = filename.replace(match[0], '').replace('.nc', '').match(regex);
 				let variable = '';
 				if (matches) {
-					// console.log('matches: ', matches[0].replace(/_\d{4}/g, '').replace(/^_+/, ''));
+					// console.log('matches: ', matches);
 					variable = matches[0]
 						.replace(/_\d{4}/g, '')
 						.replace(/^_+/, '')
@@ -423,7 +434,12 @@
 
 	async function refresh_foldercontent(force_update = false) {
 		folder_data = {};
+		variables = [];
+		search_term = '';
 		// only_convertable false fetches all files
+
+		// block further clicking on page
+		loading = true;
 
 		try {
 			if (force_update) {
@@ -434,14 +450,23 @@
 
 			folder_data = result.content;
 			// sort by filename
-			folder_data.sort((a, b) => a.filename.localeCompare(b.filename));
+			folder_data.sort((a, b) =>
+				a.filename.replace('.nc', '').localeCompare(b.filename.replace('.nc', ''))
+			);
 
 			set_cat_folder_data();
 			// reset selected files after fetching new folder
 			selected_files = folder_data.map(() => false);
 			// console.log(folder_data, '\n', cat_folder_data, '\n', selected_files);
+
+			// add foldetype to url in browser
+			if (browser) {
+				history.pushState({}, '', '?type=' + foldertype);
+			}
 		} catch (error) {
 			console.log('Refreshing folder content failed.');
+		} finally {
+			loading = false;
 		}
 	}
 
