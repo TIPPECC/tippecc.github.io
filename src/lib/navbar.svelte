@@ -15,6 +15,18 @@
 	 * @type {boolean}
 	 */
 	export let verticality;
+
+	let zoomLevel = 1;
+
+	function increaseZoom() {
+		zoomLevel += 0.1;
+		document.body.style.zoom = zoomLevel;
+	}
+
+	function decreaseZoom() {
+		zoomLevel = Math.max(0.1, zoomLevel - 0.1);
+		document.body.style.zoom = zoomLevel;
+	}
 </script>
 
 {#if verticality}
@@ -37,7 +49,40 @@
 			</ul>
 		</div>
 
-		<div class="grow">
+		<!-- Zoom Controls -->
+		<div class="grow float-right items-center">
+			<div class="zoom-controls flex justify-between items-center float-right pr-4 pt-4">
+				<span class="text-white text-lg">A<span class="text-sm">A</span></span>
+				<svg
+					class="zoom-icon fill-white"
+					on:click={decreaseZoom}
+					on:keydown={decreaseZoom}
+					tabindex="0"
+					role="button"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					width="24"
+					height="24"
+				>
+					<path d="M19 13H5v-2h14v2z" />
+				</svg>
+				<svg
+					class="zoom-icon fill-white"
+					on:click={increaseZoom}
+					on:keydown={increaseZoom}
+					tabindex="0"
+					role="button"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					width="24"
+					height="24"
+				>
+					<path d="M19 13H5v-2h14v2zm-7-7v14h-2V6h2z" />
+				</svg>
+			</div>
+		</div>
+
+		<div class="">
 			<div class="float-right pr-10">
 				<figure>
 					<section class="img-bg" />
