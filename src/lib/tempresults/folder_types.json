@@ -65,7 +65,7 @@
 	},
 	{
 		"key": "ind_full",
-		"display_name": "Indicator Full",
+		"display_name": "CORDEX-CORE Raw Ind. Full",
 		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?)(?=\\d{4}-\\d{4}))",
@@ -73,7 +73,7 @@
 	},
 	{
 		"key": "ind_slices20",
-		"display_name": "Indicator Slices 20",
+		"display_name": " CORDEX-CORE Raw Ind. Slices 20",
 		"description": "Indicator slices at 20 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
@@ -81,7 +81,7 @@
 	},
 	{
 		"key": "ind_slices30",
-		"display_name": "Indicator Slices 30",
+		"display_name": "CORDEX-CORE Raw Ind. Slices 30",
 		"description": "Indicator slices at 30 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
