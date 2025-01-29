@@ -1,43 +1,43 @@
 [
 	{
 		"key": "water_budget",
-		"display_name": "CMIP5 Water Budget",
-		"description": "Water budget and evspsblpot based on CMIP5 data",
+		"display_name": "CORDEX-CORE Indicator",
+		"description": "Indicator based on CORDEX-CORE data",
 		"citation": "tbd",
 		"header_regex": "",
-		"lineage": "Derived from CMIP5 data"
+		"lineage": "Derived from CORDEX-CORE data"
 	},
 	{
 		"key": "water_budget_bias",
-		"display_name": "CMIP5 Water Budget Bias",
-		"description": "Water budget and evspsblpot with bias adjustes CMIP5 data",
+		"display_name": "CORDEX-CORE Indicator",
+		"description": "Indicator with bias adjusted CORDEX-CORE data",
 		"citation": "tbd",
 		"header_regex": "",
-		"lineage": "Derived from CMIP5 data with bias adjustment"
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
 	},
 	{
 		"key": "kariba",
-		"display_name": "CMIP5 Kariba",
-		"description": "CMIP5 data for Kariba dam catchment",
+		"display_name": "CORDEX-CORE Kariba",
+		"description": "CORDEX-CORE data for Kariba dam catchment",
 		"citation": "tbd",
 		"header_regex": "",
-		"lineage": "Derived from CMIP5 data for Kariba dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment"
 	},
 	{
 		"key": "vaal",
-		"display_name": "CMIP5 Vaal",
-		"description": "CMIP5 data for Vaal dam catchment",
+		"display_name": "CORDEX-CORE Vaal",
+		"description": "CORDEX-CORE data for Vaal dam catchment",
 		"citation": "tbd",
 		"header_regex": "",
-		"lineage": "Derived from CMIP5 data for Vaal dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment"
 	},
 	{
 		"key": "luanginga",
-		"display_name": "CMIP5 Luanginga",
-		"description": "CMIP5 data for Luanginga dam catchment",
+		"display_name": "CORDEX-CORE Luanginga",
+		"description": "CORDEX-CORE data for Luanginga dam catchment",
 		"citation": "tbd",
 		"header_regex": "",
-		"lineage": "Derived from CMIP5 data for Luanginga dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment"
 	},
 	{
 		"key": "cmip6",
