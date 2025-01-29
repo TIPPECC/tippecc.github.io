@@ -1,7 +1,7 @@
 [
 	{
 		"key": "water_budget",
-		"display_name": "CORDEX-CORE Indicator",
+		"display_name": "CORDEX-CORE Raw Indicator",
 		"description": "Indicator based on CORDEX-CORE data",
 		"citation": "tbd",
 		"header_regex": "",
@@ -9,7 +9,7 @@
 	},
 	{
 		"key": "water_budget_bias",
-		"display_name": "CORDEX-CORE Indicator",
+		"display_name": "CORDEX-CORE Bias Indicator",
 		"description": "Indicator with bias adjusted CORDEX-CORE data",
 		"citation": "tbd",
 		"header_regex": "",
@@ -40,14 +40,6 @@
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment"
 	},
 	{
-		"key": "cmip6",
-		"display_name": "CMIP6 Water Budget",
-		"description": "CMIP6 Water budget and evspsblpot data",
-		"citation": "tbd",
-		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
-	},
-	{
 		"key": "cmip6_raw",
 		"display_name": "CMIP6 Raw",
 		"description": "CMIP6 raw data for TIPPECC area",
@@ -57,7 +49,7 @@
 	},
 	{
 		"key": "cmip6_raw_ind",
-		"display_name": "CMIP6 Indicator",
+		"display_name": "CMIP6 Raw Indicator",
 		"description": "CMIP6 indicator data",
 		"citation": "tbd",
 		"header_regex": "",
