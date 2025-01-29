@@ -25,28 +25,19 @@
 	import folder_types from '$lib/tempresults/folder_types.json';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 
-	// TODO:
-	// - file metadata from db is usually always present,
-	// - make Fileinfo and Filerow 1 type and adapt the logic to check for existence/trueth
-	// - this will reduce code and line length drastically and provide easier access to checks
-	// since then they are all on one level
+
 	type FileinfoFormat = {
 		fileversion: string;
 		num_bands: number;
-		tif_cached: boolean;
-		tif_convertable: boolean;
-		metadata_exists: boolean;
-	};
-
-	type FilerowFormat = {
 		creation_date: string;
-		fileinfo: FileinfoFormat;
 		filename: string;
 		filesize: string;
-		in_size_limit: boolean;
+		in_limit_conversion: boolean;
 		dirty: boolean;
 		filesuffix: string;
 		dat_exists: boolean;
+		tif_exists: boolean;
+		tif_convertable: boolean;
 		metadata_exists: boolean;
 		metadata: any;
 		metadata_prov: any;
@@ -69,7 +60,7 @@
 	}
 
 	// folder_data ... filenames of the target backend folder
-	let folder_data: Array<FilerowFormat> = [];
+	let folder_data: Array<FileinfoFormat> = [];
 	let cat_folder_data: CatFormat = {};
 
 	// checked state of all folder_data_checkboxes
@@ -229,15 +220,12 @@
 				var f_type = folder_data[i]['filesuffix'];
 				var requested_filetype = folder_data[i]['filename'].split('.').pop();
 				var requested_filename = folder_data[i]['filename'];
-				var file_meta = folder_data[i]['fileinfo'];
 
 				if (download_tiff && f_type == '.nc') {
-					if (file_meta) {
-						if (!folder_data[i]['in_size_limit']) {
-							// requested file too big to convert
-							num_download_dropped += 1;
-							continue;
-						}
+					if (!folder_data[i]['in_limit_conversion']) {
+						// requested file too big to convert
+						num_download_dropped += 1;
+						continue;
 					}
 					requested_filetype = 'tif';
 				}
@@ -351,20 +339,14 @@
 		});
 
 		if (!res.ok) {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['tif_cached'] = false;
-			folder_data[fc_index]['fileinfo']['tif_convertable'] = false;
+			folder_data[fc_index]['tif_exists'] = false;
+			folder_data[fc_index]['tif_convertable'] = false;
 			folder_data = [...folder_data];
 
 			var err_msg = await res.text();
 			throw new Error(`${res.status} ${res.statusText}\nReason: ${err_msg}`);
 		} else {
-			if (!folder_data[fc_index]['fileinfo']) {
-				folder_data[fc_index]['fileinfo'] = {};
-			}
-			folder_data[fc_index]['fileinfo']['tif_cached'] = true;
+			folder_data[fc_index]['tif_exists'] = true;
 			folder_data = [...folder_data];
 		}
 	}
@@ -608,8 +590,7 @@
 											<tr
 												class="hover:bg-slate-400"
 												style={download_tiff &&
-												folder_data[file_obj.index]['fileinfo'] &&
-												!folder_data[file_obj.index]['in_size_limit'] &&
+												!folder_data[file_obj.index]['in_limit_conversion'] &&
 												selected_files[file_obj.index]
 													? 'background: #000000'
 													: ''}
@@ -666,7 +647,6 @@
 												<!-- download link -->
 												<td class="min-w-[122px]">
 													<div class="flex">
-														{#if folder_data[file_obj.index]['fileinfo']}
 															{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -703,7 +683,7 @@
 																			</div>
 																		</a>
 																	</button>
-																{:else if folder_data[file_obj.index]['in_size_limit']}
+																{:else if folder_data[file_obj.index]['in_limit_conversion']}
 																	<button
 																		class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
 																		on:click={() =>
@@ -731,7 +711,7 @@
 																	</div>
 																{/if}
 
-																{#if folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached']}
+																{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																	<!-- CASE 1: Try to generate tif. -->
 																	<button
 																		class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
@@ -749,7 +729,7 @@
 																			.tif
 																		</div>
 																	</button>
-																{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
+																{:else if folder_data[file_obj.index]['tif_exists']}
 																	<!-- CASE 2: Tif file exists. -->
 																	<button
 																		class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -791,13 +771,11 @@
 																	</a>
 																</button>
 															{/if}
-														{/if}
 													</div>
 												</td>
 												<td class="min-w-[86px] max-w-[86px]">
 													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
-														{#if folder_data[file_obj.index]['fileinfo']}
-															{#if folder_data[file_obj.index]['fileinfo']['tif_convertable'] && !folder_data[file_obj.index]['fileinfo']['tif_cached']}
+															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: No data on the file. Try to generate tif. -->
 																<button
 																	class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
@@ -815,7 +793,7 @@
 																		Generate
 																	</div>
 																</button>
-															{:else if folder_data[file_obj.index]['fileinfo']['tif_cached']}
+															{:else if folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 																<button
 																	class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
@@ -836,7 +814,6 @@
 																</div>
 															{/if}
 														{/if}
-													{/if}
 												</td>
 											</tr>
 											<tr>
