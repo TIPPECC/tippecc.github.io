@@ -24,6 +24,8 @@
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
+	import FileDetails from '$lib/FileDetails.svelte';
+
 
 	type FileinfoFormat = {
 		fileversion: string;
@@ -74,6 +76,8 @@
 	let query = '';
 
 	let url = '';
+
+	let tabSet: number = 0;
 
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
@@ -816,69 +820,7 @@
 											<tr>
 												<td colspan="7" class="p-2">
 													{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-														{#if folder_data[file_obj.index]['metadata_exists']}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=meta"
-																	class="flex"
-																	title="Download metadata file"
-																>
-																	<Download />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		metadata
-																	</div>
-																</a>
-															</button>
-														{/if}
-														{#if folder_data[file_obj.index]['metadata_prov_exists'] && folder_data[file_obj.index]['metadata_show']}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=prov"
-																	class="flex"
-																	title="Download metadata file"
-																>
-																	<Download />
-																	<!--icon download-->
-
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		provenance
-																	</div>
-																</a>
-															</button>
-														{/if}
-														<!--tab select metadata or provenance object content-->
-														{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-															<!-- print object-->
-															{#each Object.entries(folder_data[file_obj.index]['metadata']) as [key, value]}
-																{#if key != 'file_id'}
-																	<!--<tr>
-														<td>{key}</td>
-														<td colspan="4">{value}</td>
-													</tr>-->
-																	<div class="flex gap-x-2">
-																		<div class="">{key}:</div>
-																		<div>{value}</div>
-																	</div>
-																{/if}
-															{/each}
-														{/if}
-													{/if}
-													{#if folder_data[file_obj.index]['metadata_prov'] && folder_data[file_obj.index]['metadata_show']}
-														<!--tab select metadata or provenance object content-->
-														{#if folder_data[file_obj.index]['metadata_prov']}
-															<!-- print object-->
-															<RecursiveDisplay
-																data={folder_data[file_obj.index]['metadata_prov']}
-															/>
-														{/if}
+														<FileDetails  {folder_data} {file_obj} {foldertype} />
 													{/if}
 												</td>
 											</tr>
