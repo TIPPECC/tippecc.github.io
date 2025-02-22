@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
 	import 'ol/ol.css';
 	import { OSM, GeoTIFF as GeoTIFF_OL } from 'ol/source';
 	import Map from 'ol/Map.js';
@@ -17,6 +18,17 @@
 	import { tick } from 'svelte';
 	import { Fill, Stroke, Style } from 'ol/style.js';
 	import Select from 'ol/interaction/Select.js';
+	import { Point } from 'ol/geom';
+	import Feature from 'ol/Feature';
+	import VectorSource from 'ol/source/Vector';
+	import VectorLayer from 'ol/layer/Vector';
+	import { fromUrl } from 'geotiff';
+	import CircleStyle from 'ol/style/Circle';
+	import Chart from 'chart.js/auto';
+	import 'chartjs-plugin-trendline';
+	import annotationPlugin from 'chartjs-plugin-annotation';
+	import regression from 'regression';
+	Chart.register(annotationPlugin);
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
 	let time_interval_mode = 0; // 0 .. years, 1 .. months, 2 .. days
@@ -72,6 +84,24 @@
 		max: 0
 	};
 
+	// Create a vector source and layer for the selected point
+	const vectorSource = new VectorSource();
+	const vectorLayer = new VectorLayer({
+		source: vectorSource,
+		style: new Style({
+			image: new CircleStyle({
+				radius: 6,
+				fill: new Fill({
+					color: 'rgba(255, 0, 0, 0.5)'
+				}),
+				stroke: new Stroke({
+					color: 'rgba(255, 0, 0, 1)',
+					width: 2
+				})
+			})
+		})
+	});
+
 	function update_layer_opacity() {
 		if (!layer) {
 			return;
@@ -106,6 +136,132 @@
 		}
 	});
 
+	let chart; // Chart object
+	onMount(() => {
+		let ctx = document.getElementById('chart').getContext('2d');
+		let highlightIndex = 2; // Index of highlighted point
+		chart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: [],
+				datasets: [
+					{
+						label: 'Value',
+						data: [],
+						borderColor: 'lightgreen'
+					},
+					{ label: 'Trendline', data: [], borderColor: 'red', borderDash: [5, 5], fill: false },
+
+					{
+						label: 'Moving Average (10)',
+						data: [],
+						borderColor: 'lightblue',
+						borderDash: [5, 10],
+						fill: false
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				scales: {
+					x: {
+						title: { display: true, text: 'Year', color: 'white' },
+						ticks: { color: 'white' }
+					},
+					y: {
+						title: { display: true, text: 'Value', color: 'white' },
+						ticks: { color: 'white' }
+					}
+				},
+				plugins: {
+					legend: {
+						labels: {
+							color: 'white'
+						}
+					},
+					annotation: {
+						annotations: {
+							highlightLine: {
+								type: 'line',
+								xMin: highlightIndex,
+								xMax: highlightIndex,
+								borderColor: 'red',
+								borderWidth: 2,
+								display: true, // Hide initially
+								label: {
+									content: 'Highlighted Time',
+									enabled: true,
+									position: 'top'
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+	});
+	/**
+	 * Update the chart with new data.	Add trendline and moving average.
+	 * @param data
+	 */
+
+	let show_chart = writable(false);
+	function updateChart(
+		data:
+			| string
+			| any[]
+			| Int8Array<ArrayBuffer>
+			| Uint8Array<ArrayBuffer>
+			| Uint16Array<ArrayBuffer>
+			| Int16Array<ArrayBuffer>
+			| Uint32Array<ArrayBuffer>
+			| Int32Array<ArrayBuffer>
+			| Float32Array<ArrayBuffer>
+			| Float64Array<ArrayBuffer>
+	) {
+		const years = band_slider_values; // Example years
+
+		// Calculate trendline
+		const regressionData = years.map((year, i) => [year, data[i]]);
+		const trend = regression.linear(regressionData);
+		const trendValues = years.map((year) => trend.predict(year)[1]); // Get y-values for trendline
+
+		// Moving Window Average
+		let ema = [];
+		let windowSize = 10;
+		let multiplier = 2 / (windowSize + 1);
+
+		// First EMA value is just the first data point
+		ema[0] = data[0];
+
+		for (let i = 1; i < data.length; i++) {
+			ema[i] = (data[i] - ema[i - 1]) * multiplier + ema[i - 1];
+		}
+
+		$show_chart = true;
+		chart.data.labels = years;
+
+		// Set data for the chart
+		chart.data.datasets[0].data = data;
+		chart.data.datasets[1].data = trendValues;
+		chart.data.datasets[2].data = ema;
+
+		chart.update();
+	}
+
+	// Function to update highlight dynamically
+	function updateHighlight(highlightIndex: number) {
+		//const highlightIndex = index;
+		if (!chart) {
+			return;
+		}
+		chart.options.plugins.annotation.annotations.highlightLine.xMin = highlightIndex;
+		chart.options.plugins.annotation.annotations.highlightLine.xMax = highlightIndex;
+		chart.options.plugins.annotation.annotations.highlightLine.display = true; // Show the line
+		chart.update();
+	}
+
+	let coordinates = writable<number[]>([]);
 	/**
 	 * Run once on page init. Creates the map object for openlayers and
 	 * connects input events.
@@ -116,7 +272,8 @@
 			layers: [
 				new TileLayer({
 					source: new OSM()
-				})
+				}),
+				vectorLayer
 			],
 			view: base_view
 		});
@@ -148,8 +305,28 @@
 			if (hov_val != null) {
 				hov_val.textContent = data_zero.toFixed(2);
 			}
+			coordinates.set([...event.coordinate]);
 		}
 		map.on(['pointermove', 'click'], displayPixelValue);
+
+		// click trigger function to read clicked data point and show time series
+		map.on('click', async (event) => {
+			const coordinate = event.coordinate; // Get map coordinates
+			console.log(coordinate);
+			//const pixel = map.getPixelFromCoordinate(coordinate);
+			const data = await getTimeSeriesFromGeoTIFF(coordinate);
+
+			if (data) {
+				console.log(data);
+				updateChart(data);
+
+				// Add a point to the map at the selected location
+				const point = new Point(coordinate);
+				const feature = new Feature(point);
+				vectorSource.clear(); // Clear previous points
+				vectorSource.addFeature(feature);
+			}
+		});
 	}
 
 	/**
@@ -433,6 +610,7 @@
 		selected_band = parseInt(slider_index) + 1;
 		await refresh_band_metadata();
 		visualize_band();
+		updateHighlight(selected_band - 1); // update highlight	in chart
 	}
 
 	/**
@@ -607,10 +785,14 @@
 		// removing the old layer if there is one (currently does not trigger in error case)
 		if (old_layer != null) {
 			map.removeLayer(old_layer);
+			map.removeLayer(vectorLayer);
 			map.addLayer(layer);
+			map.addLayer(vectorLayer);
 			old_layer = layer;
 		} else {
+			map.removeLayer(vectorLayer);
 			map.addLayer(layer);
+			map.addLayer(vectorLayer);
 			old_layer = layer;
 		}
 
@@ -673,6 +855,39 @@
 		}
 
 		fildered_folder_data = fildered_folder_data;
+	}
+
+	/**
+	 * Fetches time series data from a GeoTIFF file at a given coordinate.
+	 * @param coordinate
+	 */
+	async function getTimeSeriesFromGeoTIFF(coordinate) {
+		const tiff = await fromUrl(virtual_data_url);
+		const image = await tiff.getImage();
+		const rasterData = await image.readRasters();
+
+		const bbox = image.getBoundingBox();
+		const width = image.getWidth();
+		const height = image.getHeight();
+		const [x_res, y_res] = image.getResolution(); // Get resolution
+		const isFlipped = y_res < 0; // Check if Y-axis is flipped
+
+		// Convert map coordinates to pixel coordinates
+		let x = Math.round(((coordinate[0] - bbox[0]) / (bbox[2] - bbox[0])) * (width - 1));
+		let y = Math.round(((coordinate[1] - bbox[1]) / (bbox[3] - bbox[1])) * (height - 1));
+
+		// Flip Y index if necessary
+		if (isFlipped) {
+			y = height - 1 - y;
+		}
+
+		// Ensure x and y are within bounds
+		x = Math.max(0, Math.min(x, width - 1));
+		y = Math.max(0, Math.min(y, height - 1));
+
+		let values = rasterData.map((band) => band[y * width + x]);
+
+		return values; // Time series data
 	}
 </script>
 
@@ -807,16 +1022,27 @@
 
 	<div class="w-full px-4 mt-2">
 		<div class="variant-outline-tertiary p-2">
-			<span>Hovering Pixel: [</span>
+			<!--<span>Hovering Pixel: [</span>
 			<span id="hovering_pixel_x" />,
-			<span id="hovering_pixel_y" />
-			]
-			<span> &nbsp;&nbsp;Value: </span><span id="hovering_value" />
-			<span> &nbsp;&nbsp;Status: </span><span id="status" />
+			<span id="hovering_pixel_y" />]-->
+
+			{#if $coordinates.length > 0}
+				&nbsp;&nbsp;Coordinates: [{$coordinates[0].toFixed(2)}, {$coordinates[1].toFixed(2)}]
+
+				<span> &nbsp;&nbsp;Value: </span><span id="hovering_value" />
+			{:else}
+				<span><em>Hover over map to get pixel value</em></span>
+			{/if}
+
+			<span><em> / Click on map to view timeseries</em></span>
 		</div>
 	</div>
 {/if}
-
+<div class="w-full px-4 mt-2">
+	<div class="variant-outline-tertiary p-2">
+		<canvas id="chart" width="400" height="100" class:hidden={!$show_chart} />
+	</div>
+</div>
 <div class={horizontal_scala ? '' : 'flex'}>
 	<div class="flex justify-center items-center">
 		<CustomGradientPicker
@@ -941,5 +1167,8 @@
 	.map {
 		width: 100%;
 		height: 800px;
+	}
+	.hidden {
+		display: none;
 	}
 </style>
