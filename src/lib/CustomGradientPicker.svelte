@@ -64,7 +64,7 @@
 	export let cmax_real = 100; // real data maximum
 	let custom_min = 0.0;
 	let custom_max = 0.0;
-	export let show_in_bounds = false;
+	export let show_in_bounds = true;
 	export let horizontal = true;
 
 	let value_steps: any[] = [];
