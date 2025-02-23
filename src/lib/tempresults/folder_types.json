@@ -86,5 +86,13 @@
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area"
+	},
+	{
+		"key": "era5_land",
+		"display_name": "ERA5 Land",
+		"description": "ERA5 Land data for TIPPECC area",
+		"citation": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "Downloaded from CDS"
 	}
 ]
