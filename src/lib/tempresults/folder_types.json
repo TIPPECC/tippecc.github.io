@@ -94,5 +94,21 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Downloaded from CDS"
+	},
+	{
+		"key": "sftlf",
+		"display_name": "sftlf",
+		"description": "sftlf",
+		"citation": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "sftlf"
+	},
+	{
+		"key": "orog",
+		"display_name": "Orog",
+		"description": "Orog data for TIPPECC area",
+		"citation": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": ""
 	}
 ]
