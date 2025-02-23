@@ -317,7 +317,7 @@
 			const data = await getTimeSeriesFromGeoTIFF(coordinate);
 
 			if (data) {
-				console.log(data);
+				// console.log(data);
 				updateChart(data);
 
 				// Add a point to the map at the selected location
@@ -522,6 +522,13 @@
 		slider_index = 0;
 		slider_index_diff = 0;
 		diff_mode = false;
+
+		// reset chart
+		chart.data.labels = [];
+		chart.data.datasets[0].data = [];
+		chart.data.datasets[1].data = [];
+		chart.data.datasets[2].data = [];
+		chart.update();
 
 		// demand access to the tif file
 		var access_tif_url =
@@ -840,7 +847,7 @@
 
 		for (var key in folder_data) {
 			var f_name = folder_data[key]['filename'];
-			var f_name_helper: string = f_name.toLowerCase().replace('-', '').replace('_', '');
+			var f_name_helper: string = f_name.toLowerCase();
 			var ignore_file: boolean = false;
 			for (var i in search_term_bits) {
 				if (!f_name_helper.includes(search_term_bits[i].toLowerCase())) {
@@ -855,6 +862,7 @@
 		}
 
 		fildered_folder_data = fildered_folder_data;
+		set_cat_folder_data();
 	}
 
 	/**
@@ -889,6 +897,88 @@
 
 		return values; // Time series data
 	}
+	let cat_folder_data: any = [];
+	let variables: any = [];
+	let categories: any = [];
+	let full_var: any = [];
+	import folder_types from '$lib/tempresults/folder_types.json';
+	function set_cat_folder_data() {
+		// Regex pattern to match filenames
+		let filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
+		const folder_type = folder_types.find((x) => x.key == foldertype);
+		if (folder_type && folder_type.header_regex.length > 2) {
+			filePattern = new RegExp(folder_type.header_regex.replace(/\\/g, '\\'));
+		} else {
+			// console.error(`Folder type ${foldertype} not found.`);
+		}
+		console.log('filePattern: ', filePattern);
+		cat_folder_data = {};
+		categories: [];
+		variables = [];
+		full_var = [];
+
+		// categories['No Category'] = { files: [], toggled: false };
+
+		for (let x = 0; x < folder_data.length; x++) {
+			var filename: string = folder_data[x]['filename'];
+			const match = filename.match(filePattern);
+
+			if (match && match.length >= 3) {
+				const category = match[0];
+
+				// match first part of filename under first "__" and save it as variable ( e.g. __evspsblpot_all__mm__yearsum_mean_2080_2099.nc, __water_budget_all__mm__yearsum_mean_1981_2000.nc, ...)
+				const regex = /^(_*[^_]*_[^_]+)/g;
+				let matches = filename.replace(match[0], '').replace('.nc', '').match(regex);
+				let variable = '';
+				if (matches) {
+					// console.log('matches: ', matches);
+					variable = matches[0]
+						.replace(/_\d{4}/g, '')
+						.replace(/^_+/, '')
+						.replace('_Afr', '');
+					if (!variables.includes(variable)) {
+						variables.push(variable);
+					}
+
+					if (
+						!full_var.includes(
+							filename
+								.replace(match[0], '')
+								.replace(matches[0], '')
+								.replace(/^_+/, '')
+								.replace('.nc', '')
+						)
+					) {
+						full_var.push(
+							filename
+								.replace(match[0], '')
+								.replace(matches[0], '')
+								.replace(/^_+/, '')
+								.replace('.nc', '')
+						);
+					}
+				}
+				// console.log('matches: ', match[1]);
+
+				if (!categories.includes(category)) {
+					categories.push(category);
+				}
+
+				//categories[category].files.push({ filename: filename, index: x });
+			}
+		}
+
+		categories = [...categories];
+		variables = [...variables];
+		full_var.sort();
+		full_var = [...full_var];
+		console.log('variables: ', variables);
+		console.log('cat_folder_data: ', cat_folder_data);
+	}
+	function set_search_term(variable: string) {
+		file_search_term = variable;
+		filesearch_input_changed();
+	}
 </script>
 
 <div class="flex px-4">
@@ -909,9 +999,49 @@
 		placeholder="Type to filter filenames..."
 		bind:value={file_search_term}
 		on:input={filesearch_input_changed}
+		on:change={filesearch_input_changed}
 	/>
 </div>
+<div class="overflow-y-auto max-h-[120px]">
+	{#if categories.length > 0}
+		<div>
+			<div class="flow gap-2 items-center">
+				{#each categories as variable}
+					<button
+						class="w-[300px] h-[60px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+						on:click={set_search_term(variable)}>{variable}</button
+					>
+				{/each}
+			</div>
+		</div>
+	{/if}
+	{#if variables.length > 0}
+		<div>
+			<div class="flow gap-2 items-center">
+				{#each variables as variable}
+					<button
+						class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+						on:click={set_search_term(variable)}>{variable}</button
+					>
+				{/each}
+			</div>
+		</div>
+	{/if}
+	{#if full_var.length > 0}
+		<!-- max height and all scroll -->
 
+		<div>
+			<div class="flow gap-2 items-center">
+				{#each full_var as variable}
+					<button
+						class="w-[520px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+						on:click={set_search_term(variable)}>{variable}</button
+					>
+				{/each}
+			</div>
+		</div>
+	{/if}
+</div>
 <div class="lg:flex px-4 pt-4 w-full">
 	{#if foldertype}
 		<label
