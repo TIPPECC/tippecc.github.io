@@ -24,12 +24,20 @@
 		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment"
 	},
 	{
-		"key": "vaal",
+		"key": "vaal_CORDEX",
 		"display_name": "CORDEX-CORE Vaal",
 		"description": "CORDEX-CORE data for Vaal dam catchment",
 		"citation": "tbd",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment"
+	},
+	{
+		"key": "vaal_CHIRPS",
+		"display_name": "CHIRPS Vaal",
+		"description": "CHIRPS data for Vaal dam catchment",
+		"citation": "tbd",
+		"header_regex": "",
+		"lineage": "Derived from CHIRPS data for Vaal dam catchment"
 	},
 	{
 		"key": "luanginga",

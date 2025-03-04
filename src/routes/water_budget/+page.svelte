@@ -232,7 +232,8 @@
 					}
 					requested_filetype = 'tif';
 				}
-				checked_boxes.push([requested_filename, requested_filetype]);
+				//requested_filetype = requested_filetype == 'nc' ? filetype : requested_filetype;
+				checked_boxes.push([requested_filename, filetype]);
 			}
 		}
 
@@ -467,6 +468,12 @@
 		search_term = variable;
 	}
 
+	let filetype = 'nc';
+	let requested_filetype = 'nc';
+function handleFileTypeChange(event) {
+	filetype = event.target.value;
+	requested_filetype = filetype;
+}
 	// array with current geo_data['facets']['file_id']
 </script>
 
@@ -667,6 +674,26 @@
 																	</div>
 																</a>
 															</button>
+															{#if folder_data[file_obj.index]['nc_clipped_exists']}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+																<a
+																	href="{API_URL}/climate/get_temp_file?name={folder_data[
+																		file_obj.index
+																	]['filename']}&type={foldertype}&filetype=dat_clipped"
+																	class="flex"
+																	title="Download clipped .nc file"
+																>
+																	<Download />
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		.nc(c)
+																	</div>
+																</a>
+															</button>
+
+														{/if}
+
 															{#if folder_data[file_obj.index]['dat_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -711,6 +738,26 @@
 																	<XDisabled />
 																</div>
 															{/if}
+
+															{#if folder_data[file_obj.index]['dat_clipped_exists']}
+															<button
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+															>
+																<a
+																	href="{API_URL}/climate/get_temp_file?name={folder_data[
+																		file_obj.index
+																	]['filename']}&type={foldertype}&filetype=dat_clipped"
+																	class="flex"
+																	title="Download clipped .dat file"
+																>
+																	<Download />
+																	<div class="ml-1 flex place-items-center justify-items-center">
+																		.dat(c)
+																	</div>
+																</a>
+															</button>
+
+														{/if}
 
 															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
@@ -841,13 +888,29 @@
 				on:click|preventDefault={handle_checkbox_submit}
 				>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 			>
-			<button
-				type="button"
-				class="btn bg-tertiary-500 hover:bg-tertiary-900 rounded-md"
-				on:click|preventDefault={toggle_download_tiff}
-				>{download_tiff ? 'Filetype .nc as .tiff' : 'Filetype .nc as .nc'}
-			</button>
 
+			<div class="filetype-selector">
+				<label>
+					<input type="radio" name="filetype" value="nc" bind:group={filetype} on:change={handleFileTypeChange} />
+					Filetype .nc
+				</label>
+				<label>
+					<input type="radio" name="filetype" value="nc_clipped" bind:group={filetype} on:change={handleFileTypeChange} />
+					Filetype .nc (clipped)
+				</label>
+				<label>
+					<input type="radio" name="filetype" value="dat" bind:group={filetype} on:change={handleFileTypeChange} />
+					Filetype .dat
+				</label>
+				<label>
+					<input type="radio" name="filetype" value="dat_clipped" bind:group={filetype} on:change={handleFileTypeChange} />
+					Filetype .dat (clipped)
+				</label>
+				<label>
+					<input type="radio" name="filetype" value="tif" bind:group={filetype} on:change={handleFileTypeChange} />
+					Filetype .tiff
+				</label>
+			</div>
 			<!-- TODO CHECKBOX -->
 			<!-- <label
 				for={'checkbox_' + file_obj.index}
