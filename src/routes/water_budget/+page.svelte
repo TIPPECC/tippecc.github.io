@@ -93,6 +93,7 @@
 			foldertype = type;
 		}
 	}
+	let filter = '';
 
 	let loading = false;
 
@@ -485,7 +486,7 @@ function handleFileTypeChange(event) {
 		</div>
 	</div>
 
-	<FoldertypeChooser bind:foldertype on:foldertype_changed={() => refresh_foldercontent(false)} />
+	<FoldertypeChooser bind:foldertype bind:filter on:foldertype_changed={() => refresh_foldercontent(false)} />
 	<div>
 		<button
 			class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"

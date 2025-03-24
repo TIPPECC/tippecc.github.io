@@ -1,25 +1,49 @@
 [
 	{
-		"key": "water_budget",
-		"display_name": "CORDEX-CORE Raw Indicator",
-		"description": "Indicator based on CORDEX-CORE data",
-		"citation": "tbd",
+		"key": "CORDEX_raw",
+		"display_name": "CORDEX-CORE Raw",
+		"description": "Raw CORDEX-CORE data",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data"
 	},
 	{
-		"key": "water_budget_bias",
-		"display_name": "CORDEX-CORE Bias Indicator",
-		"description": "Indicator with bias adjusted CORDEX-CORE data",
-		"citation": "tbd",
+		"key": "CORDEX_bias",
+		"display_name": "CORDEX-CORE Bias",
+		"description": "Bias adjusted CORDEX-CORE data",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
 	},
 	{
-		"key": "kariba",
+		"key": "CORDEX_raw_ind",
+		"display_name": "CORDEX-CORE Raw Indicator",
+		"description": "Indicator based on CORDEX-CORE data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data"
+	},
+	{
+		"key": "CORDEX_bias_ind",
+		"display_name": "CORDEX-CORE Bias Indicator",
+		"description": "Indicator with bias adjusted CORDEX-CORE data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+	},
+	{
+		"key": "CHIRPS",
+		"display_name": "CHIRPS TIPPECC area",
+		"description": "Raw CHIRPS data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CHIRPS data"
+	},
+	{
+		"key": "kariba_CORDEX",
 		"display_name": "CORDEX-CORE Kariba",
 		"description": "CORDEX-CORE data for Kariba dam catchment",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment"
 	},
@@ -27,7 +51,7 @@
 		"key": "vaal_CORDEX",
 		"display_name": "CORDEX-CORE Vaal",
 		"description": "CORDEX-CORE data for Vaal dam catchment",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment"
 	},
@@ -35,44 +59,44 @@
 		"key": "vaal_CHIRPS",
 		"display_name": "CHIRPS Vaal",
 		"description": "CHIRPS data for Vaal dam catchment",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CHIRPS data for Vaal dam catchment"
 	},
 	{
-		"key": "luanginga",
+		"key": "vaal_ERA5_LAND",
+		"display_name": "ERA5-LAND Vaal",
+		"description": "ERA5-LAND data for Vaal dam catchment",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment"
+	},
+	{
+		"key": "luanginga_CORDEX",
 		"display_name": "CORDEX-CORE Luanginga",
 		"description": "CORDEX-CORE data for Luanginga dam catchment",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment"
 	},
 	{
-		"key": "cmip6_raw",
+		"key": "CMIP6_raw",
 		"display_name": "CMIP6 Raw",
 		"description": "CMIP6 raw data for TIPPECC area",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data"
 	},
 	{
-		"key": "cmip6_raw_ind",
+		"key": "CMIP6_raw_ind",
 		"display_name": "CMIP6 Raw Indicator",
 		"description": "CMIP6 indicator data",
-		"citation": "tbd",
+		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data"
 	},
 	{
-		"key": "paper",
-		"display_name": "Paper",
-		"description": "Research papers and articles",
-		"citation": "tbd",
-		"header_regex": "",
-		"lineage": ""
-	},
-	{
-		"key": "ind_full",
+		"key": "LANDSURF_ind_full",
 		"display_name": "CORDEX-CORE Raw Ind. Full",
 		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
@@ -80,7 +104,7 @@
 		"lineage": "Derived from full indicator data for TIPPECC area"
 	},
 	{
-		"key": "ind_slices20",
+		"key": "LANDSURF_ind_slices20",
 		"display_name": " CORDEX-CORE Raw Ind. Slices 20",
 		"description": "Indicator slices at 20 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
@@ -88,7 +112,7 @@
 		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area"
 	},
 	{
-		"key": "ind_slices30",
+		"key": "LANDSURF_ind_slices30",
 		"display_name": "CORDEX-CORE Raw Ind. Slices 30",
 		"description": "Indicator slices at 30 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
@@ -96,9 +120,9 @@
 		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area"
 	},
 	{
-		"key": "era5_land",
-		"display_name": "ERA5 Land",
-		"description": "ERA5 Land data for TIPPECC area",
+		"key": "kunene_ERA5_LAND",
+		"display_name": "ERA5-LAND Kunene",
+		"description": "ERA5-LAND data for Kunene dam catchment",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Downloaded from CDS"
@@ -117,6 +141,14 @@
 		"description": "Orog data for TIPPECC area",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": ""
+	},
+	{
+		"key": "paper",
+		"display_name": "Paper",
+		"description": "Research papers and articles",
+		"citation": "",
+		"header_regex": "",
 		"lineage": ""
 	}
 ]

@@ -2,7 +2,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
 
-	export var foldertype: string = 'water_budget';
+	export var filter : string = '';
+	export var foldertype: string = 'CORDEX_raw_ind';
+
 	var foldertypes: {
 		key: string;
 		display_name: string;
@@ -11,6 +13,12 @@
 		header_regex: string;
 		lineage: string;
 	}[] = folder_types;
+
+	// filter out the folder types that are not relevant
+	if (filter.length > 0) {
+		foldertypes = foldertypes.filter((x) => x.key.startsWith(filter));
+	}
+
 
 	const dispatch = createEventDispatcher();
 
