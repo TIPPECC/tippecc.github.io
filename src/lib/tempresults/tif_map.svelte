@@ -75,13 +75,15 @@
 	// min/max of current main band
 	let current_band_metainfo = {
 		min: 0,
-		max: 0
+		max: 0,
+		noDataValue: NaN
 	};
 
 	// min/max of current diff band
 	let current_diff_band_metainfo = {
 		min: 0,
-		max: 0
+		max: 0,
+		noDataValue: NaN
 	};
 
 	// Create a vector source and layer for the selected point
@@ -303,7 +305,15 @@
 
 			var hov_val = document.getElementById('hovering_value');
 			if (hov_val != null) {
-				hov_val.textContent = data_zero.toFixed(2);
+				if (diff_mode) {
+					var data_one = 0.0;
+					if (data.length > 2) {
+						data_one = data[1];
+						hov_val.textContent = (data_zero - data_one).toFixed(2).toString();
+					}
+				} else {
+					hov_val.textContent = data_zero.toFixed(2);
+				}
 			}
 			coordinates.set([...event.coordinate]);
 		}
@@ -423,6 +433,8 @@
 		try {
 			var meta_min = parseFloat(band_metadata[selected_band].min);
 			var meta_max = parseFloat(band_metadata[selected_band].max);
+			var noDataValue = parseFloat(band_metadata[selected_band].noDataValue);
+			var noDataValueDiff = parseFloat(band_metadata[selected_band_diff].noDataValue);
 
 			if (isNaN(meta_min) || isNaN(meta_max)) {
 				loading_map = false;
@@ -431,6 +443,8 @@
 
 			current_band_metainfo.min = meta_min;
 			current_band_metainfo.max = meta_max;
+			current_band_metainfo.noDataValue = noDataValue;
+			current_diff_band_metainfo.noDataValue = noDataValueDiff;
 
 			current_diff_band_metainfo.min = meta_min;
 			current_diff_band_metainfo.max = meta_max;
@@ -453,6 +467,7 @@
 
 		var timestamp_begin = file_metadata['time#units'];
 		var timestamp_data = timestamp_begin.split(' ');
+		console.log('TIMESTAMP DATA: \n', timestamp_data);
 
 		// start date of the metadata timestamp in milliseconds
 		var start_date = NaN;
@@ -636,9 +651,24 @@
 	 * Documented under: https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 	 * @param color_stops
 	 * @param layerinfo
+	 * @param noDataValue
 	 */
-	function generate_openlayers_case_stops(color_stops: any[], layerinfo: any[]) {
+	function generate_openlayers_case_stops(color_stops: any[], layerinfo: any[], noDataValue: any) {
+		// only 0.00 default noDataValue
 		var color_cases = ['case', ['==', layerinfo, 0], [0, 0, 0, 0]];
+		if (isNaN(noDataValue) || noDataValue == 'NaN') {
+			// do nothing
+		} else {
+			// 0.00 default noDataValue + band specific
+			color_cases = [
+				'case',
+				['==', layerinfo, 0],
+				[0, 0, 0, 0],
+				['==', layerinfo, noDataValue],
+				[0, 0, 0, 0]
+			];
+		}
+
 		for (let i = 0; i < color_stops.length; i++) {
 			if (i % 2 == 0) {
 				// current range of values
@@ -739,6 +769,12 @@
 		// band selection
 		var bands_helper = [];
 		if (diff_mode) {
+			// NOTE:
+			//	- sadly openlayers does not natively understand custom noDataValues like -9999 here
+			//	- this results in many falsely colored pixels when e.g. the pixel in band 1 has a value
+			//	but the pixel in the diff band 2 has a noDataValue of -9999 -> openlayers just substracts these
+			//	creating a senseless result which we can not prevent currently....
+			//	- gpt suggested overwriting the band-diff function from ol.source.Rastere as a solution
 			bands_helper = [selected_band, selected_band_diff];
 		} else {
 			bands_helper = [selected_band];
@@ -777,7 +813,8 @@
 		// build a color object for openlayers based on the current configuration
 		const color_thing = generate_openlayers_case_stops(
 			cg_picker.get_color_boundaries('rgb'),
-			layerinfo
+			layerinfo,
+			current_band_metainfo['noDataValue']
 		);
 		// console.log('GENERATED STOPS: \n', color_thing);
 
@@ -1105,7 +1142,10 @@
 			>
 				<h2>Layer meta data <b>#{selected_band}:</b></h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
-				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
+				<div id="band_max">MAX: {current_band_metainfo['max']}</div>
+				<div id="noDataValue">
+					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+				</div>
 			</div>
 			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 				<CustomSliderPicker
@@ -1127,6 +1167,9 @@
 					<h2>Layer meta data <b>#{selected_band_diff}:</b></h2>
 					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
 					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
+					<div id="noDataValue">
+						nDV: {parseFloat(current_diff_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+					</div>
 				</div>
 				<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 					<CustomSliderPicker
@@ -1145,6 +1188,9 @@
 				<h2>Single layer metadata</h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
+				<div id="noDataValue">
+					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+				</div>
 				<div id="band_timestamp">Start: {file_metadata['time#units']}</div>
 			</div>
 		</div>
