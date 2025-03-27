@@ -26,7 +26,6 @@
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 	import FileDetails from '$lib/FileDetails.svelte';
 
-
 	type FileinfoFormat = {
 		fileversion: string;
 		num_bands: number;
@@ -471,10 +470,10 @@
 
 	let filetype = 'nc';
 	let requested_filetype = 'nc';
-function handleFileTypeChange(event) {
-	filetype = event.target.value;
-	requested_filetype = filetype;
-}
+	function handleFileTypeChange(event) {
+		filetype = event.target.value;
+		requested_filetype = filetype;
+	}
 	// array with current geo_data['facets']['file_id']
 </script>
 
@@ -486,7 +485,11 @@ function handleFileTypeChange(event) {
 		</div>
 	</div>
 
-	<FoldertypeChooser bind:foldertype bind:filter on:foldertype_changed={() => refresh_foldercontent(false)} />
+	<FoldertypeChooser
+		bind:foldertype
+		bind:filter
+		on:foldertype_changed={() => refresh_foldercontent(false)}
+	/>
 	<div>
 		<button
 			class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -676,24 +679,23 @@ function handleFileTypeChange(event) {
 																</a>
 															</button>
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=dat_clipped"
-																	class="flex"
-																	title="Download clipped .nc file"
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 																>
-																	<Download />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		.nc(c)
-																	</div>
-																</a>
-															</button>
-
-														{/if}
+																	<a
+																		href="{API_URL}/climate/get_temp_file?name={folder_data[
+																			file_obj.index
+																		]['filename']}&type={foldertype}&filetype=dat_clipped"
+																		class="flex"
+																		title="Download clipped .nc file"
+																	>
+																		<Download />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.nc(c)
+																		</div>
+																	</a>
+																</button>
+															{/if}
 
 															{#if folder_data[file_obj.index]['dat_exists']}
 																<button
@@ -741,24 +743,23 @@ function handleFileTypeChange(event) {
 															{/if}
 
 															{#if folder_data[file_obj.index]['dat_clipped_exists']}
-															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=dat_clipped"
-																	class="flex"
-																	title="Download clipped .dat file"
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 																>
-																	<Download />
-																	<div class="ml-1 flex place-items-center justify-items-center">
-																		.dat(c)
-																	</div>
-																</a>
-															</button>
-
-														{/if}
+																	<a
+																		href="{API_URL}/climate/get_temp_file?name={folder_data[
+																			file_obj.index
+																		]['filename']}&type={foldertype}&filetype=dat_clipped"
+																		class="flex"
+																		title="Download clipped .dat file"
+																	>
+																		<Download />
+																		<div class="ml-1 flex place-items-center justify-items-center">
+																			.dat(c)
+																		</div>
+																	</a>
+																</button>
+															{/if}
 
 															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
@@ -868,7 +869,7 @@ function handleFileTypeChange(event) {
 											<tr>
 												<td colspan="7" class="p-2">
 													{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-														<FileDetails  {folder_data} {file_obj} {foldertype} />
+														<FileDetails {folder_data} {file_obj} {foldertype} />
 													{/if}
 												</td>
 											</tr>
@@ -892,23 +893,53 @@ function handleFileTypeChange(event) {
 
 			<div class="filetype-selector">
 				<label>
-					<input type="radio" name="filetype" value="nc" bind:group={filetype} on:change={handleFileTypeChange} />
+					<input
+						type="radio"
+						name="filetype"
+						value="nc"
+						bind:group={filetype}
+						on:change={handleFileTypeChange}
+					/>
 					Filetype .nc
 				</label>
 				<label>
-					<input type="radio" name="filetype" value="nc_clipped" bind:group={filetype} on:change={handleFileTypeChange} />
+					<input
+						type="radio"
+						name="filetype"
+						value="nc_clipped"
+						bind:group={filetype}
+						on:change={handleFileTypeChange}
+					/>
 					Filetype .nc (clipped)
 				</label>
 				<label>
-					<input type="radio" name="filetype" value="dat" bind:group={filetype} on:change={handleFileTypeChange} />
+					<input
+						type="radio"
+						name="filetype"
+						value="dat"
+						bind:group={filetype}
+						on:change={handleFileTypeChange}
+					/>
 					Filetype .dat
 				</label>
 				<label>
-					<input type="radio" name="filetype" value="dat_clipped" bind:group={filetype} on:change={handleFileTypeChange} />
+					<input
+						type="radio"
+						name="filetype"
+						value="dat_clipped"
+						bind:group={filetype}
+						on:change={handleFileTypeChange}
+					/>
 					Filetype .dat (clipped)
 				</label>
 				<label>
-					<input type="radio" name="filetype" value="tif" bind:group={filetype} on:change={handleFileTypeChange} />
+					<input
+						type="radio"
+						name="filetype"
+						value="tif"
+						bind:group={filetype}
+						on:change={handleFileTypeChange}
+					/>
 					Filetype .tiff
 				</label>
 			</div>
