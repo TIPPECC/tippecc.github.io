@@ -401,6 +401,98 @@
 		await set_color_bounds();
 	}
 
+	function evaluate_timestamp_data(timestemp: any, net_cdf_times: any) {
+		// read timestamp and calculated values for the bandslider
+		band_slider_values = [];
+
+		var timestamp_begin = file_metadata['time#units'];
+		var timestamp_data = timestamp_begin.split(' ');
+
+		// timestamp_data is an arbitrary string array which we first want to analyze
+		const regex = /^[^0-9]*$/;
+
+		function doesNotContainNumber(str: string) {
+			return regex.test(str);
+		}
+
+		var start_date = NaN;
+		var time_prefix = 'days';
+		// we assume always some form of "days/years since timestemp..."
+		for (var i = 0; i < timestamp_data.length; i++) {
+			var cur_el: string = timestamp_data[i];
+			if (doesNotContainNumber(cur_el)) {
+				if (cur_el != 'since') {
+					if (cur_el == 'years' || cur_el == 'days') {
+						time_prefix = cur_el;
+					} else {
+						console.log('Encountered new Time Prefix: ', cur_el);
+					}
+				}
+			} else {
+				start_date = Date.parse(cur_el);
+				if (isNaN(start_date)) {
+					// console.log("NaN Start Date: ", cur_el)
+				} else {
+					// console.log("Start Date: ", cur_el, " ", start_date);
+					// For now we finish here, take the date, and assume a current
+					// clocktime of 00:00:00
+					break;
+				}
+			}
+		}
+
+		if (isNaN(start_date)) {
+			console.log('Could not parse metadata timestamp.');
+			timestamp_begin = '';
+			throw new Error('Metadata timestamp is invalid.');
+		}
+
+		var time_prefix_multiplier = 1.0;
+		// days of a year after gregorian calendar - multiplier
+		if (time_prefix == 'years') time_prefix_multiplier = 365.2425;
+		// console.log("Time Prefix and Multi: ", time_prefix, " ", time_prefix_multiplier);
+
+		try {
+			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
+			if (last_date > 365.0) {
+				time_interval_mode = 0;
+			} else {
+				time_interval_mode = 1;
+			}
+			if (timestamp_begin == '') {
+				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					band_slider_values.push(parseFloat(net_cdf_times[i]));
+				}
+			} else {
+				// valid timestamp -> calculate years (for now) and assign to bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					if (time_interval_mode == 0) {
+						band_slider_values.push(
+							new Date(
+								start_date +
+									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+							).getFullYear()
+						);
+					} else if (time_interval_mode == 1) {
+						band_slider_values.push(
+							new Date(
+								start_date +
+									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+							).toLocaleDateString()
+						);
+					}
+
+					band_slider_dates.push(
+						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+					);
+				}
+			}
+		} catch (error) {
+			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		}
+	}
+
 	/**
 	 * Try to interprate file metadata (min, max, timestamp, bands, netcdf_times, ..).
 	 */
@@ -462,61 +554,63 @@
 			current_diff_band_metainfo.max = 1000.0;
 		}
 
-		// read timestamp and calculated values for the bandslider
-		band_slider_values = [];
+		evaluate_timestamp_data(file_metadata['time#units'], net_cdf_times);
 
-		var timestamp_begin = file_metadata['time#units'];
-		var timestamp_data = timestamp_begin.split(' ');
-		console.log('TIMESTAMP DATA: \n', timestamp_data);
+		// // read timestamp and calculated values for the bandslider
+		// band_slider_values = [];
 
-		// start date of the metadata timestamp in milliseconds
-		var start_date = NaN;
-		for (var i = 0; i < timestamp_data.length; i++) {
-			start_date = Date.parse(timestamp_data[i]);
-			if (!isNaN(start_date)) {
-				break;
-			}
-		}
+		// var timestamp_begin = file_metadata['time#units'];
+		// var timestamp_data = timestamp_begin.split(' ');
+		// console.log('TIMESTAMP DATA: \n', timestamp_data);
 
-		if (isNaN(start_date)) {
-			console.log('Could not parse metadata timestamp.');
-			timestamp_begin = '';
-			throw new Error('Metadata timestamp is invalid.');
-		}
+		// // start date of the metadata timestamp in milliseconds
+		// var start_date = NaN;
+		// for (var i = 0; i < timestamp_data.length; i++) {
+		// 	start_date = Date.parse(timestamp_data[i]);
+		// 	if (!isNaN(start_date)) {
+		// 		break;
+		// 	}
+		// }
 
-		try {
-			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-			if (last_date > 365.0) {
-				time_interval_mode = 0;
-			} else {
-				time_interval_mode = 1;
-			}
-			if (timestamp_begin == '') {
-				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(parseFloat(net_cdf_times[i]));
-				}
-			} else {
-				// valid timestamp -> calculate years (for now) and assign to bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					if (time_interval_mode == 0) {
-						band_slider_values.push(
-							new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
-						);
-					} else if (time_interval_mode == 1) {
-						band_slider_values.push(
-							new Date(
-								start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
-							).toLocaleDateString()
-						);
-					}
+		// if (isNaN(start_date)) {
+		// 	console.log('Could not parse metadata timestamp.');
+		// 	timestamp_begin = '';
+		// 	throw new Error('Metadata timestamp is invalid.');
+		// }
 
-					band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
-				}
-			}
-		} catch (error) {
-			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
-		}
+		// try {
+		// 	var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
+		// 	if (last_date > 365.0) {
+		// 		time_interval_mode = 0;
+		// 	} else {
+		// 		time_interval_mode = 1;
+		// 	}
+		// 	if (timestamp_begin == '') {
+		// 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+		// 		for (let i = 0; i < net_cdf_times.length; i++) {
+		// 			band_slider_values.push(parseFloat(net_cdf_times[i]));
+		// 		}
+		// 	} else {
+		// 		// valid timestamp -> calculate years (for now) and assign to bandslider values
+		// 		for (let i = 0; i < net_cdf_times.length; i++) {
+		// 			if (time_interval_mode == 0) {
+		// 				band_slider_values.push(
+		// 					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
+		// 				);
+		// 			} else if (time_interval_mode == 1) {
+		// 				band_slider_values.push(
+		// 					new Date(
+		// 						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
+		// 					).toLocaleDateString()
+		// 				);
+		// 			}
+
+		// 			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		// 		}
+		// 	}
+		// } catch (error) {
+		// 	console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		// }
 	}
 
 	/**
