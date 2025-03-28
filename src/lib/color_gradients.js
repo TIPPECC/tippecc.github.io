@@ -3882,7 +3882,7 @@ export let slev_seq = [
 	[0, 5, 74]
 ];
 
-export let gray_seq =[
+export let gray_seq = [
 	[0, 0, 0],
 	[1, 1, 1],
 	[2, 2, 2],
@@ -4139,4 +4139,4 @@ export let gray_seq =[
 	[253, 253, 253],
 	[254, 254, 254],
 	[255, 255, 255]
-]
+];

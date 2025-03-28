@@ -36,7 +36,7 @@
 		slev_seq: { scheme: slev_seq, orientation: 'seq', name: 'Sea level' },
 		temp_seq: { scheme: temp_seq, orientation: 'seq', name: 'Temperature' },
 		wind_seq: { scheme: wind_seq, orientation: 'seq', name: 'Wind' },
-		gray_seq: { scheme: gray_seq, orientation: 'seq', name: 'Grayscale'}
+		gray_seq: { scheme: gray_seq, orientation: 'seq', name: 'Grayscale' }
 	};
 
 	const dispatch = createEventDispatcher();
@@ -621,10 +621,9 @@
 			{#if obj_element == 'tools'}
 				<div class={horizontal ? 'flex w-full place-items-center' : 'pt-2 flex p-1'}>
 					<div
-						class="{horizontal ? 'flex flex-wrap w-full text-xs font-bold place-items-center gap-x-2 justify-evenly' : ''} {object_order_flip &&
-						colorbar_order_flip
-							? 'mt-[2px]'
-							: ''}"
+						class="{horizontal
+							? 'flex flex-wrap w-full text-xs font-bold place-items-center gap-x-2 justify-evenly'
+							: ''} {object_order_flip && colorbar_order_flip ? 'mt-[2px]' : ''}"
 					>
 						<!--Bounds-->
 						<div class="max-w-[120px] flex-1">
@@ -764,10 +763,11 @@
 							</select>
 						</div>
 
-
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<button
-								class="{forcedGrayScaleMode ? 'bg-success-700' : 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
+								class="{forcedGrayScaleMode
+									? 'bg-success-700'
+									: 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
 									? 'h-[28px]'
 									: 'mb-1'}"
 								on:click={() => try_gray_rescale()}
