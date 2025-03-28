@@ -791,6 +791,7 @@
 	 */
 	function color_stops_changed_signaler() {
 		if (metadata_loaded) {
+			// console.log("Visualizing band due to color_stops_changed Signal.")
 			visualize_band();
 		}
 	}
@@ -936,7 +937,7 @@
 
 		layer.setOpacity(opacity_value);
 		map.setView(base_view);
-
+		// console.log("Finished Visualize function.")
 		// console.log("Source Keys: \n", source.getKeys()); // empty
 		// console.log("Source Properties: \n", source.getProperties()); // empty
 		// console.log("Source TileGrid: \n", source.getTileGrid()); // null
