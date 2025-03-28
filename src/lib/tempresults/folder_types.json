@@ -39,6 +39,14 @@
 		"header_regex": "",
 		"lineage": "Derived from CHIRPS data"
 	},
+	{	
+		"key": "GLEAM",
+		"display_name": "GLEAM potEt",
+		"description": "GLEAM potEt data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from GLEAM data"
+	},
 	{
 		"key": "kariba_CORDEX",
 		"display_name": "CORDEX-CORE Kariba",
