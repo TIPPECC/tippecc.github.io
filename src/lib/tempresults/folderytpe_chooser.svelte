@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
 
-	export var filter : string = '';
+	export var filter: string = '';
 	export var foldertype: string = 'CORDEX_raw_ind';
 
 	var foldertypes: {
@@ -18,7 +18,6 @@
 	if (filter.length > 0) {
 		foldertypes = foldertypes.filter((x) => x.key.startsWith(filter));
 	}
-
 
 	const dispatch = createEventDispatcher();
 

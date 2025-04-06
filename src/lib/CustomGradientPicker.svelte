@@ -14,7 +14,8 @@
 		misc_seq,
 		slev_seq,
 		temp_seq,
-		wind_seq
+		wind_seq,
+		gray_seq
 	} from './color_gradients';
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
@@ -34,7 +35,8 @@
 		misc_seq: { scheme: misc_seq, orientation: 'seq', name: 'Other variables' },
 		slev_seq: { scheme: slev_seq, orientation: 'seq', name: 'Sea level' },
 		temp_seq: { scheme: temp_seq, orientation: 'seq', name: 'Temperature' },
-		wind_seq: { scheme: wind_seq, orientation: 'seq', name: 'Wind' }
+		wind_seq: { scheme: wind_seq, orientation: 'seq', name: 'Wind' },
+		gray_seq: { scheme: gray_seq, orientation: 'seq', name: 'Grayscale' }
 	};
 
 	const dispatch = createEventDispatcher();
@@ -72,6 +74,8 @@
 
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
+
+	let forcedGrayScaleMode: boolean = false;
 
 	// const VALUE_MODES = ['categorized', 'direct']
 	// export let value_mode: string = VALUE_MODES[0];
@@ -271,7 +275,8 @@
 		if (data_mode == 'divergent') {
 			return get_color_boundaries_div(format);
 		} else {
-			return get_color_boundaries_seq(format);
+			// NOTE: correct this later when needed
+			return get_color_boundaries_div(format);
 		}
 	}
 
@@ -282,6 +287,7 @@
 	function get_color_boundaries_seq(format: string) {
 		const stops = new Array(steps * 2);
 
+		// TODO: format is wrong here
 		if (format == 'rbg') {
 			for (let i = 0; i < steps; i++) {
 				stops[i * 2] = value_steps[i];
@@ -290,7 +296,7 @@
 		} /** hex */ else {
 			for (let i = 0; i < steps; i++) {
 				stops[i * 2] = value_steps[i];
-				stops[i * 2 + 1] = r2h(color_steps[i]);
+				stops[i * 2 + 1] = color_steps[i];
 			}
 		}
 
@@ -372,10 +378,17 @@
 		if (data_mode == 'divergent') {
 			update_color_steps_div();
 			update_value_steps_div();
+
+			// console.log("DIVERGENT:");
+			// console.log("Color Steps:\n", color_steps);
+			// console.log("Value Steps:\n", value_steps);
 		} else if (data_mode == 'sequential') {
 			// not functional rn
 			update_color_steps_seq();
 			update_value_steps_seq();
+			// console.log("SEQUENTIAL:");
+			// console.log("Color Steps:\n", color_steps);
+			// console.log("Value Steps:\n", value_steps);
 		} else if (data_mode == 'divergent_individual') {
 			update_color_steps_indiv();
 			update_value_steps_indiv();
@@ -405,12 +418,12 @@
 	function update_value_steps_seq() {
 		value_steps = [];
 
-		value_steps = [...value_steps, cmin];
+		value_steps = [...value_steps, cmin_real];
 		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, cmin + i * ((cmax - cmin) / steps)];
+			value_steps = [...value_steps, cmin_real + i * ((cmax_real - cmin_real) / steps)];
 		}
 
-		value_steps = [...value_steps, cmax];
+		value_steps = [...value_steps, cmax_real];
 	}
 
 	/**
@@ -472,6 +485,22 @@
 			value_steps = [...value_steps, j * (Math.abs(upper_l) / (step_half + 1))];
 		}
 		value_steps = [...value_steps, upper_l];
+	}
+
+	function try_gray_rescale() {
+		if (forcedGrayScaleMode) {
+			forcedGrayScaleMode = false;
+			data_mode = 'divergent';
+			color_scheme = prec_div;
+			color_scheme_key = 'prec_div';
+			update_color_and_value_steps();
+		} else {
+			forcedGrayScaleMode = true;
+			data_mode = 'sequential';
+			color_scheme = gray_seq;
+			color_scheme_key = 'gray_seq';
+			update_color_and_value_steps();
+		}
 	}
 
 	/**
@@ -590,20 +619,19 @@
 	<div class="grid grid-cols-1 place-items-center {horizontal ? 'grid-cols-1 w-full' : 'w-full'}">
 		{#each object_order as obj_element}
 			{#if obj_element == 'tools'}
-				<div class={horizontal ? '' : 'pt-2 flex place-items-center p-1'}>
+				<div class={horizontal ? 'flex w-full place-items-center' : 'pt-2 flex p-1'}>
 					<div
-						class="{horizontal ? 'flex text-xs font-bold h-7' : ''} {object_order_flip &&
-						colorbar_order_flip
-							? 'mt-[2px]'
-							: ''}"
+						class="{horizontal
+							? 'flex flex-wrap w-full text-xs font-bold place-items-center gap-x-2 justify-evenly'
+							: ''} {object_order_flip && colorbar_order_flip ? 'mt-[2px]' : ''}"
 					>
 						<!--Bounds-->
-						<div class="flex {horizontal ? 'md:mr-1 max-md:mb-1' : 'mb-1'}">
+						<div class="max-w-[120px] flex-1">
 							{#if show_in_bounds}
 								<button
 									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 {horizontal
 										? 'h-[28px]'
-										: ''}"
+										: 'mb-1'}"
 									on:click={() => {
 										show_in_bounds = !show_in_bounds;
 									}}
@@ -614,7 +642,7 @@
 								<button
 									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 {horizontal
 										? 'h-[28px]'
-										: ''}"
+										: 'mb-1'}"
 									on:click={() => {
 										show_in_bounds = !show_in_bounds;
 									}}
@@ -625,7 +653,7 @@
 						</div>
 
 						<!--Verticality-->
-						<div class="flex-1 {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
+						<div class="max-w-[120px] flex-1 {horizontal ? '' : 'mb-1'}">
 							{#if horizontal}
 								<button
 									class="variant-filled-tertiary hover:bg-tertiary-600 p-1 w-28 h-[28px]"
@@ -648,7 +676,7 @@
 						</div>
 
 						<!--Custom Min-->
-						<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
+						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
 								<label
 									for="custom_bounds_input"
@@ -664,7 +692,7 @@
 						</div>
 
 						<!--Custom Max-->
-						<div class="flex {horizontal ? 'md:mr-2 max-md:mb-1' : 'mb-1'}">
+						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
 								<label
 									for="custom_bounds_input"
@@ -680,7 +708,7 @@
 						</div>
 
 						<!--Steps-->
-						<div class="flex {horizontal ? 'md:mr-2 mr-1' : 'mb-1'}">
+						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
 								<div class="h-full flex-center variant-outline-tertiary p-1">Steps:</div>
 							</nobr>
@@ -733,6 +761,19 @@
 									<!-- <option value="misc_seq">Other variables</option> -->
 								{/if}
 							</select>
+						</div>
+
+						<div class="flex {horizontal ? '' : 'mb-1'}">
+							<button
+								class="{forcedGrayScaleMode
+									? 'bg-success-700'
+									: 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
+									? 'h-[28px]'
+									: 'mb-1'}"
+								on:click={() => try_gray_rescale()}
+								title="Rescale colors to one-dimensional gray-scale. (Use when the value range of data points is very small or just one sided (e.g. only positives)."
+								>Rescale
+							</button>
 						</div>
 					</div>
 				</div>

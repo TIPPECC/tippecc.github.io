@@ -75,13 +75,15 @@
 	// min/max of current main band
 	let current_band_metainfo = {
 		min: 0,
-		max: 0
+		max: 0,
+		noDataValue: NaN
 	};
 
 	// min/max of current diff band
 	let current_diff_band_metainfo = {
 		min: 0,
-		max: 0
+		max: 0,
+		noDataValue: NaN
 	};
 
 	// Create a vector source and layer for the selected point
@@ -303,7 +305,15 @@
 
 			var hov_val = document.getElementById('hovering_value');
 			if (hov_val != null) {
-				hov_val.textContent = data_zero.toFixed(2);
+				if (diff_mode) {
+					var data_one = 0.0;
+					if (data.length > 2) {
+						data_one = data[1];
+						hov_val.textContent = (data_zero - data_one).toFixed(2).toString();
+					}
+				} else {
+					hov_val.textContent = data_zero.toFixed(2);
+				}
 			}
 			coordinates.set([...event.coordinate]);
 		}
@@ -391,6 +401,98 @@
 		await set_color_bounds();
 	}
 
+	function evaluate_timestamp_data(timestemp: any, net_cdf_times: any) {
+		// read timestamp and calculated values for the bandslider
+		band_slider_values = [];
+
+		var timestamp_begin = file_metadata['time#units'];
+		var timestamp_data = timestamp_begin.split(' ');
+
+		// timestamp_data is an arbitrary string array which we first want to analyze
+		const regex = /^[^0-9]*$/;
+
+		function doesNotContainNumber(str: string) {
+			return regex.test(str);
+		}
+
+		var start_date = NaN;
+		var time_prefix = 'days';
+		// we assume always some form of "days/years since timestemp..."
+		for (var i = 0; i < timestamp_data.length; i++) {
+			var cur_el: string = timestamp_data[i];
+			if (doesNotContainNumber(cur_el)) {
+				if (cur_el != 'since') {
+					if (cur_el == 'years' || cur_el == 'days') {
+						time_prefix = cur_el;
+					} else {
+						console.log('Encountered new Time Prefix: ', cur_el);
+					}
+				}
+			} else {
+				start_date = Date.parse(cur_el);
+				if (isNaN(start_date)) {
+					// console.log("NaN Start Date: ", cur_el)
+				} else {
+					// console.log("Start Date: ", cur_el, " ", start_date);
+					// For now we finish here, take the date, and assume a current
+					// clocktime of 00:00:00
+					break;
+				}
+			}
+		}
+
+		if (isNaN(start_date)) {
+			console.log('Could not parse metadata timestamp.');
+			timestamp_begin = '';
+			throw new Error('Metadata timestamp is invalid.');
+		}
+
+		var time_prefix_multiplier = 1.0;
+		// days of a year after gregorian calendar - multiplier
+		if (time_prefix == 'years') time_prefix_multiplier = 365.2425;
+		// console.log("Time Prefix and Multi: ", time_prefix, " ", time_prefix_multiplier);
+
+		try {
+			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
+			if (last_date > 365.0) {
+				time_interval_mode = 0;
+			} else {
+				time_interval_mode = 1;
+			}
+			if (timestamp_begin == '') {
+				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					band_slider_values.push(parseFloat(net_cdf_times[i]));
+				}
+			} else {
+				// valid timestamp -> calculate years (for now) and assign to bandslider values
+				for (let i = 0; i < net_cdf_times.length; i++) {
+					if (time_interval_mode == 0) {
+						band_slider_values.push(
+							new Date(
+								start_date +
+									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+							).getFullYear()
+						);
+					} else if (time_interval_mode == 1) {
+						band_slider_values.push(
+							new Date(
+								start_date +
+									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+							).toLocaleDateString()
+						);
+					}
+
+					band_slider_dates.push(
+						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+					);
+				}
+			}
+		} catch (error) {
+			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		}
+	}
+
 	/**
 	 * Try to interprate file metadata (min, max, timestamp, bands, netcdf_times, ..).
 	 */
@@ -423,6 +525,8 @@
 		try {
 			var meta_min = parseFloat(band_metadata[selected_band].min);
 			var meta_max = parseFloat(band_metadata[selected_band].max);
+			var noDataValue = parseFloat(band_metadata[selected_band].noDataValue);
+			var noDataValueDiff = parseFloat(band_metadata[selected_band_diff].noDataValue);
 
 			if (isNaN(meta_min) || isNaN(meta_max)) {
 				loading_map = false;
@@ -431,6 +535,8 @@
 
 			current_band_metainfo.min = meta_min;
 			current_band_metainfo.max = meta_max;
+			current_band_metainfo.noDataValue = noDataValue;
+			current_diff_band_metainfo.noDataValue = noDataValueDiff;
 
 			current_diff_band_metainfo.min = meta_min;
 			current_diff_band_metainfo.max = meta_max;
@@ -448,60 +554,63 @@
 			current_diff_band_metainfo.max = 1000.0;
 		}
 
-		// read timestamp and calculated values for the bandslider
-		band_slider_values = [];
+		evaluate_timestamp_data(file_metadata['time#units'], net_cdf_times);
 
-		var timestamp_begin = file_metadata['time#units'];
-		var timestamp_data = timestamp_begin.split(' ');
+		// // read timestamp and calculated values for the bandslider
+		// band_slider_values = [];
 
-		// start date of the metadata timestamp in milliseconds
-		var start_date = NaN;
-		for (var i = 0; i < timestamp_data.length; i++) {
-			start_date = Date.parse(timestamp_data[i]);
-			if (!isNaN(start_date)) {
-				break;
-			}
-		}
+		// var timestamp_begin = file_metadata['time#units'];
+		// var timestamp_data = timestamp_begin.split(' ');
+		// console.log('TIMESTAMP DATA: \n', timestamp_data);
 
-		if (isNaN(start_date)) {
-			console.log('Could not parse metadata timestamp.');
-			timestamp_begin = '';
-			throw new Error('Metadata timestamp is invalid.');
-		}
+		// // start date of the metadata timestamp in milliseconds
+		// var start_date = NaN;
+		// for (var i = 0; i < timestamp_data.length; i++) {
+		// 	start_date = Date.parse(timestamp_data[i]);
+		// 	if (!isNaN(start_date)) {
+		// 		break;
+		// 	}
+		// }
 
-		try {
-			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-			if (last_date > 365.0) {
-				time_interval_mode = 0;
-			} else {
-				time_interval_mode = 1;
-			}
-			if (timestamp_begin == '') {
-				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(parseFloat(net_cdf_times[i]));
-				}
-			} else {
-				// valid timestamp -> calculate years (for now) and assign to bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					if (time_interval_mode == 0) {
-						band_slider_values.push(
-							new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
-						);
-					} else if (time_interval_mode == 1) {
-						band_slider_values.push(
-							new Date(
-								start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
-							).toLocaleDateString()
-						);
-					}
+		// if (isNaN(start_date)) {
+		// 	console.log('Could not parse metadata timestamp.');
+		// 	timestamp_begin = '';
+		// 	throw new Error('Metadata timestamp is invalid.');
+		// }
 
-					band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
-				}
-			}
-		} catch (error) {
-			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
-		}
+		// try {
+		// 	var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
+		// 	if (last_date > 365.0) {
+		// 		time_interval_mode = 0;
+		// 	} else {
+		// 		time_interval_mode = 1;
+		// 	}
+		// 	if (timestamp_begin == '') {
+		// 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+		// 		for (let i = 0; i < net_cdf_times.length; i++) {
+		// 			band_slider_values.push(parseFloat(net_cdf_times[i]));
+		// 		}
+		// 	} else {
+		// 		// valid timestamp -> calculate years (for now) and assign to bandslider values
+		// 		for (let i = 0; i < net_cdf_times.length; i++) {
+		// 			if (time_interval_mode == 0) {
+		// 				band_slider_values.push(
+		// 					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
+		// 				);
+		// 			} else if (time_interval_mode == 1) {
+		// 				band_slider_values.push(
+		// 					new Date(
+		// 						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
+		// 					).toLocaleDateString()
+		// 				);
+		// 			}
+
+		// 			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		// 		}
+		// 	}
+		// } catch (error) {
+		// 	console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		// }
 	}
 
 	/**
@@ -636,9 +745,24 @@
 	 * Documented under: https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 	 * @param color_stops
 	 * @param layerinfo
+	 * @param noDataValue
 	 */
-	function generate_openlayers_case_stops(color_stops: any[], layerinfo: any[]) {
+	function generate_openlayers_case_stops(color_stops: any[], layerinfo: any[], noDataValue: any) {
+		// only 0.00 default noDataValue
 		var color_cases = ['case', ['==', layerinfo, 0], [0, 0, 0, 0]];
+		if (isNaN(noDataValue) || noDataValue == 'NaN') {
+			// do nothing
+		} else {
+			// 0.00 default noDataValue + band specific
+			color_cases = [
+				'case',
+				['==', layerinfo, 0],
+				[0, 0, 0, 0],
+				['==', layerinfo, noDataValue],
+				[0, 0, 0, 0]
+			];
+		}
+
 		for (let i = 0; i < color_stops.length; i++) {
 			if (i % 2 == 0) {
 				// current range of values
@@ -667,6 +791,7 @@
 	 */
 	function color_stops_changed_signaler() {
 		if (metadata_loaded) {
+			// console.log("Visualizing band due to color_stops_changed Signal.")
 			visualize_band();
 		}
 	}
@@ -739,6 +864,12 @@
 		// band selection
 		var bands_helper = [];
 		if (diff_mode) {
+			// NOTE:
+			//	- sadly openlayers does not natively understand custom noDataValues like -9999 here
+			//	- this results in many falsely colored pixels when e.g. the pixel in band 1 has a value
+			//	but the pixel in the diff band 2 has a noDataValue of -9999 -> openlayers just substracts these
+			//	creating a senseless result which we can not prevent currently....
+			//	- gpt suggested overwriting the band-diff function from ol.source.Rastere as a solution
 			bands_helper = [selected_band, selected_band_diff];
 		} else {
 			bands_helper = [selected_band];
@@ -777,7 +908,8 @@
 		// build a color object for openlayers based on the current configuration
 		const color_thing = generate_openlayers_case_stops(
 			cg_picker.get_color_boundaries('rgb'),
-			layerinfo
+			layerinfo,
+			current_band_metainfo['noDataValue']
 		);
 		// console.log('GENERATED STOPS: \n', color_thing);
 
@@ -805,7 +937,7 @@
 
 		layer.setOpacity(opacity_value);
 		map.setView(base_view);
-
+		// console.log("Finished Visualize function.")
 		// console.log("Source Keys: \n", source.getKeys()); // empty
 		// console.log("Source Properties: \n", source.getProperties()); // empty
 		// console.log("Source TileGrid: \n", source.getTileGrid()); // null
@@ -1105,7 +1237,10 @@
 			>
 				<h2>Layer meta data <b>#{selected_band}:</b></h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
-				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
+				<div id="band_max">MAX: {current_band_metainfo['max']}</div>
+				<div id="noDataValue">
+					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+				</div>
 			</div>
 			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 				<CustomSliderPicker
@@ -1127,6 +1262,9 @@
 					<h2>Layer meta data <b>#{selected_band_diff}:</b></h2>
 					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
 					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
+					<div id="noDataValue">
+						nDV: {parseFloat(current_diff_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+					</div>
 				</div>
 				<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
 					<CustomSliderPicker
@@ -1145,6 +1283,9 @@
 				<h2>Single layer metadata</h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
+				<div id="noDataValue">
+					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+				</div>
 				<div id="band_timestamp">Start: {file_metadata['time#units']}</div>
 			</div>
 		</div>
