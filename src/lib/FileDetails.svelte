@@ -3,6 +3,7 @@
 	import { API_URL } from '../app.config.js';
 	import Download from '$lib/icons/download.svelte';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
+	import MetadataDisplay from '$lib/MetadataDisplay.svelte';
 	export let folder_data;
 	export let file_obj;
 	export let foldertype;
@@ -36,7 +37,7 @@
 				</button>
 
 				{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-					<RecursiveDisplay data={folder_data[file_obj.index]['metadata']} />
+					<MetadataDisplay data={folder_data[file_obj.index]['metadata']} />
 				{/if}
 			{/if}
 		{:else if tabSet === 1}
