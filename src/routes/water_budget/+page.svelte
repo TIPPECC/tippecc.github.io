@@ -355,12 +355,17 @@
 		}
 	}
 
-	function jump_to_vis(filename: string) {
+	/*function jump_to_vis(filename: string) {
 		tempresult_selection.set({
 			filename: filename,
 			foldertype: foldertype
 		});
 		goto('/view_geotiff');
+	}*/
+	let selected_file = '';
+	function jump_to_vis(filename: string, index: number) {
+		selected_file = filename;
+		folder_data[index]['metadata_show'] = true;
 	}
 
 	function set_cat_folder_data() {
@@ -492,45 +497,11 @@
 	/>
 	<div>
 		<button
-			class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+			class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
 			on:click={() => refresh_foldercontent(true)}
 		>
 			Force Update
 		</button>
-	</div>
-	<div class="flex gap-4 mt-2 p-2">
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-				on:click={() => expand_all_categories()}
-			>
-				<CaretRight /> &nbsp; Expand All
-			</button>
-		</div>
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-				on:click={() => close_all_categories()}
-			>
-				<CaretDown /> &nbsp; Close All
-			</button>
-		</div>
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-				on:click={() => select_all_files()}
-			>
-				<SquareCheckmark /> &nbsp; Select All
-			</button>
-		</div>
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
-				on:click={() => unselect_all_files()}
-			>
-				<SquareEmpty /> &nbsp; Unselect All
-			</button>
-		</div>
 	</div>
 
 	<div class="p-2">
@@ -553,6 +524,40 @@
 			</div>
 		</div>
 	{/if}
+	<div class="flex gap-4 mt-2 p-2">
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => expand_all_categories()}
+			>
+				<CaretRight /> &nbsp; Expand All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => close_all_categories()}
+			>
+				<CaretDown /> &nbsp; Close All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => select_all_files()}
+			>
+				<SquareCheckmark /> &nbsp; Select All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => unselect_all_files()}
+			>
+				<SquareEmpty /> &nbsp; Unselect All
+			</button>
+		</div>
+	</div>
 
 	{#if folder_data.length > 0}
 		{#key folder_data}
@@ -663,7 +668,7 @@
 													<div class="flex">
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center rounded-md"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -848,7 +853,11 @@
 															<button
 																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
 																on:click={() =>
-																	jump_to_vis(folder_data[file_obj.index]['filename'])}
+																	get_metadata_and_prov(
+																		folder_data[file_obj.index]['filename'],
+																		foldertype,
+																		file_obj
+																	)}
 															>
 																<Earth />
 																<div
@@ -886,7 +895,7 @@
 		<div class="flex gap-x-1">
 			<button
 				type="button"
-				class="btn bg-[#D17208] rounded-md"
+				class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
 				on:click|preventDefault={handle_checkbox_submit}
 				>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 			>

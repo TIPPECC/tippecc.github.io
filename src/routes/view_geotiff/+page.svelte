@@ -3,7 +3,9 @@
 	import { browser } from '$app/environment';
 	import { tempresult_selection } from '../store/tempresult_store';
 	import TifMap from '$lib/tempresults/tif_map.svelte';
+	import ShowMap from '$lib/tempresults/show_maps.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
+	import ShowMaps from '$lib/tempresults/show_maps.svelte';
 
 	let selected_filename: string = '';
 	let selected_foldertype: string = '';
@@ -43,7 +45,7 @@
 
 <div class="content-div">
 	{#if temp_res_check}
-		<TifMap foldertype={selected_foldertype} selected_file={selected_filename} />
+		<ShowMaps foldertype={selected_foldertype} selected_file={selected_filename} />
 	{:else}
 		<div class="flex-center mt-8">
 			<LoadingRing />

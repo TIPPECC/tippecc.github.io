@@ -12,9 +12,6 @@
 	import CustomGradientPicker from '$lib/CustomGradientPicker.svelte';
 	import CustomSliderPicker from '$lib/CustomSliderPicker.svelte';
 	import { browser } from '$app/environment';
-	import FoldertypeChooser from './folderytpe_chooser.svelte';
-	import EarthAfrica from '$lib/icons/earth_africa.svelte';
-	import LoadingRing from '$lib/LoadingRing.svelte';
 	import { tick } from 'svelte';
 	import { Fill, Stroke, Style } from 'ol/style.js';
 	import Select from 'ol/interaction/Select.js';
@@ -42,6 +39,7 @@
 	let fildered_folder_data: any[] = []; // filtered files
 	export let foldertype: string = 'water_budget'; // string of selected foldertype
 	export let selected_file: string = ''; // string of selected file
+	export let show_varinfos: boolean = true; // show variable info in the map
 	let selected_tif_url: string = ''; // url of selected file
 	let virtual_data_url: string = ''; // helper variable carrying selected file as virtual url
 	let file_search_term: string = ''; // current string input in file search field
@@ -112,13 +110,10 @@
 	}
 
 	onMount(() => {
-		refresh_foldercontent();
-	});
-
-	onMount(() => {
 		initialize_map();
 		// TEST
 		changeInteraction();
+		console.log('test');
 	});
 
 	onMount(() => {
@@ -207,7 +202,7 @@
 	 * @param data
 	 */
 
-	let show_chart = writable(false);
+	let show_chart = true; // Show chart or not
 	function updateChart(
 		data:
 			| string
@@ -240,7 +235,7 @@
 			ema[i] = (data[i] - ema[i - 1]) * multiplier + ema[i - 1];
 		}
 
-		$show_chart = true;
+		//$show_chart = true;
 		chart.data.labels = years;
 
 		// Set data for the chart
@@ -490,6 +485,11 @@
 			}
 		} catch (error) {
 			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		}
+		if (band_slider_values.length > 1) {
+			show_chart = true;
+		} else {
+			show_chart = false;
 		}
 	}
 
@@ -1113,122 +1113,6 @@
 	}
 </script>
 
-<div class="flex px-4">
-	<h1 class="content-heading">Data Visualization</h1>
-	<div class="flex-center">
-		<EarthAfrica w="38" />
-	</div>
-</div>
-
-<div class="px-2">
-	<FoldertypeChooser bind:foldertype on:foldertype_changed={refresh_foldercontent} />
-</div>
-
-<div class="p-2">
-	<input
-		class="input w-full mt-4 p-2"
-		type="text"
-		placeholder="Type to filter filenames..."
-		bind:value={file_search_term}
-		on:input={filesearch_input_changed}
-		on:change={filesearch_input_changed}
-	/>
-</div>
-<div class="overflow-y-auto max-h-[120px]">
-	{#if categories.length > 0}
-		<div>
-			<div class="flow gap-2 items-center">
-				{#each categories as variable}
-					<button
-						class="w-[300px] h-[60px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-						on:click={set_search_term(variable)}>{variable}</button
-					>
-				{/each}
-			</div>
-		</div>
-	{/if}
-	{#if variables.length > 0}
-		<div>
-			<div class="flow gap-2 items-center">
-				{#each variables as variable}
-					<button
-						class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-						on:click={set_search_term(variable)}>{variable}</button
-					>
-				{/each}
-			</div>
-		</div>
-	{/if}
-	{#if full_var.length > 0}
-		<!-- max height and all scroll -->
-
-		<div>
-			<div class="flow gap-2 items-center">
-				{#each full_var as variable}
-					<button
-						class="w-[520px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-						on:click={set_search_term(variable)}>{variable}</button
-					>
-				{/each}
-			</div>
-		</div>
-	{/if}
-</div>
-<div class="lg:flex px-4 pt-4 w-full">
-	{#if foldertype}
-		<label
-			class="flex max-w-[100px] place-items-center justify-center variant-outline-tertiary p-1"
-			for="fileselect">Select file:</label
-		>
-
-		<!--TODO: Bare Select will probably not be enough for mobile
-		layouts if needed here. Needs replacement by something better. -->
-		<select
-			id="fileselect"
-			class="bg-primary-500 rounded-md p-1 max-lg:max-w-[100%] max-w-[80%] max-lg:mt-1 lg:ml-2"
-			bind:this={file_selector}
-			bind:value={selected_file}
-			on:change={file_selected}
-		>
-			{#if folder_data}
-				{#each fildered_folder_data as f_name}
-					<option value={f_name}>
-						{f_name}
-					</option>
-				{/each}
-			{/if}
-		</select>
-
-		{#if metadata_loaded && band_slider_values.length > 1}
-			{#if diff_mode}
-				<div>
-					<button
-						class="variant-filled-tertiary p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
-						on:click={() => {
-							toggle_diff_mode();
-						}}>Normal mode</button
-					>
-				</div>
-			{:else}
-				<div>
-					<button
-						class="variant-filled-tertiary hover:bg-tertiary-600 p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
-						on:click={() => {
-							toggle_diff_mode();
-						}}>Compare layer</button
-					>
-				</div>
-			{/if}
-		{/if}
-	{/if}
-
-	{#if loading_map}
-		<div class="flex-center ml-2">
-			<LoadingRing size="24px" />
-		</div>
-	{/if}
-</div>
-
 {#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
@@ -1281,8 +1165,9 @@
 		<div class="w-full px-4 mt-2">
 			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
 				<h2>Single layer metadata</h2>
-				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
-				<div id="band_min">MAX: {current_band_metainfo['max']}</div>
+				<div id="band_min">
+					MIN - MAX: {current_band_metainfo['min']} - {current_band_metainfo['max']}
+				</div>
 				<div id="noDataValue">
 					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
 				</div>
@@ -1309,11 +1194,14 @@
 		</div>
 	</div>
 {/if}
-<div class="w-full px-4 mt-2">
-	<div class="variant-outline-tertiary p-2">
-		<canvas id="chart" width="400" height="100" class:hidden={!$show_chart} />
+{#if show_chart}
+	<div class="w-full px-4 mt-2">
+		<div class="variant-outline-tertiary p-2">
+			<canvas id="chart" width="400" height="100" />
+		</div>
 	</div>
-</div>
+{/if}
+
 <div class={horizontal_scala ? '' : 'flex'}>
 	<div class="flex justify-center items-center">
 		<CustomGradientPicker
@@ -1346,98 +1234,102 @@
 	</div>
 </div>
 
-<div class="mt-4">
-	<table>
-		{#if file_metadata['varinfo'] != null}
-			<tr><td><b>Varinfo:</b></td><td /></tr>
-			<tr><td>Varname:</td> <td>{file_metadata['varinfo']['NETCDF_VARNAME']}</td></tr>
-			<tr><td>Long name:</td> <td>{file_metadata['varinfo']['long_name']}</td></tr>
-			<tr><td>Stand. name:</td> <td>{file_metadata['varinfo']['standard_name']}</td></tr>
-			<tr><td>Type:</td> <td>{file_metadata['varinfo']['type']}</td></tr>
-			<tr><td>Units:</td> <td>{file_metadata['varinfo']['unit']}</td></tr>
-		{:else}
-			<tr><td><b>Varinfo:</b></td><td>null</td></tr>
-		{/if}
+{#if show_varinfos}
+	<div class="mt-4">
+		<table>
+			{#if file_metadata['varinfo'] != null}
+				<tr><td><b>Varinfo:</b></td><td /></tr>
+				<tr><td>Varname:</td> <td>{file_metadata['varinfo']['NETCDF_VARNAME']}</td></tr>
+				<tr><td>Long name:</td> <td>{file_metadata['varinfo']['long_name']}</td></tr>
+				<tr><td>Stand. name:</td> <td>{file_metadata['varinfo']['standard_name']}</td></tr>
+				<tr><td>Type:</td> <td>{file_metadata['varinfo']['type']}</td></tr>
+				<tr><td>Units:</td> <td>{file_metadata['varinfo']['unit']}</td></tr>
+			{:else}
+				<tr><td><b>Varinfo:</b></td><td>null</td></tr>
+			{/if}
 
-		{#if file_metadata['cornerCoordinates']}
-			<tr><td><b>CornerCoordinates:</b></td><td /></tr>
-			<tr
-				><td>center:</td>
-				<td>
-					[{file_metadata['cornerCoordinates']['center'][0]}, {file_metadata['cornerCoordinates'][
-						'center'
-					][1]}]</td
-				></tr
-			>
-			<tr
-				><td>lowerLeft:</td>
-				<td>
-					[{file_metadata['cornerCoordinates']['lowerLeft'][0]}, {file_metadata[
-						'cornerCoordinates'
-					]['lowerLeft'][1]}]</td
-				></tr
-			>
-			<tr
-				><td>lowerRight:</td>
-				<td>
-					[{file_metadata['cornerCoordinates']['lowerRight'][0]}, {file_metadata[
-						'cornerCoordinates'
-					]['lowerRight'][1]}]</td
-				></tr
-			>
-			<tr
-				><td>upperLeft:</td>
-				<td>
-					[{file_metadata['cornerCoordinates']['upperLeft'][0]}, {file_metadata[
-						'cornerCoordinates'
-					]['upperLeft'][1]}]</td
-				></tr
-			>
-			<tr
-				><td>upperRight:</td>
-				<td>
-					[{file_metadata['cornerCoordinates']['upperRight'][0]}, {file_metadata[
-						'cornerCoordinates'
-					]['upperRight'][1]}]</td
-				></tr
-			>
-		{:else}
-			<tr><td><b>CornerCoordinates:</b></td><td>null</td></tr>
-		{/if}
+			{#if file_metadata['cornerCoordinates']}
+				<tr><td><b>CornerCoordinates:</b></td><td /></tr>
+				<tr
+					><td>center:</td>
+					<td>
+						[{file_metadata['cornerCoordinates']['center'][0]}, {file_metadata['cornerCoordinates'][
+							'center'
+						][1]}]</td
+					></tr
+				>
+				<tr
+					><td>lowerLeft:</td>
+					<td>
+						[{file_metadata['cornerCoordinates']['lowerLeft'][0]}, {file_metadata[
+							'cornerCoordinates'
+						]['lowerLeft'][1]}]</td
+					></tr
+				>
+				<tr
+					><td>lowerRight:</td>
+					<td>
+						[{file_metadata['cornerCoordinates']['lowerRight'][0]}, {file_metadata[
+							'cornerCoordinates'
+						]['lowerRight'][1]}]</td
+					></tr
+				>
+				<tr
+					><td>upperLeft:</td>
+					<td>
+						[{file_metadata['cornerCoordinates']['upperLeft'][0]}, {file_metadata[
+							'cornerCoordinates'
+						]['upperLeft'][1]}]</td
+					></tr
+				>
+				<tr
+					><td>upperRight:</td>
+					<td>
+						[{file_metadata['cornerCoordinates']['upperRight'][0]}, {file_metadata[
+							'cornerCoordinates'
+						]['upperRight'][1]}]</td
+					></tr
+				>
+			{:else}
+				<tr><td><b>CornerCoordinates:</b></td><td>null</td></tr>
+			{/if}
 
-		{#if file_metadata['extent']}
-			<tr><td><b>Extent:</b></td><td /></tr>
-			<tr><td>Type:</td> <td> {file_metadata['extent']['type']}</td></tr>
-			<tr><td>Coordinates:</td> <td> {file_metadata['extent']['coordinates']}</td></tr>
-		{:else}
-			<tr><td><b>Extent:</b></td><td>null</td></tr>
-		{/if}
+			{#if file_metadata['extent']}
+				<tr><td><b>Extent:</b></td><td /></tr>
+				<tr><td>Type:</td> <td> {file_metadata['extent']['type']}</td></tr>
+				<tr><td>Coordinates:</td> <td> {file_metadata['extent']['coordinates']}</td></tr>
+			{:else}
+				<tr><td><b>Extent:</b></td><td>null</td></tr>
+			{/if}
 
-		{#if file_metadata['time#units']}
-			<tr><td><b>Time#Units:</b></td><td>{file_metadata['time#units']}</td></tr>
-		{:else}
-			<tr><td><b>Time#Units:</b></td><td>null</td></tr>
-		{/if}
+			{#if file_metadata['time#units']}
+				<tr><td><b>Time#Units:</b></td><td>{file_metadata['time#units']}</td></tr>
+			{:else}
+				<tr><td><b>Time#Units:</b></td><td>null</td></tr>
+			{/if}
 
-		{#if file_metadata['time#calendar']}
-			<tr><td><b>Time#Calendar:</b></td><td>{file_metadata['time#calendar']}</td></tr>
-		{:else}
-			<tr><td><b>Time#Calendar:</b></td><td>null</td></tr>
-		{/if}
+			{#if file_metadata['time#calendar']}
+				<tr><td><b>Time#Calendar:</b></td><td>{file_metadata['time#calendar']}</td></tr>
+			{:else}
+				<tr><td><b>Time#Calendar:</b></td><td>null</td></tr>
+			{/if}
 
-		{#if file_metadata['size']}
-			<tr><td><b>Size:</b></td><td>[{file_metadata['size'][0]}, {file_metadata['size'][1]}]</td></tr
-			>
-		{:else}
-			<tr><td><b>Size:</b></td><td>null</td></tr>
-		{/if}
-	</table>
-</div>
+			{#if file_metadata['size']}
+				<tr
+					><td><b>Size:</b></td><td>[{file_metadata['size'][0]}, {file_metadata['size'][1]}]</td
+					></tr
+				>
+			{:else}
+				<tr><td><b>Size:</b></td><td>null</td></tr>
+			{/if}
+		</table>
+	</div>
+{/if}
 
 <style>
 	.map {
 		width: 100%;
-		height: 800px;
+		height: 600px;
 	}
 	.hidden {
 		display: none;
