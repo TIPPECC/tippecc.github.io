@@ -690,7 +690,7 @@
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
-																		]['filename']}&type={foldertype}&filetype=dat_clipped"
+																		]['filename']}&type={foldertype}&filetype=nc_clipped"
 																		class="flex"
 																		title="Download clipped .nc file"
 																	>
