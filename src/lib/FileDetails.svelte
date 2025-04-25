@@ -66,8 +66,12 @@
 						<!--tab select metadata or provenance object content-->
 						{#if folder_data[file_obj.index]['metadata_prov']}
 							<!-- print object-->
-							<RecursiveDisplay data={folder_data[file_obj.index]['metadata_prov']} />
-						{/if}
+							<div class="bg-box">
+							<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Provenance</h2>
+								<RecursiveDisplay data={folder_data[file_obj.index]['metadata_prov']} />
+							</div>
+						
+					{/if}
 					{/if}
 				{/if}
 			{:else if tabSet === 2}
@@ -82,3 +86,15 @@
 		</svelte:fragment>
 	</TabGroup>
 </div>
+
+<style>
+	.bg-box {
+		background-color: #1f2937; /* Dunkelgrau (zinc-800) als Standardhintergrund */
+		border: 1px solid #374151; /* Etwas dunklerer Rand (zinc-700) */
+		border-radius: 1rem; /* abgerundete Ecken */
+		padding: 1rem; /* Innenabstand */
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für den 3D-Effekt */
+		margin-bottom: 1rem; /* Abstand nach unten */
+		margin-top: 1rem; /* Abstand nach oben */
+	}
+</style>

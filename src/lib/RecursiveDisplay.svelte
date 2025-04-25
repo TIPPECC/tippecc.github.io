@@ -218,7 +218,7 @@
 				on:click={() => toggleCollapse(key)}
 				on:keydown={(e) => e.key === 'Enter' && toggleCollapse(key)}
 			>
-				<strong>{key}:</strong>
+			<span class="font-bold text-blue-400">{key}:</span>
 				<div class="ml-4 {collapsed[key] ? 'collapsed' : ''}">
 					<div class="content">
 						<RecursiveDisplay data={value} />
