@@ -36,10 +36,10 @@
 		"display_name": "CHIRPS TIPPECC area",
 		"description": "Raw CHIRPS data",
 		"citation": "",
-		"header_regex": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data"
 	},
-	{	
+	{
 		"key": "GLEAM",
 		"display_name": "GLEAM potEt",
 		"description": "GLEAM potEt data",
@@ -68,7 +68,7 @@
 		"display_name": "CHIRPS Vaal",
 		"description": "CHIRPS data for Vaal dam catchment",
 		"citation": "",
-		"header_regex": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data for Vaal dam catchment"
 	},
 	{
@@ -76,7 +76,7 @@
 		"display_name": "ERA5-LAND Vaal",
 		"description": "ERA5-LAND data for Vaal dam catchment",
 		"citation": "",
-		"header_regex": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment"
 	},
 	{

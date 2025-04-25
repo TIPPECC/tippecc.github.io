@@ -9,7 +9,7 @@
 	export let file_obj;
 	export let foldertype;
 	$: selected_file = folder_data[file_obj.index]['filename'];
-	let tabSet = 3; // default tab
+	let tabSet = folder_data[file_obj.index]['tabset']; // default tab
 </script>
 
 <div class="bg-surface-700">
@@ -20,7 +20,9 @@
 		</Tab>
 		<Tab bind:group={tabSet} name="tab2" value={1}>Provenance</Tab>
 		<Tab bind:group={tabSet} name="tab3" value={2}>Citation</Tab>
-		<Tab bind:group={tabSet} name="tab3" value={3}>Map</Tab>
+		{#if folder_data[file_obj.index]['tif_convertable']}
+			<Tab bind:group={tabSet} name="tab4" value={3}>Map</Tab>
+		{/if}
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
 			{#if tabSet === 0}
@@ -43,6 +45,8 @@
 					{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
 						<MetadataDisplay data={folder_data[file_obj.index]['metadata']} />
 					{/if}
+				{:else}
+					currently no metadata available
 				{/if}
 			{:else if tabSet === 1}
 				{#if folder_data[file_obj.index]['metadata_prov_exists'] && folder_data[file_obj.index]['metadata_show']}
@@ -67,12 +71,15 @@
 						{#if folder_data[file_obj.index]['metadata_prov']}
 							<!-- print object-->
 							<div class="bg-box">
-							<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Provenance</h2>
+								<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+									ℹ️ Provenance
+								</h2>
 								<RecursiveDisplay data={folder_data[file_obj.index]['metadata_prov']} />
 							</div>
-						
+						{/if}
 					{/if}
-					{/if}
+				{:else}
+					currently no provenance data available
 				{/if}
 			{:else if tabSet === 2}
 				coming soon

@@ -43,6 +43,7 @@
 		metadata_prov: any;
 		metadata_prov_exists: boolean;
 		metadata_show?: boolean;
+		tabset?: number; // Added tabset property
 	};
 
 	type CatfilesItem = {
@@ -258,7 +259,13 @@
 		}
 	}
 
-	async function get_metadata_and_prov(filename: string, foldertype: string, file_obj: any) {
+	async function get_metadata_and_prov(
+		filename: string,
+		foldertype: string,
+		file_obj: any,
+		tabset: number = 0
+	) {
+		folder_data[file_obj.index]['tabset'] = tabset;
 		const res = await fetch(
 			API_URL +
 				'/climate/get_temp_file?name=' +
@@ -480,6 +487,34 @@
 		requested_filetype = filetype;
 	}
 	// array with current geo_data['facets']['file_id']
+
+	function show_variable(variable: string) {
+		const variableMapping: Record<string, string> = {
+			ai: 'Aridity Index',
+			evspsblpot: 'PET',
+			evspsbl: 'Actual Evaporation',
+			pr: 'Precipitation',
+			tas: 'Air Temp',
+			tasmax: 'Max Air Temp',
+			tasmin: 'Min Air Temp',
+			sfcWind: 'Wind Speed',
+			water_budget: 'Water Budget',
+			kbdi: 'KBDI',
+			hurs: 'Rel. Humidity',
+			rlds: 'D. Long Rad.',
+			rsds: 'D. Short Rad.',
+			rsus: 'Up Short Rad.',
+			rlus: 'Up Long Rad.',
+			spi: 'SPI',
+			spei: 'SPEI'
+		};
+		for (const [key, value] of Object.entries(variableMapping)) {
+			if (variable == key) {
+				return variable.replace(key, value);
+			}
+		}
+		return variable;
+	}
 </script>
 
 <div class="content-div">
@@ -517,8 +552,8 @@
 			<div class="flow gap-2 items-center">
 				{#each variables as variable}
 					<button
-						class="w-[120px] h-[30px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-						on:click={set_search_term(variable)}>{variable}</button
+						class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+						on:click={set_search_term(variable)}>{show_variable(variable)}</button
 					>
 				{/each}
 			</div>
@@ -668,7 +703,7 @@
 													<div class="flex">
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center rounded-md"
+																class="mr-1 max-h-[33px] p-1 flex items-center variant-filled-primary hover:bg-tertiary-900 justify-center rounded-md"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -678,14 +713,16 @@
 																	title="Download .nc file"
 																>
 																	<Download />
-																	<div class="ml-1 flex place-items-center justify-items-center">
+																	<div
+																		class="ml-1 flex text-white place-items-center justify-items-center"
+																	>
 																		.nc
 																	</div>
 																</a>
 															</button>
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -695,7 +732,9 @@
 																		title="Download clipped .nc file"
 																	>
 																		<Download />
-																		<div class="ml-1 flex place-items-center justify-items-center">
+																		<div
+																			class="ml-1 flex text-white place-items-center justify-items-center"
+																		>
 																			.nc(c)
 																		</div>
 																	</a>
@@ -704,7 +743,7 @@
 
 															{#if folder_data[file_obj.index]['dat_exists']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -714,7 +753,9 @@
 																		title="Download .dat file"
 																	>
 																		<Download />
-																		<div class="ml-1 flex place-items-center justify-items-center">
+																		<div
+																			class="ml-1 flex text-white place-items-center justify-items-center"
+																		>
 																			.dat
 																		</div>
 																	</a>
@@ -743,13 +784,13 @@
 																>
 															{:else}
 																<div class="flex w-full pr-2 items-center justify-center">
-																	<XDisabled />
+																	<!--<XDisabled />-->
 																</div>
 															{/if}
 
 															{#if folder_data[file_obj.index]['dat_clipped_exists']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -759,14 +800,16 @@
 																		title="Download clipped .dat file"
 																	>
 																		<Download />
-																		<div class="ml-1 flex place-items-center justify-items-center">
+																		<div
+																			class="ml-1 flex text-white place-items-center justify-items-center"
+																		>
 																			.dat(c)
 																		</div>
 																	</a>
 																</button>
 															{/if}
 
-															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
+															{#if !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
@@ -787,7 +830,7 @@
 															{:else if folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 2: Tif file exists. -->
 																<button
-																	class="max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																	class="max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -797,7 +840,9 @@
 																		title="Download TIFF file"
 																	>
 																		<Download />
-																		<div class="ml-1 flex place-items-center justify-center">
+																		<div
+																			class="ml-1 text-white flex place-items-center justify-center"
+																		>
 																			.tif
 																		</div>
 																	</a>
@@ -805,13 +850,13 @@
 															{:else}
 																<!-- CASE 3: Tif not creatable. -->
 																<div class="flex w-full pr-2 items-center justify-center">
-																	<XDisabled />
+																	<!--<XDisabled />-->
 																</div>
 															{/if}
 															<!-- Other Filetypes -->
 														{:else}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -820,7 +865,9 @@
 																	class="flex"
 																>
 																	<Download />
-																	<div class="ml-1 flex place-items-center justify-items-center">
+																	<div
+																		class="ml-1 flex text-white place-items-center justify-items-center"
+																	>
 																		{folder_data[file_obj.index]['filesuffix']}
 																	</div>
 																</a>
@@ -830,10 +877,10 @@
 												</td>
 												<td class="min-w-[86px] max-w-[86px]">
 													{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
-														{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
-															<!-- CASE 1: No data on the file. Try to generate tif. -->
-															<button
-																class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center variant-filled-secondary hover:bg-secondary-900 rounded-md"
+														<!--{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}-->
+														<!-- CASE 1: No data on the file. Try to generate tif. -->
+														<!-- <button
+																class="max-h-[33px] h-[33px] w-[100px] p-1 flex items-center justify-center  bg-fuchsia-700 hover:bg-fuchsia-900  rounded-md"
 																on:click={() =>
 																	try_to_access_tiff_file(
 																		folder_data[file_obj.index]['filename'],
@@ -848,7 +895,8 @@
 																	Generate
 																</div>
 															</button>
-														{:else if folder_data[file_obj.index]['tif_exists']}
+														{:else if folder_data[file_obj.index]['tif_exists']}-->
+														{#if folder_data[file_obj.index]['tif_convertable']}
 															<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 															<button
 																class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
@@ -856,7 +904,8 @@
 																	get_metadata_and_prov(
 																		folder_data[file_obj.index]['filename'],
 																		foldertype,
-																		file_obj
+																		file_obj,
+																		3
 																	)}
 															>
 																<Earth />
@@ -869,7 +918,7 @@
 														{:else}
 															<!-- CASE 3: Tif not creatable. -->
 															<div class="flex w-full pr-2 items-center justify-center">
-																<XDisabled />
+																<!--<XDisabled />-->
 															</div>
 														{/if}
 													{/if}
@@ -892,7 +941,7 @@
 			</div>
 		{/key}
 
-		<div class="flex gap-x-1">
+		<div class="flex gap-x-1 pl-2">
 			<button
 				type="button"
 				class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
@@ -900,57 +949,63 @@
 				>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
 			>
 
-			<div class="filetype-selector">
-				<label>
-					<input
-						type="radio"
-						name="filetype"
-						value="nc"
-						bind:group={filetype}
-						on:change={handleFileTypeChange}
-					/>
-					Filetype .nc
-				</label>
-				<label>
-					<input
-						type="radio"
-						name="filetype"
-						value="nc_clipped"
-						bind:group={filetype}
-						on:change={handleFileTypeChange}
-					/>
-					Filetype .nc (clipped)
-				</label>
-				<label>
-					<input
-						type="radio"
-						name="filetype"
-						value="dat"
-						bind:group={filetype}
-						on:change={handleFileTypeChange}
-					/>
-					Filetype .dat
-				</label>
-				<label>
-					<input
-						type="radio"
-						name="filetype"
-						value="dat_clipped"
-						bind:group={filetype}
-						on:change={handleFileTypeChange}
-					/>
-					Filetype .dat (clipped)
-				</label>
-				<label>
-					<input
-						type="radio"
-						name="filetype"
-						value="tif"
-						bind:group={filetype}
-						on:change={handleFileTypeChange}
-					/>
-					Filetype .tiff
-				</label>
+			<div class="filetype-selector flex">
+				<div>
+					<label>
+						<input
+							type="radio"
+							name="filetype"
+							value="nc"
+							bind:group={filetype}
+							on:change={handleFileTypeChange}
+						/>
+						Filetype .nc
+					</label>
+					<label>
+						<input
+							type="radio"
+							name="filetype"
+							value="nc_clipped"
+							bind:group={filetype}
+							on:change={handleFileTypeChange}
+						/>
+						Filetype .nc (clipped)
+					</label>
+				</div>
+				<div>
+					<label>
+						<input
+							type="radio"
+							name="filetype"
+							value="dat"
+							bind:group={filetype}
+							on:change={handleFileTypeChange}
+						/>
+						Filetype .dat
+					</label>
+					<label>
+						<input
+							type="radio"
+							name="filetype"
+							value="dat_clipped"
+							bind:group={filetype}
+							on:change={handleFileTypeChange}
+						/>
+						Filetype .dat (clipped)
+					</label>
+				</div>
+				<div>
+					<label>
+						<input
+							type="radio"
+							name="filetype"
+							value="tif"
+							bind:group={filetype}
+							on:change={handleFileTypeChange}
+						/>
+						Filetype .tiff
+					</label>
+				</div>
 			</div>
 			<!-- TODO CHECKBOX -->
 			<!-- <label
@@ -975,33 +1030,33 @@
 
 	{#if wget_request_string.length > 0}
 		<div style="display:flex">
-			<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
+			<div class="bg-surface-700 border-2 rounded-md p-4 m-2">
 				{#if num_download_dropped > 0}
 					({num_download_dropped}) of your selected files were too big and are thus dropped from the
 					download.
 				{/if}
 				<div class="mb-2">
-					<span> To download all objects using Wget: </span>
+					<span> To download all selected files using Wget: </span>
 				</div>
-				<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
+				<div class=" p-[3px] bg-surface-900 [word-spacing:6px]">
 					{wget_request_string}
-				</span>
-				<div class="mb-2">
+				</div>
+				<!--<div class="mb-2">
 					<span> How to use Wget on Windows and Linux: </span>
 				</div>
 				<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
 					..links
-				</span>
+				</span>-->
 			</div>
 		</div>
 	{:else}
-		<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
+		<!--	<div class="bg-[#d9edf7] border-2 border-[#bce8f1] text-[#31708f] rounded-md p-4 m-2">
 			<span class="bg-[#f9f2f4] p-[3px] rounded-sm text-red-500 [word-spacing:6px]">
 				No files selected or selection has changed. Please select files and click the button again.
 			</span>
-		</div>
+		</div>-->
 	{/if}
-
+	<!--
 	<div class="p-4">
 		<div class="flex items-center mb-2">
 			<SquareCaretDown />&nbsp; Download file in .[format]
@@ -1016,5 +1071,5 @@
 		<div class="flex items-center">
 			<XDisabled />&nbsp; TIFF file not creatable (no download/visualization)
 		</div>
-	</div>
+	</div>-->
 </div>

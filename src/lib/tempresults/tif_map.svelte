@@ -62,6 +62,7 @@
 	let file_metadata: any = {}; // dict carrying file metadata
 
 	let map: Map; // openlayers map
+	let random_id = Math.random(); // random id for the map
 
 	// predefined custom base view
 	let base_view = new View({
@@ -112,7 +113,7 @@
 	onMount(() => {
 		initialize_map();
 		// TEST
-		changeInteraction();
+		// changeInteraction();
 		console.log('test');
 	});
 
@@ -135,7 +136,7 @@
 
 	let chart; // Chart object
 	onMount(() => {
-		let ctx = document.getElementById('chart').getContext('2d');
+		let ctx = document.getElementById('chart_' + random_id).getContext('2d');
 		let highlightIndex = 2; // Index of highlighted point
 		chart = new Chart(ctx, {
 			type: 'line',
@@ -265,7 +266,7 @@
 	 */
 	function initialize_map() {
 		map = new Map({
-			target: 'map',
+			target: 'map_' + random_id,
 			layers: [
 				new TileLayer({
 					source: new OSM()
@@ -312,24 +313,31 @@
 			}
 			coordinates.set([...event.coordinate]);
 		}
-		map.on(['pointermove', 'click'], displayPixelValue);
+
+		map.on(['pointermove'], displayPixelValue);
+		let lastCoordinate = null;
 
 		// click trigger function to read clicked data point and show time series
 		map.on('click', async (event) => {
 			const coordinate = event.coordinate; // Get map coordinates
+			lastCoordinate = coordinate;
 			console.log(coordinate);
 			//const pixel = map.getPixelFromCoordinate(coordinate);
 			const data = await getTimeSeriesFromGeoTIFF(coordinate);
-
-			if (data) {
+			console.log(coordinate);
+			if (data && lastCoordinate === coordinate) {
 				// console.log(data);
 				updateChart(data);
-
+				console.log(coordinate);
 				// Add a point to the map at the selected location
 				const point = new Point(coordinate);
 				const feature = new Feature(point);
 				vectorSource.clear(); // Clear previous points
+				console.log('Adding feature to map');
+				console.log('Feature: ', feature);
+				console.log(vectorSource);
 				vectorSource.addFeature(feature);
+				// Force the map to refresh
 			}
 		});
 	}
@@ -494,7 +502,7 @@
 	}
 
 	/**
-	 * Try to interprate file metadata (min, max, timestamp, bands, netcdf_times, ..).
+	 * Try to interpret file metadata (min, max, timestamp, bands, netcdf_times, ..).
 	 */
 	async function evaluate_file_metadata() {
 		// console.log("FILE META:\n");
@@ -838,14 +846,17 @@
 		map.addInteraction(select);
 
 		select.on('select', function (e) {
-			document.getElementById('status').innerHTML =
-				'&nbsp;' +
-				e.target.getFeatures().getLength() +
-				' selected features (last operation selected ' +
-				e.selected.length +
-				' and deselected ' +
-				e.deselected.length +
-				' features)';
+			const statusElement = document.getElementById('status');
+			if (statusElement) {
+				statusElement.innerHTML =
+					'&nbsp;' +
+					e.target.getFeatures().getLength() +
+					' selected features (last operation selected ' +
+					e.selected.length +
+					' and deselected ' +
+					e.deselected.length +
+					' features)';
+			}
 		});
 	};
 
@@ -928,11 +939,13 @@
 			map.addLayer(layer);
 			map.addLayer(vectorLayer);
 			old_layer = layer;
+			console.log('Removed old layer');
 		} else {
 			map.removeLayer(vectorLayer);
 			map.addLayer(layer);
 			map.addLayer(vectorLayer);
 			old_layer = layer;
+			console.log('Added new layer');
 		}
 
 		layer.setOpacity(opacity_value);
@@ -1197,7 +1210,7 @@
 {#if show_chart}
 	<div class="w-full px-4 mt-2">
 		<div class="variant-outline-tertiary p-2">
-			<canvas id="chart" width="400" height="100" />
+			<canvas id="chart_{random_id}" width="400" height="100" />
 		</div>
 	</div>
 {/if}
@@ -1230,7 +1243,7 @@
 				/>
 			</label>
 		</div>
-		<div id="map" class="map" />
+		<div id="map_{random_id}" class="map" />
 	</div>
 </div>
 
