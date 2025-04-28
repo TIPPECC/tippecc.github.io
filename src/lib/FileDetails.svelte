@@ -2,9 +2,11 @@
 	import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
 	import { API_URL } from '../app.config.js';
 	import Download from '$lib/icons/download.svelte';
-	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
+
 	import Map from '$lib/tempresults/tif_map.svelte';
 	import MetadataDisplay from '$lib/MetadataDisplay.svelte';
+	import CitationView from '$lib/CitationView.svelte';
+	import ProvenanceView from '$lib/ProvenanceView.svelte';
 	export let folder_data;
 	export let file_obj;
 	export let foldertype;
@@ -66,23 +68,19 @@
 							<div class="ml-1 flex place-items-center justify-items-center">provenance</div>
 						</a>
 					</button>
-					{#if folder_data[file_obj.index]['metadata_prov'] && folder_data[file_obj.index]['metadata_show']}
-						<!--tab select metadata or provenance object content-->
-						{#if folder_data[file_obj.index]['metadata_prov']}
-							<!-- print object-->
-							<div class="bg-box">
-								<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-									ℹ️ Provenance
-								</h2>
-								<RecursiveDisplay data={folder_data[file_obj.index]['metadata_prov']} />
-							</div>
-						{/if}
+					{#if folder_data[file_obj.index]['metadata_prov_stats']}
+						<ProvenanceView
+							bind:metadata_prov={folder_data[file_obj.index]['metadata_prov']}
+							bind:metadata_prov_stats={folder_data[file_obj.index]['metadata_prov_stats']}
+						/>
 					{/if}
 				{:else}
 					currently no provenance data available
 				{/if}
 			{:else if tabSet === 2}
-				coming soon
+				{#if folder_data[file_obj.index]['metadata']['file'] && folder_data[file_obj.index]['metadata_show']}
+					<CitationView file={folder_data[file_obj.index]['metadata']['file']} />
+				{/if}
 			{:else if tabSet === 3}
 				{#if selected_file && selected_file != ''}
 					{#key selected_file}

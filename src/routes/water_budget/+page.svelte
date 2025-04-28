@@ -42,6 +42,8 @@
 		metadata: any;
 		metadata_prov: any;
 		metadata_prov_exists: boolean;
+		metadata_prov_stats?: any;
+		metadata_prov_stats_exists?: boolean;
 		metadata_show?: boolean;
 		tabset?: number; // Added tabset property
 	};
@@ -339,6 +341,44 @@
 			folder_data = [...folder_data];
 			console.log(metadata);
 		}
+
+		const res3 = await fetch(
+			API_URL +
+				'/climate/get_temp_file?name=' +
+				filename +
+				'&type' +
+				'=' +
+				foldertype +
+				'&filetype=prov_stats',
+			{
+				method: 'GET'
+			}
+		);
+		if (!res3.ok) {
+			if (!folder_data[file_obj.index]['metadata_prov_stats']) {
+				folder_data[file_obj.index]['metadata_prov_stats'] = {};
+			}
+			folder_data[file_obj.index]['metadata_prov_stats_exists'] = false;
+			folder_data[file_obj.index]['metadata_prov_stats'] = {
+				'currently no provenance information available': 'for this file'
+			};
+			console.log(folder_data[file_obj.index]['metadata_prov_stats']);
+			folder_data = [...folder_data];
+			// throw new Error(`${res.status} ${res.statusText}`);
+		} else {
+			const result = await res3.json();
+			metadata = result;
+			await tick();
+			if (!folder_data[file_obj.index]['metadata_prov_stats']) {
+				folder_data[file_obj.index]['metadata_prov_stats'] = {};
+			}
+			folder_data[file_obj.index]['metadata_prov_stats_exists'] = true;
+			folder_data[file_obj.index]['metadata_prov_stats'] = result;
+			await tick();
+			folder_data = [...folder_data];
+			console.log(metadata);
+		}
+
 		folder_data[file_obj.index]['metadata_show'] = true;
 	}
 
