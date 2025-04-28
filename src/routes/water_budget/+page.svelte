@@ -67,7 +67,7 @@
 	let cat_folder_data: CatFormat = {};
 
 	// checked state of all folder_data_checkboxes
-	let selected_files: Array<boolean>;
+	let selected_files: Array<boolean> = [];
 
 	$: wget_request_string = '';
 	let download_tiff = false;
@@ -86,13 +86,20 @@
 	// 	"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
-	let foldertype = 'water_budget';
+	let foldertype = 'CMIP6_raw';
+	let start_file = '';
+	// Removed duplicate declaration of selected_file
+
 	// set from URL url type ?type=cmip6_raw
 	$: if (browser) {
 		const urlParams = new URLSearchParams(window.location.search);
 		const type = urlParams.get('type');
 		if (type) {
 			foldertype = type;
+		}
+		const filename = urlParams.get('filename');
+		if (filename) {
+			start_file = filename;
 		}
 	}
 	let filter = '';
@@ -267,6 +274,7 @@
 		file_obj: any,
 		tabset: number = 0
 	) {
+		console.log('get_metadata_and_prov', filename, foldertype, file_obj);
 		folder_data[file_obj.index]['tabset'] = tabset;
 		const res = await fetch(
 			API_URL +
@@ -468,6 +476,29 @@
 		}
 		cat_folder_data = categories;
 		variables = [...variables];
+
+		if (start_file.length > 0) {
+			// search for file in cat_folder_data
+			for (const [key, value] of Object.entries(cat_folder_data)) {
+				const found = value.files.find((file) => file.filename === start_file);
+				console.log('found', found);
+				if (found) {
+					cat_folder_data[key].toggled = true;
+
+					// find the index of the file in folder_data
+					const key2 = folder_data.findIndex((file) => file.filename === start_file);
+
+					// find file_obj in folder_data
+					const file_obj = folder_data[key2];
+
+					// set show metadata to true
+					console.log('found file in folder_data', file_obj);
+
+					get_metadata_and_prov(folder_data[key2]['filename'], foldertype, found, 0);
+					break;
+				}
+			}
+		}
 	}
 
 	async function refresh_foldercontent(force_update = false) {
@@ -499,7 +530,7 @@
 
 			// add foldetype to url in browser
 			if (browser) {
-				history.pushState({}, '', '?type=' + foldertype);
+				history.pushState({}, '', '?type=' + foldertype + '&filename=' + start_file);
 			}
 		} catch (error) {
 			console.log('Refreshing folder content failed.');
