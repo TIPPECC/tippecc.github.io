@@ -388,6 +388,9 @@
 		}
 
 		folder_data[file_obj.index]['metadata_show'] = true;
+		if (browser) {
+				history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
+		}
 	}
 
 	async function try_to_access_tiff_file(filename: string, fc_index: number) {
