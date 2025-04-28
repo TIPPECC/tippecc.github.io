@@ -104,6 +104,20 @@
 		"lineage": "Derived from CMIP6 data"
 	},
 	{
+		"key": "CCAM_raw",
+		"display_name": "CCAM Raw Test",
+		"description": "CCAM raw data for TIPPECC area",
+		"citation": "",
+		"header_regex": ""
+	},
+	{
+		"key": "CCAM_raw_ind",
+		"display_name": "CCAM Raw Indicator Test",
+		"description": "CCAM raw data for TIPPECC area",
+		"citation": "",
+		"header_regex": ""
+	},
+	{
 		"key": "LANDSURF_ind_full",
 		"display_name": "CORDEX-CORE Raw Ind. Full",
 		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
@@ -134,6 +148,14 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Downloaded from CDS"
+	},
+	{
+		"key": "kunene_GLEAM",
+		"display_name": "GLEAM Kunene",
+		"description": "GLEAM data for Kunene dam catchment",
+		"citation": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": ""
 	},
 	{
 		"key": "sftlf",
