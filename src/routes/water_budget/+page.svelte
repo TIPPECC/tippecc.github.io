@@ -604,7 +604,7 @@
 		bind:filter
 		on:foldertype_changed={() => refresh_foldercontent(false)}
 	/>
-	<div>
+	<div class="ml-2">
 		<button
 			class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
 			on:click={() => refresh_foldercontent(true)}
@@ -623,7 +623,7 @@
 	</div>
 	{#if variables.length > 0}
 		<div>
-			<div class="flow gap-2 items-center">
+			<div class="flow gap-2 items-center ml-2">
 				{#each variables as variable}
 					<button
 						class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
@@ -883,7 +883,7 @@
 																</button>
 															{/if}
 
-															{#if !folder_data[file_obj.index]['tif_exists']}
+															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"

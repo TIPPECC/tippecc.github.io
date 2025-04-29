@@ -30,7 +30,7 @@
 			{#if tabSet === 0}
 				{#if folder_data[file_obj.index]['metadata_exists']}
 					<button
-						class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+						class="ml-2 mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 					>
 						<a
 							href="{API_URL}/climate/get_temp_file?name={folder_data[file_obj.index][
@@ -53,7 +53,7 @@
 			{:else if tabSet === 1}
 				{#if folder_data[file_obj.index]['metadata_prov_exists'] && folder_data[file_obj.index]['metadata_show']}
 					<button
-						class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
+						class="ml-2 mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
 					>
 						<a
 							href="{API_URL}/climate/get_temp_file?name={folder_data[file_obj.index][
