@@ -28,6 +28,35 @@
 		const num = parseFloat(value);
 		return isNaN(num) ? value : num.toFixed(digits);
 	}
+
+	/**
+	 * @param {number} num
+	 */
+	function sizeofFmt(num, suffix = 'B') {
+		const units = ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi'];
+		for (let unit of units) {
+			if (Math.abs(num) < 1024.0) {
+				return `${num.toFixed(1)} ${unit}${suffix}`;
+			}
+			num /= 1024.0;
+		}
+		return `${num.toFixed(1)}Yi${suffix}`;
+	}
+
+	/**
+	 * @param {any} value
+	 */
+	function format_c_bound(value) {
+		if (typeof value == 'object') {
+			const start = value[0].split('-')[0];
+			const end = value[1].split('-')[0];
+			return start + ' - ' + end;
+		} else {
+			const parts = value.split('-');
+			const start = parts[0];
+			return start;
+		}
+	}
 </script>
 
 {#if typeof excludedData === 'object' && !Array.isArray(data) && data !== null}
@@ -45,7 +74,7 @@
 					</div>
 					<div>
 						<span class="font-bold text-label">Size:</span>
-						<span class="font-medium text-zinc-300">{value['file_size']} Byte</span>
+						<span class="font-medium text-zinc-300">{sizeofFmt(value['file_size'])}</span>
 					</div>
 					<div>
 						<span class="font-bold text-label">Created:</span>
@@ -72,6 +101,34 @@
 						<span class="font-bold text-label">End:</span>
 						<span class="font-medium text-zinc-300">{value['time_coverage_end']}</span>
 					</div>
+					{#if value['climatology_bounds']}
+						<div>
+							<span class="font-bold text-label">Climatology Bounds Start:</span>
+							<span class="font-medium text-zinc-300"
+								>{format_c_bound(value['climatology_bounds'][0][0])}</span
+							>
+						</div>
+						<div>
+							<span class="font-bold text-label">Climatology Bounds End:</span>
+							<span class="font-medium text-zinc-300"
+								>{format_c_bound(value['climatology_bounds'][0][1])}</span
+							>
+						</div>
+					{/if}
+					{#if value['climatology_bounds_details']}
+						<div>
+							<span class="font-bold text-label">Climatology Bounds 1st Period:</span>
+							<span class="font-medium text-zinc-300"
+								>{format_c_bound(value['climatology_bounds_details'][0])}</span
+							>
+						</div>
+						<div>
+							<span class="font-bold text-label">Climatology Bounds 2nd Period:</span>
+							<span class="font-medium text-zinc-300"
+								>{format_c_bound(value['climatology_bounds_details'][1])}</span
+							>
+						</div>
+					{/if}
 					<div>
 						<span class="font-bold text-label">Time Units:</span>
 						<span class="font-medium text-zinc-300">{value['time_units']}</span>
