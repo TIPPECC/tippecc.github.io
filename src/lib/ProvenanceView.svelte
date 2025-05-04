@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
-
+	import ProvenanceListView from '$lib/ProvenanceListView.svelte';
 
 	export let metadata_prov = {};
 	export let metadata_prov_stats: {
@@ -18,7 +18,10 @@
 		};
 		source_entities?: {
 			results?: {
-				bindings: { entity: { value: string } }[];
+				bindings: {
+					collection_id: { value: string };
+					entity: { value: string };
+				}[];
 			};
 		};
 		result_entities?: {
@@ -32,8 +35,7 @@
 			};
 		};
 	} = {};
-    let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
-
+	let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
 </script>
 
 {#if metadata_prov}
@@ -112,33 +114,19 @@
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Source Files (e.g. downloaded from the ESGF portal + additional files)
 		</h2>
-		<div class="ml-2">
-			{#each metadata_prov_stats?.['source_entities']?.['results']?.['bindings'] ?? [] as source_file}
-				<li>{source_file.entity.value.split('/').slice(-1)[0]}</li>
-			{/each}
-		</div>
+		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} />
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Result Files (products of the processing chain)
 		</h2>
-		<div class="ml-2">
-			{#each metadata_prov_stats?.['result_entities']?.['results']?.['bindings'] ?? [] as source_file}
-				{#if source_file.entity}
-					<li>{source_file.entity.value.split('/').slice(-1)[0]}</li>
-				{/if}
-			{/each}
-		</div>
+		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} />
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Files based on this file
 		</h2>
-		<div class="ml-2">
-			{#each metadata_prov_stats?.['base_for_entities']?.['results']?.['bindings'] ?? [] as source_file}
-				<li>{source_file.entity.value.split('/').slice(-1)[0]}</li>
-			{/each}
-		</div>
+		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} />
 	</div>
 {/if}
 
