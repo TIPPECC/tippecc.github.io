@@ -268,6 +268,26 @@
 		}
 	}
 
+	async function get_md_part({
+		url,
+		key,
+		folder_data,
+		file_obj
+	}: {
+		url: string;
+		key: string;
+		folder_data: any;
+		file_obj: any;
+	}): Promise<any> {
+		const res = await fetch(url);
+		folder_data[file_obj.index][key] = res.ok
+			? await res.json()
+			: {
+					[`currently no ${key} available`]: 'for this file'
+			  };
+		folder_data[file_obj.index][`${key}_exists`] = res.ok;
+	}
+
 	async function get_metadata_and_prov(
 		filename: string,
 		foldertype: string,
@@ -276,121 +296,55 @@
 	) {
 		console.log('get_metadata_and_prov', filename, foldertype, file_obj);
 		folder_data[file_obj.index]['tabset'] = tabset;
-		const res = await fetch(
-			API_URL +
-				'/climate/get_temp_file?name=' +
-				filename +
-				'&type' +
-				'=' +
-				foldertype +
-				'&filetype=meta',
-			{
-				method: 'GET'
-			}
-		);
-		if (!res.ok) {
-			if (!folder_data[file_obj.index]['metadata']) {
-				folder_data[file_obj.index]['metadata'] = {};
-			}
-			folder_data[file_obj.index]['metadata'] = {
-				'currently no metadata available': 'for this file'
-			};
-			folder_data[file_obj.index]['metadata_exists'] = false;
-			console.log(folder_data[file_obj.index]['metadata']);
-			folder_data = [...folder_data];
-			// throw new Error(`${res.status} ${res.statusText}`);
-		} else {
-			const result = await res.json();
-			metadata = result;
-			await tick();
-			if (!folder_data[file_obj.index]['metadata']) {
-				folder_data[file_obj.index]['metadata'] = {};
-			}
-			folder_data[file_obj.index]['metadata_exists'] = true;
-			folder_data[file_obj.index]['metadata'] = result;
-			await tick();
-			folder_data = [...folder_data];
-			console.log(metadata);
-		}
 
-		const res2 = await fetch(
-			API_URL +
-				'/climate/get_temp_file?name=' +
-				filename +
-				'&type' +
-				'=' +
-				foldertype +
-				'&filetype=prov',
-			{
-				method: 'GET'
-			}
-		);
-		if (!res2.ok) {
-			if (!folder_data[file_obj.index]['metadata_prov']) {
-				folder_data[file_obj.index]['metadata_prov'] = {};
-			}
-			folder_data[file_obj.index]['metadata_prov_exists'] = false;
-			folder_data[file_obj.index]['metadata_prov'] = {
-				'currently no provenance information available': 'for this file'
-			};
-			console.log(folder_data[file_obj.index]['metadata_prov']);
-			folder_data = [...folder_data];
-			// throw new Error(`${res.status} ${res.statusText}`);
-		} else {
-			const result = await res2.json();
-			metadata = result;
-			await tick();
-			if (!folder_data[file_obj.index]['metadata_prov']) {
-				folder_data[file_obj.index]['metadata_prov'] = {};
-			}
-			folder_data[file_obj.index]['metadata_prov_exists'] = true;
-			folder_data[file_obj.index]['metadata_prov'] = result;
-			await tick();
-			folder_data = [...folder_data];
-			console.log(metadata);
-		}
-
-		const res3 = await fetch(
-			API_URL +
-				'/climate/get_temp_file?name=' +
-				filename +
-				'&type' +
-				'=' +
-				foldertype +
-				'&filetype=prov_stats',
-			{
-				method: 'GET'
-			}
-		);
-		if (!res3.ok) {
-			if (!folder_data[file_obj.index]['metadata_prov_stats']) {
-				folder_data[file_obj.index]['metadata_prov_stats'] = {};
-			}
-			folder_data[file_obj.index]['metadata_prov_stats_exists'] = false;
-			folder_data[file_obj.index]['metadata_prov_stats'] = {
-				'currently no provenance information available': 'for this file'
-			};
-			console.log(folder_data[file_obj.index]['metadata_prov_stats']);
-			folder_data = [...folder_data];
-			// throw new Error(`${res.status} ${res.statusText}`);
-		} else {
-			const result = await res3.json();
-			metadata = result;
-			await tick();
-			if (!folder_data[file_obj.index]['metadata_prov_stats']) {
-				folder_data[file_obj.index]['metadata_prov_stats'] = {};
-			}
-			folder_data[file_obj.index]['metadata_prov_stats_exists'] = true;
-			folder_data[file_obj.index]['metadata_prov_stats'] = result;
-			await tick();
-			folder_data = [...folder_data];
-			console.log(metadata);
-		}
+		await Promise.all([
+			get_md_part({
+				url:
+					API_URL +
+					'/climate/get_temp_file?name=' +
+					filename +
+					'&type' +
+					'=' +
+					foldertype +
+					'&filetype=meta',
+				key: 'metadata',
+				folder_data,
+				file_obj
+			}),
+			get_md_part({
+				url:
+					API_URL +
+					'/climate/get_temp_file?name=' +
+					filename +
+					'&type' +
+					'=' +
+					foldertype +
+					'&filetype=prov',
+				key: 'metadata_prov',
+				folder_data,
+				file_obj
+			}),
+			get_md_part({
+				url:
+					API_URL +
+					'/climate/get_temp_file?name=' +
+					filename +
+					'&type' +
+					'=' +
+					foldertype +
+					'&filetype=prov_stats',
+				key: 'metadata_prov_stats',
+				folder_data,
+				file_obj
+			})
+		]);
 
 		folder_data[file_obj.index]['metadata_show'] = true;
 		if (browser) {
-				history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
+			history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
 		}
+
+		folder_data = [...folder_data];
 	}
 
 	async function try_to_access_tiff_file(filename: string, fc_index: number) {
