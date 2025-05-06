@@ -11,7 +11,8 @@
 
     let metadata: any = ([] = []);
     let folder_data: FileinfoFormat;
-    let file_obj: Array<FileinfoFormat> = [];
+    const file_obj = null
+	const in_main_page = false
 	let foldertype = '';
 	let file = '';
 
@@ -60,6 +61,7 @@
 		foldertype: string,
 	) {
 		console.log('get_metadata_and_prov', filename, foldertype, file_obj);
+		folder_data['tabset'] = 0;
 		const res = await fetch(
 			API_URL +
 				'/climate/get_temp_file?name=' +
@@ -187,5 +189,7 @@
 
 </script>
 
-<h1>Hello</h1>
-<!-- <FileDetails {folder_data} {file_obj} {foldertype} /> -->
+<h1>{file}</h1>
+{#if folder_data}
+	<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page} />
+{/if}
