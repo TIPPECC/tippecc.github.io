@@ -11,6 +11,7 @@
 	export let folder_data;
 	export let file_obj;
 	export let foldertype;
+	export let in_main_page; 
 	$: selected_file = folder_data[file_obj.index]['filename'];
 	let tabSet = folder_data[file_obj.index]['tabset']; // default tab
 	let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
@@ -27,6 +28,15 @@
 		<Tab bind:group={tabSet} name="tab3" value={3}>Citation</Tab>
 		{#if folder_data[file_obj.index]['tif_convertable']}
 			<Tab bind:group={tabSet} name="tab4" value={4}>Map</Tab>
+		{/if}
+		{#if in_main_page}
+			<div class="ml-auto">
+				<a href="/file_details?type={foldertype}&filename={folder_data[file_obj.index]['filename']}" 
+				class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" 
+				style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;">
+					File information Explorer
+				</a>
+			</div>
 		{/if}
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
