@@ -81,6 +81,8 @@
 
 	let tabSet: number = 0;
 
+	const in_main_page = true;
+
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
 	// 	"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
@@ -1045,7 +1047,7 @@
 											<tr>
 												<td colspan="7" class="p-2">
 													{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-														<FileDetails {folder_data} {file_obj} {foldertype} />
+														<FileDetails {folder_data} {file_obj} {foldertype}{in_main_page} />
 													{/if}
 												</td>
 											</tr>
