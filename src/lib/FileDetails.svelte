@@ -7,11 +7,13 @@
 	import MetadataDisplay from '$lib/MetadataDisplay.svelte';
 	import CitationView from '$lib/CitationView.svelte';
 	import ProvenanceView from '$lib/ProvenanceView.svelte';
+	import ProvenanceListView from '$lib/ProvenanceListView.svelte';
 	export let folder_data;
 	export let file_obj;
 	export let foldertype;
 	$: selected_file = folder_data[file_obj.index]['filename'];
 	let tabSet = folder_data[file_obj.index]['tabset']; // default tab
+	let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
 </script>
 
 <div class="bg-surface-700">
@@ -20,10 +22,11 @@
 			<svelte:fragment slot="lead" />
 			<span>Metadata</span>
 		</Tab>
-		<Tab bind:group={tabSet} name="tab2" value={1}>Provenance</Tab>
-		<Tab bind:group={tabSet} name="tab3" value={2}>Citation</Tab>
+		<Tab bind:group={tabSet} name="tab1" value={1}>Related Datasets</Tab>
+		<Tab bind:group={tabSet} name="tab2" value={2}>Provenance</Tab>
+		<Tab bind:group={tabSet} name="tab3" value={3}>Citation</Tab>
 		{#if folder_data[file_obj.index]['tif_convertable']}
-			<Tab bind:group={tabSet} name="tab4" value={3}>Map</Tab>
+			<Tab bind:group={tabSet} name="tab4" value={4}>Map</Tab>
 		{/if}
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
@@ -51,6 +54,33 @@
 					currently no metadata available
 				{/if}
 			{:else if tabSet === 1}
+				{#if folder_data[file_obj.index]['metadata_prov_stats']}
+					<div class="bg-box" id="base_for_entities_{random_id}">
+						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+							ℹ️ Available files based on this file
+						</h2>
+						<ProvenanceListView
+							data={folder_data[file_obj.index]['metadata_prov_stats']?.['base_for_entities']}
+							only_links={true}
+						/>
+					</div>
+					<div class="bg-box" id="base_for_entities_{random_id}">
+						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+							ℹ️ Available files used to create this file
+						</h2>
+						<ProvenanceListView
+							data={folder_data[file_obj.index]['metadata_prov_stats']?.['source_entities']}
+							only_links={true}
+						/>
+						<ProvenanceListView
+							data={folder_data[file_obj.index]['metadata_prov_stats']?.['result_entities']}
+							only_links={true}
+						/>
+					</div>
+				{:else}
+					currently no related datasets available
+				{/if}
+			{:else if tabSet === 2}
 				{#if folder_data[file_obj.index]['metadata_prov_exists'] && folder_data[file_obj.index]['metadata_show']}
 					<button
 						class="ml-2 mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-tertiary hover:bg-tertiary-900 rounded-md"
@@ -77,11 +107,11 @@
 				{:else}
 					currently no provenance data available
 				{/if}
-			{:else if tabSet === 2}
+			{:else if tabSet === 3}
 				{#if folder_data[file_obj.index]['metadata']['file'] && folder_data[file_obj.index]['metadata_show']}
 					<CitationView file={folder_data[file_obj.index]['metadata']['file']} />
 				{/if}
-			{:else if tabSet === 3}
+			{:else if tabSet === 4}
 				{#if selected_file && selected_file != ''}
 					{#key selected_file}
 						<Map {foldertype} bind:selected_file show_varinfos={false} />

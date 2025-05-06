@@ -933,7 +933,7 @@
 																		folder_data[file_obj.index]['filename'],
 																		foldertype,
 																		file_obj,
-																		3
+																		4
 																	)}
 															>
 																<Earth />
