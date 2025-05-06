@@ -32,6 +32,76 @@
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
 	},
 	{
+		"key": "CORDEX_LANDSURF_ind_full",
+		"display_name": "CORDEX-CORE LANDSURF Raw Ind. Full",
+		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
+		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
+		"header_regex": "(^(.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "Derived from full indicator data for TIPPECC area"
+	},
+	{
+		"key": "CORDEX_LANDSURF_ind_slices20",
+		"display_name": "Σ CORDEX-CORE LANDSURF Raw Ind. Slices 20",
+		"description": "Indicator slices at 20 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
+		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area"
+	},
+	{
+		"key": "CORDEX_LANDSURF_ind_slices30",
+		"display_name": "Σ CORDEX-CORE LANDSURF Raw Ind. Slices 30",
+		"description": "Indicator slices at 30 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
+		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area"
+	},
+	{
+		"key": "CMIP6_raw",
+		"display_name": "CMIP6 Raw",
+		"description": "CMIP6 raw data for TIPPECC area",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
+		"key": "CMIP6_raw_stat",
+		"display_name": "Σ CMIP6 Raw",
+		"description": "Sum/Mean over time (20/30 years) for CMIP6 raw data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
+		"key": "CMIP6_raw_ind",
+		"display_name": "CMIP6 Raw Indicator",
+		"description": "CMIP6 indicator data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
+		"key": "CMIP6_raw_ind_stat",
+		"display_name": "Σ CMIP6 Raw Indicator",
+		"description": "Sum/Mean over time (20/30 years) for CMIP6 indicator data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data"
+	},
+	{
+		"key": "CCAM_raw",
+		"display_name": "CCAM Raw Test",
+		"description": "CCAM raw data for TIPPECC area",
+		"citation": "",
+		"header_regex": ""
+	},
+	{
+		"key": "CCAM_raw_ind",
+		"display_name": "CCAM Raw Indicator Test",
+		"description": "CCAM raw data for TIPPECC area",
+		"citation": "",
+		"header_regex": ""
+	},
+	{
 		"key": "CHIRPS",
 		"display_name": "CHIRPS TIPPECC area",
 		"description": "Raw CHIRPS data",
@@ -87,60 +157,7 @@
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment"
 	},
-	{
-		"key": "CMIP6_raw",
-		"display_name": "CMIP6 Raw",
-		"description": "CMIP6 raw data for TIPPECC area",
-		"citation": "",
-		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
-	},
-	{
-		"key": "CMIP6_raw_ind",
-		"display_name": "CMIP6 Raw Indicator",
-		"description": "CMIP6 indicator data",
-		"citation": "",
-		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
-	},
-	{
-		"key": "CCAM_raw",
-		"display_name": "CCAM Raw Test",
-		"description": "CCAM raw data for TIPPECC area",
-		"citation": "",
-		"header_regex": ""
-	},
-	{
-		"key": "CCAM_raw_ind",
-		"display_name": "CCAM Raw Indicator Test",
-		"description": "CCAM raw data for TIPPECC area",
-		"citation": "",
-		"header_regex": ""
-	},
-	{
-		"key": "LANDSURF_ind_full",
-		"display_name": "CORDEX-CORE Raw Ind. Full",
-		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
-		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
-		"header_regex": "(^(.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from full indicator data for TIPPECC area"
-	},
-	{
-		"key": "LANDSURF_ind_slices20",
-		"display_name": " CORDEX-CORE Raw Ind. Slices 20",
-		"description": "Indicator slices at 20 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
-		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
-		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area"
-	},
-	{
-		"key": "LANDSURF_ind_slices30",
-		"display_name": "CORDEX-CORE Raw Ind. Slices 30",
-		"description": "Indicator slices at 30 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
-		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
-		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area"
-	},
+
 	{
 		"key": "kunene_ERA5_LAND",
 		"display_name": "ERA5-LAND Kunene",

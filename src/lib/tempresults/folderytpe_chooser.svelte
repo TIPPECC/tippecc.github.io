@@ -5,6 +5,8 @@
 	export var filter: string = '';
 	export var foldertype: string = 'CORDEX_raw_ind';
 
+	let current_category: string = 'CORDEX';
+
 	var foldertypes: {
 		key: string;
 		display_name: string;
@@ -45,6 +47,7 @@
 
 	function set_filter(filter: string) {
 		foldertypes = foldertypes_full.filter((x) => x.key.startsWith(filter));
+		current_category = filter;
 	}
 </script>
 
@@ -55,7 +58,7 @@
 		{#each categories as cat}
 			<button
 				type="button"
-				class="btn bg-[#078715] m-2 rounded-md {foldertype == cat
+				class="btn bg-[#078715] m-2 rounded-md {current_category == cat
 					? 'font-bold bg-[#078715] text-white'
 					: ''}"
 				on:click={() => set_filter(cat)}>{cat}</button
