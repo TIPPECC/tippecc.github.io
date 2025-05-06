@@ -6,7 +6,7 @@
 	export let color = '#10b981';
 </script>
 
-<div class="ring" style="--color:{color};--size:{size}">
+<div class="loadingRing" style="--color:{color};--size:{size}">
 	<div />
 	<div />
 	<div />
@@ -14,14 +14,15 @@
 </div>
 
 <style>
-	.ring {
+	.loadingRing {
+		position: relative;
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
 		width: var(--size);
 		height: var(--size);
 	}
-	.ring div {
+	.loadingRing div {
 		width: calc(var(--size) * 0.8);
 		height: calc(var(--size) * 0.8);
 		box-sizing: border-box;
@@ -33,13 +34,13 @@
 		border-color: var(--color) transparent transparent transparent;
 		animation: rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	}
-	.ring div:nth-child(1) {
+	.loadingRing div:nth-child(1) {
 		animation-delay: -0.45s;
 	}
-	.ring div:nth-child(2) {
+	.loadingRing div:nth-child(2) {
 		animation-delay: -0.3s;
 	}
-	.ring div:nth-child(3) {
+	.loadingRing div:nth-child(3) {
 		animation-delay: -0.15s;
 	}
 	@keyframes rotate {
