@@ -211,14 +211,14 @@
 {#if typeof data === 'object' && !Array.isArray(data) && data !== null}
 	{#each Object.entries(data) as [key, value]}
 		{#if key != 'NETCDF_DIM_time_VALUES'}
-			<div
-				class="ml-4 collapsible flex"
-				role="button"
-				tabindex="0"
-				on:click={() => toggleCollapse(key)}
-				on:keydown={(e) => e.key === 'Enter' && toggleCollapse(key)}
-			>
-				<span class="font-bold text-blue-400">{key}:</span>
+			<div class="ml-4 collapsible flex">
+				<span
+					class="font-bold text-blue-400"
+					role="button"
+					tabindex="0"
+					on:click={() => toggleCollapse(key)}
+					on:keydown={(e) => e.key === 'Enter' && toggleCollapse(key)}>{key}:</span
+				>
 				<div class="ml-4 {collapsed[key] ? 'collapsed' : ''}">
 					<div class="content">
 						<RecursiveDisplay data={value} />
@@ -244,7 +244,7 @@
 {:else if data in keyList}
 	<!--add tooltip-->
 	<button
-		class="underline [&>*]:pointer-events-none"
+		class="underline decoration-dotted [&>*]:pointer-events-none"
 		use:popup={{ event: 'hover', target: 'loopExample-' + data, placement: 'top' }}
 	>
 		<span>{data}</span>
