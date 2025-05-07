@@ -409,6 +409,9 @@
 
 		categories['No Category'] = { files: [], toggled: false };
 
+		// check if filename contains abs_change, 20 or 30y times and set to false for all
+		uncheck_times();
+
 		for (let x = 0; x < folder_data.length; x++) {
 			var filename: string = folder_data[x]['filename'];
 			const match = filename.match(filePattern);
@@ -550,6 +553,19 @@
 		}
 	}
 
+	function uncheck_times() {
+		// uncheck all times
+		for (let i = 0; i < abs_change.length; i++) {
+			abs_change[i].show = 'false';
+		}
+		for (let i = 0; i < twenty_years_period.length; i++) {
+			twenty_years_period[i].show = 'false';
+		}
+		for (let i = 0; i < thirty_years_period.length; i++) {
+			thirty_years_period[i].show = 'false';
+		}
+	}
+
 	let filetype = 'nc';
 	let requested_filetype = 'nc';
 	function handleFileTypeChange(event) {
@@ -628,7 +644,11 @@
 				{/each}
 			</div>
 			<div class="flow gap-2 items-center ml-2">
-				⏳ Δ- ⟶⌛:
+				<!--check if one entry has show is true-->
+				{#if abs_change.some((variable) => variable.show == 'true')}
+					<span class="mr-3">⏳ Δ- ⟶⌛:</span>
+				{/if}
+
 				{#each abs_change as variable}
 					{#if variable.show == 'true'}
 						<button
@@ -642,7 +662,10 @@
 				{/each}
 			</div>
 			<div class="flow gap-2 items-center ml-2">
-				⏳ 20y ⟶ ⌛:
+				<!--check if one entry has show is true-->
+				{#if twenty_years_period.some((variable) => variable.show == 'true')}
+					⏳ 20y ⟶ ⌛:
+				{/if}
 				{#each twenty_years_period as variable}
 					{#if variable.show == 'true'}
 						<button
@@ -656,7 +679,10 @@
 				{/each}
 			</div>
 			<div class="flow gap-2 items-center ml-2">
-				⏳ 30y ⟶ ⌛:
+				<!--check if one entry has show is true-->
+				{#if thirty_years_period.some((variable) => variable.show == 'true')}
+					⏳ 30y ⟶ ⌛:
+				{/if}
 				{#each thirty_years_period as variable}
 					{#if variable.show == 'true'}
 						<button
@@ -669,10 +695,12 @@
 					{/if}
 				{/each}
 			</div>
-			<button
-				class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-				on:click={() => set_search_time('-')}>unset ⏳</button
-			>
+			{#if search_time !== '_'}
+				<button
+					class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+					on:click={() => set_search_time('_')}>reset ⏳</button
+				>
+			{/if}
 		</div>
 	{/if}
 	<div class="flex gap-4 mt-2 p-2">
