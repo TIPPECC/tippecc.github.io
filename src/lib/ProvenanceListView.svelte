@@ -1,6 +1,7 @@
 <script>
 	export let data = null;
 	export let only_links = false;
+	export let in_main_page = true;
 
 	// split entity name and sort by name
 	const sortedData = data?.['results']?.['bindings']?.sort((a, b) => {
@@ -21,11 +22,19 @@
 		{#if source_file.entity}
 			{#if source_file['collection_id']}
 				<li class="underline">
-					<a
-						href="water_budget?type={source_file.collection_id
-							.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
-						target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
-					>
+					{#if in_main_page}
+						<a
+							href="water_budget?type={source_file.collection_id
+								.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
+							target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
+						>
+					{:else}
+						<a
+							href="file_details?type={source_file.collection_id
+								.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
+							target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
+						>
+					{/if}
 				</li>
 			{:else if !only_links}
 				<li>{source_file.entity.value.split('/').slice(-1)[0]}</li>

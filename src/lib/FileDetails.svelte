@@ -43,6 +43,14 @@
 					File information Explorer
 				</a>
 			</div>
+		{:else}
+			<div class="ml-auto">
+				<a href="/water_budget?type={foldertype}&filename={folder_data['filename']}" 
+				class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" 
+				style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;">
+					Geoportal
+				</a>
+			</div>
 		{/if}
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
@@ -78,6 +86,7 @@
 						<ProvenanceListView
 							data={folder_data['metadata_prov_stats']?.['base_for_entities']}
 							only_links={true}
+							in_main_page ={in_main_page}
 						/>
 					</div>
 					<div class="bg-box" id="base_for_entities_{random_id}">
@@ -87,10 +96,12 @@
 						<ProvenanceListView
 							data={folder_data['metadata_prov_stats']?.['source_entities']}
 							only_links={true}
+							in_main_page ={in_main_page}
 						/>
 						<ProvenanceListView
 							data={folder_data['metadata_prov_stats']?.['result_entities']}
 							only_links={true}
+							in_main_page ={in_main_page}
 						/>
 					</div>
 				{:else}
