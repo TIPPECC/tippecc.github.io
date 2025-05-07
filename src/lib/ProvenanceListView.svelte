@@ -1,6 +1,7 @@
 <script>
 	export let data = null;
 	export let only_links = false;
+	export let in_main_page = true;
 
 	// split entity name and sort by name
 	const sortedData = data?.['results']?.['bindings']?.sort((a, b) => {
