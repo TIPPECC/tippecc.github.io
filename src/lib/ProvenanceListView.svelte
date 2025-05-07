@@ -30,7 +30,7 @@
 						>
 					{:else}
 						<a
-							href="file_details?type={source_file.collection_id
+							href="file_info?type={source_file.collection_id
 								.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
 							target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
 						>

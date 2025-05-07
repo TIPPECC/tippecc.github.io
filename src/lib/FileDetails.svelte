@@ -37,7 +37,7 @@
 		{/if}
 		{#if in_main_page}
 			<div class="ml-auto">
-				<a href="/file_details?type={foldertype}&filename={folder_data['filename']}" 
+				<a href="/file_info?type={foldertype}&filename={folder_data['filename']}" 
 				class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" 
 				style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;">
 					File information Explorer
