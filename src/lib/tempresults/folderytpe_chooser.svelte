@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
+	import { set } from 'ol/transform';
 
 	export var filter: string = '';
 	export var foldertype: string = 'CORDEX_raw_ind';
 
-	let current_category: string = 'CORDEX';
+	let current_category: string = foldertype.split('_')[0];
+
+	//set_filter(current_category);
 
 	var foldertypes: {
 		key: string;
@@ -29,6 +32,9 @@
 	}
 	const dispatch = createEventDispatcher();
 	let current_foldertype = {};
+	foldertypes = foldertypes_full.filter((x) => x.key.startsWith(current_category));
+
+
 	function set_foldertype(new_type: string) {
 		for (let x = 0; x < foldertypes.length; x++) {
 			if (new_type == foldertypes[x].key) {
