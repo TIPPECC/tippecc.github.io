@@ -111,6 +111,19 @@
 	// initial query
 	// send_query();
 
+	let abs_change = [{ time: '1981_2000-2080_2099', show: 'false' }];
+	let twenty_years_period = [
+		{ time: '1981_2000', show: 'false' },
+		{ time: '2021_2040', show: 'false' },
+		{ time: '2041_2060', show: 'false' },
+		{ time: '2080_2099', show: 'false' }
+	];
+	let thirty_years_period = [
+		{ time: '1981_2010', show: 'false' },
+		{ time: '2011_2040', show: 'false' },
+		{ time: '2071_2099', show: 'false' }
+	];
+
 	onMount(() => {
 		if (browser) {
 			tempresult_selection.subscribe((_value: any) => {});
@@ -400,6 +413,9 @@
 			var filename: string = folder_data[x]['filename'];
 			const match = filename.match(filePattern);
 
+			// check if filename contains abs_change, 20 or 30y times and set to true if includes
+			check_times(filename);
+
 			if (match && match.length >= 3) {
 				const category = match[0];
 				// match first part of filename under first "__" and save it as variable ( e.g. __evspsblpot_all__mm__yearsum_mean_2080_2099.nc, __water_budget_all__mm__yearsum_mean_1981_2000.nc, ...)
@@ -508,6 +524,32 @@
 		search_term = variable;
 	}
 
+	let search_time = '_';
+	function set_search_time(variable: string) {
+		search_time = variable;
+	}
+
+	function check_times(filename: string | string[]) {
+		// check if filename contains abs_change times and set to true if includes
+		for (let i = 0; i < abs_change.length; i++) {
+			if (filename.includes(abs_change[i].time)) {
+				abs_change[i].show = 'true';
+			}
+		}
+		// check if filename contains twenty_years_period times and set to true if includes
+		for (let i = 0; i < twenty_years_period.length; i++) {
+			if (filename.includes(twenty_years_period[i].time)) {
+				twenty_years_period[i].show = 'true';
+			}
+		}
+		// check if filename contains thirty_years_period times and set to true if includes
+		for (let i = 0; i < thirty_years_period.length; i++) {
+			if (filename.includes(thirty_years_period[i].time)) {
+				thirty_years_period[i].show = 'true';
+			}
+		}
+	}
+
 	let filetype = 'nc';
 	let requested_filetype = 'nc';
 	function handleFileTypeChange(event) {
@@ -585,6 +627,52 @@
 					>
 				{/each}
 			</div>
+			<div class="flow gap-2 items-center ml-2">
+				⏳ Δ- ⟶⌛:
+				{#each abs_change as variable}
+					{#if variable.show == 'true'}
+						<button
+							class="w-[220px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+							variable.time
+								? 'font-bold'
+								: ''}"
+							on:click={() => set_search_time(variable.time)}>{variable.time}</button
+						>
+					{/if}
+				{/each}
+			</div>
+			<div class="flow gap-2 items-center ml-2">
+				⏳ 20y ⟶ ⌛:
+				{#each twenty_years_period as variable}
+					{#if variable.show == 'true'}
+						<button
+							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+							variable.time
+								? 'font-bold'
+								: ''}"
+							on:click={() => set_search_time(variable.time)}>{variable.time}</button
+						>
+					{/if}
+				{/each}
+			</div>
+			<div class="flow gap-2 items-center ml-2">
+				⏳ 30y ⟶ ⌛:
+				{#each thirty_years_period as variable}
+					{#if variable.show == 'true'}
+						<button
+							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+							variable.time
+								? 'font-bold'
+								: ''}"
+							on:click={() => set_search_time(variable.time)}>{variable.time}</button
+						>
+					{/if}
+				{/each}
+			</div>
+			<button
+				class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+				on:click={() => set_search_time('-')}>unset ⏳</button
+			>
 		</div>
 	{/if}
 	<div class="flex gap-4 mt-2 p-2">
@@ -626,9 +714,9 @@
 		{#key folder_data}
 			<div class="p-2">
 				{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
-					{#if cat_obj && cat_obj.files.filter((a) => a.filename
-								.toLowerCase()
-								.includes(search_term.toLowerCase())).length > 0}
+					{#if cat_obj && cat_obj.files.filter( (a) => [search_term.toLowerCase(), search_time].every( (term) => a.filename
+											.toLowerCase()
+											.includes(term) ) ).length > 0}
 						<div
 							class="w-full h-[36px] flex items-center rounded-md pl-3 {cat_counter % 2 == 0
 								? 'bg-emerald-700'
@@ -647,7 +735,9 @@
 								</div>
 								<h2 class="text-xl ml-2">
 									{folder_cat} ({cat_obj.files.filter((a) =>
-										a.filename.toLowerCase().includes(search_term.toLowerCase())
+										[search_term.toLowerCase(), search_time].every((term) =>
+											a.filename.toLowerCase().includes(term)
+										)
 									).length})
 								</h2>
 							</button>
@@ -666,9 +756,9 @@
 								</thead>
 								<tbody>
 									{#each cat_obj.files as file_obj}
-										{#if folder_data[file_obj.index]['filename']
-											.toLowerCase()
-											.includes(search_term.toLowerCase())}
+										{#if [search_term.toLowerCase(), search_time].every( (term) => folder_data[file_obj.index]['filename']
+													.toLowerCase()
+													.includes(term) )}
 											<tr
 												class="hover:bg-slate-400"
 												style={download_tiff &&
