@@ -893,6 +893,7 @@
 	 * (Re)-build and (re)-place layer and source for the map.
 	 */
 	function visualize_band() {
+		if (!cg_picker) return;
 		// Important note:
 		// band selection is a bit tricky here..
 		// - band numbers always start at 1
