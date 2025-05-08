@@ -564,6 +564,8 @@
 		for (let i = 0; i < thirty_years_period.length; i++) {
 			thirty_years_period[i].show = 'false';
 		}
+		// set search_time to '_'
+		search_time = '_';
 	}
 
 	let filetype = 'nc';
