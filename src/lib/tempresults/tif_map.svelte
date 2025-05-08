@@ -457,6 +457,40 @@
 		}
 	}
 
+	function getSeason(date: Date) {
+		const month = date.getMonth(); // 0 for January, 11 for December
+
+		switch (month) {
+			case 2: // March
+			case 3: // April
+			case 4: // May
+				return 'Spring';
+			case 5: // June
+			case 6: // July
+			case 7: // August
+				return 'Summer';
+			case 8: // September
+			case 9: // October
+			case 10: // November
+				return 'Autumn';
+			case 11: // December
+			case 0: // January
+			case 1: // February
+				return 'Winter';
+			default:
+				return 'Unknown'; // Handle potential unexpected month values
+		}
+	}
+
+	function fill_band_slider_seasons(net_cdf_times: any, start_date: number) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			band_slider_values.push(getSeason(curDate));
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
 	function evaluate_timestamp_data(net_cdf_times: any) {
 		// read timestamp and calculated values for the bandslider
 		band_slider_values = [];
@@ -503,9 +537,9 @@
 			throw new Error('Metadata timestamp is invalid.');
 		}
 
-		// console.log("PREFIX: ", time_prefix);
-		// console.log("timestamp_begin: ", timestamp_begin);
-		// console.log("start_date: ", start_date);
+		// console.log('PREFIX: ', time_prefix);
+		// console.log('timestamp_begin: ', timestamp_begin);
+		// console.log('start_date: ', start_date);
 
 		try {
 			var full_band_date_diff =
@@ -517,28 +551,29 @@
 				first_band_diff = parseFloat(net_cdf_times[1]) - parseFloat(net_cdf_times[0]);
 			}
 
-			// console.log("full_band_date_diff: ", full_band_date_diff);
-			// console.log("first_band_diff: ", first_band_diff);
-			// console.log("net_cdf_times.length: ", net_cdf_times.length);
+			// console.log('full_band_date_diff: ', full_band_date_diff);
+			// console.log('first_band_diff: ', first_band_diff);
+			// console.log('net_cdf_times.length: ', net_cdf_times.length);
 
 			// cases for different timestep interpretations
 			if (timestamp_begin == '') {
-				console.log('slider_error');
 				fill_band_slider_error(net_cdf_times);
-			} else if (net_cdf_times.length == 12 && first_band_diff <= 32 && first_band_diff >= 28) {
-				console.log('fill_band_slider_monthmean');
+			} else if (net_cdf_times.length == 12 && first_band_diff >= 28 && first_band_diff <= 32) {
 				fill_band_slider_monthmean(net_cdf_times, start_date);
+			} else if (net_cdf_times.length == 4 && first_band_diff >= 70 && first_band_diff <= 110) {
+				fill_band_slider_seasons(net_cdf_times, start_date);
 			} else if (time_prefix == 'years') {
-				console.log('fill_band_slider_years');
 				fill_band_slider_years(net_cdf_times, start_date);
 			} else if (time_prefix == 'days') {
-				console.log('fill_band_slider_days');
 				if (full_band_date_diff > 365.0) {
 					// displays dates as years
 					fill_band_slider_days(net_cdf_times, start_date, true);
 				} else {
 					fill_band_slider_days(net_cdf_times, start_date);
 				}
+			} else {
+				// case where every condition fails for example unknown time_prefix
+				fill_band_slider_error(net_cdf_times);
 			}
 		} catch (error) {
 			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
