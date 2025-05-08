@@ -208,7 +208,14 @@
 
 	function select_all_files() {
 		for (var i = 0; i < selected_files.length; i++) {
-			selected_files[i] = true;
+			// set all files true which are shown (filtered result)
+			if (
+				folder_data[i]['filename'].toLowerCase().includes(search_term.toLowerCase()) &&
+				(folder_data[i]['filename'].includes(search_time) || search_time == '_')
+			)
+			{
+				selected_files[i] = true;
+			}
 		}
 	}
 
