@@ -28,7 +28,6 @@
 	Chart.register(annotationPlugin);
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
-	let time_interval_mode = 'years';
 
 	let metadata_loaded: boolean = false; // trigger variable indicating metadata is loaded
 	let loading_map: boolean = false; // trigger variable indicating map is loaded
@@ -614,62 +613,6 @@
 		}
 
 		evaluate_timestamp_data(net_cdf_times);
-
-		// // read timestamp and calculated values for the bandslider
-		// band_slider_values = [];
-
-		// var timestamp_begin = file_metadata['time#units'];
-		// var timestamp_data = timestamp_begin.split(' ');
-		// console.log('TIMESTAMP DATA: \n', timestamp_data);
-
-		// // start date of the metadata timestamp in milliseconds
-		// var start_date = NaN;
-		// for (var i = 0; i < timestamp_data.length; i++) {
-		// 	start_date = Date.parse(timestamp_data[i]);
-		// 	if (!isNaN(start_date)) {
-		// 		break;
-		// 	}
-		// }
-
-		// if (isNaN(start_date)) {
-		// 	console.log('Could not parse metadata timestamp.');
-		// 	timestamp_begin = '';
-		// 	throw new Error('Metadata timestamp is invalid.');
-		// }
-
-		// try {
-		// 	var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-		// 	if (last_date > 365.0) {
-		// 		time_interval_mode = 0;
-		// 	} else {
-		// 		time_interval_mode = 1;
-		// 	}
-		// 	if (timestamp_begin == '') {
-		// 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-		// 		for (let i = 0; i < net_cdf_times.length; i++) {
-		// 			band_slider_values.push(parseFloat(net_cdf_times[i]));
-		// 		}
-		// 	} else {
-		// 		// valid timestamp -> calculate years (for now) and assign to bandslider values
-		// 		for (let i = 0; i < net_cdf_times.length; i++) {
-		// 			if (time_interval_mode == 0) {
-		// 				band_slider_values.push(
-		// 					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
-		// 				);
-		// 			} else if (time_interval_mode == 1) {
-		// 				band_slider_values.push(
-		// 					new Date(
-		// 						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
-		// 					).toLocaleDateString()
-		// 				);
-		// 			}
-
-		// 			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
-		// 		}
-		// 	}
-		// } catch (error) {
-		// 	console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
-		// }
 	}
 
 	/**
