@@ -28,7 +28,7 @@
 	Chart.register(annotationPlugin);
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
-	let time_interval_mode = 0; // 0 .. years, 1 .. months, 2 .. days
+	let time_interval_mode = 'years';
 
 	let metadata_loaded: boolean = false; // trigger variable indicating metadata is loaded
 	let loading_map: boolean = false; // trigger variable indicating map is loaded
@@ -404,7 +404,61 @@
 		await set_color_bounds();
 	}
 
-	function evaluate_timestamp_data(timestemp: any, net_cdf_times: any) {
+	function fill_band_slider_error(net_cdf_times: any) {
+		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(parseFloat(net_cdf_times[i]));
+		}
+	}
+
+	function fill_band_slider_years(net_cdf_times: any, start_date: number) {
+		var time_prefix_multiplier = 365.2425;
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(
+				new Date(
+					start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+				).getFullYear()
+			);
+
+			band_slider_dates.push(
+				start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+			);
+		}
+	}
+
+	function fill_band_slider_days(
+		net_cdf_times: any,
+		start_date: number,
+		displayYears: boolean = false
+	) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			var curDateStr: string = '';
+			if (displayYears) {
+				curDateStr = curDate.getFullYear().toString();
+			} else {
+				curDateStr = curDate.toLocaleDateString();
+			}
+			band_slider_values.push(curDateStr);
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
+	function fill_band_slider_monthmean(net_cdf_times: any, start_date: number) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(
+				new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).toLocaleDateString(
+					'en-US',
+					{ month: 'long' }
+				)
+			);
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
+	function evaluate_timestamp_data(net_cdf_times: any) {
 		// read timestamp and calculated values for the bandslider
 		band_slider_values = [];
 
@@ -420,7 +474,7 @@
 
 		var start_date = NaN;
 		var time_prefix = 'days';
-		// we assume always some form of "days/years since timestemp..."
+		// we assume always some form of "days/years since timestamp..."
 		for (var i = 0; i < timestamp_data.length; i++) {
 			var cur_el: string = timestamp_data[i];
 			if (doesNotContainNumber(cur_el)) {
@@ -450,50 +504,47 @@
 			throw new Error('Metadata timestamp is invalid.');
 		}
 
-		var time_prefix_multiplier = 1.0;
-		// days of a year after gregorian calendar - multiplier
-		if (time_prefix == 'years') time_prefix_multiplier = 365.2425;
-		// console.log("Time Prefix and Multi: ", time_prefix, " ", time_prefix_multiplier);
+		// console.log("PREFIX: ", time_prefix);
+		// console.log("timestamp_begin: ", timestamp_begin);
+		// console.log("start_date: ", start_date);
 
 		try {
-			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-			if (last_date > 365.0) {
-				time_interval_mode = 0;
-			} else {
-				time_interval_mode = 1;
-			}
-			if (timestamp_begin == '') {
-				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(parseFloat(net_cdf_times[i]));
-				}
-			} else {
-				// valid timestamp -> calculate years (for now) and assign to bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					if (time_interval_mode == 0) {
-						band_slider_values.push(
-							new Date(
-								start_date +
-									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-							).getFullYear()
-						);
-					} else if (time_interval_mode == 1) {
-						band_slider_values.push(
-							new Date(
-								start_date +
-									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-							).toLocaleDateString()
-						);
-					}
+			var full_band_date_diff =
+				parseFloat(net_cdf_times[net_cdf_times.length - 1]) - parseFloat(net_cdf_times[0]);
+			var first_band_diff = 0;
 
-					band_slider_dates.push(
-						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-					);
+			if (net_cdf_times.length >= 2) {
+				// diff between the first 2 band time values if exist
+				first_band_diff = parseFloat(net_cdf_times[1]) - parseFloat(net_cdf_times[0]);
+			}
+
+			// console.log("full_band_date_diff: ", full_band_date_diff);
+			// console.log("first_band_diff: ", first_band_diff);
+			// console.log("net_cdf_times.length: ", net_cdf_times.length);
+
+			// cases for different timestep interpretations
+			if (timestamp_begin == '') {
+				console.log('slider_error');
+				fill_band_slider_error(net_cdf_times);
+			} else if (net_cdf_times.length == 12 && first_band_diff <= 32 && first_band_diff >= 28) {
+				console.log('fill_band_slider_monthmean');
+				fill_band_slider_monthmean(net_cdf_times, start_date);
+			} else if (time_prefix == 'years') {
+				console.log('fill_band_slider_years');
+				fill_band_slider_years(net_cdf_times, start_date);
+			} else if (time_prefix == 'days') {
+				console.log('fill_band_slider_days');
+				if (full_band_date_diff > 365.0) {
+					// displays dates as years
+					fill_band_slider_days(net_cdf_times, start_date, true);
+				} else {
+					fill_band_slider_days(net_cdf_times, start_date);
 				}
 			}
 		} catch (error) {
 			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
 		}
+
 		if (band_slider_values.length > 1) {
 			show_chart = true;
 		} else {
@@ -562,7 +613,7 @@
 			current_diff_band_metainfo.max = 1000.0;
 		}
 
-		evaluate_timestamp_data(file_metadata['time#units'], net_cdf_times);
+		evaluate_timestamp_data(net_cdf_times);
 
 		// // read timestamp and calculated values for the bandslider
 		// band_slider_values = [];
