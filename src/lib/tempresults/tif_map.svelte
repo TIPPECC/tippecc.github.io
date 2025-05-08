@@ -909,6 +909,17 @@
 
 		const layerinfo = info;
 
+		// force gray rescale if conditions are met
+		if (!cg_picker.get_forcedGrayScaleMode()) {
+			if (
+				(current_band_metainfo.min < 0 && current_band_metainfo.max < 0) ||
+				(current_band_metainfo.min > 0 && current_band_metainfo.max > 0)
+			) {
+				cg_picker.apply_gray_rescale(false, true);
+				cg_picker.update_color_and_value_steps(false);
+			}
+		}
+
 		// console.log('CG_STOPS: \n', cg_picker.get_color_boundaries('rgb'));
 		// build a color object for openlayers based on the current configuration
 		const color_thing = generate_openlayers_case_stops(
@@ -916,6 +927,7 @@
 			layerinfo,
 			current_band_metainfo['noDataValue']
 		);
+
 		// console.log('GENERATED STOPS: \n', color_thing);
 
 		// create new layer, with the newly created source and style
