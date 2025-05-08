@@ -741,9 +741,9 @@
 	{#if folder_data.length > 0}
 		<div class="p-2">
 			{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
-				{#if cat_obj && cat_obj.files.filter( (a) => [search_term.toLowerCase(), search_time].every( (term) => a.filename
-										.toLowerCase()
-										.includes(term) ) ).length > 0}
+				<div class="{cat_obj.files.filter( (a) => [search_term.toLowerCase(), search_time].every( (term) => a.filename
+					.toLowerCase()
+					.includes(term) ) ).length > 0 ? 'visible' : 'hidden'}">
 					<div
 						class="w-full h-[36px] flex items-center rounded-md pl-3 {cat_counter % 2 == 0
 							? 'bg-emerald-700'
@@ -769,7 +769,7 @@
 							</h2>
 						</button>
 					</div>
-					{#if cat_obj.toggled}
+					<div class="{cat_obj.toggled ? 'visible' : 'hidden'}">
 						<table class="table-fixed mb-1">
 							<thead>
 								<tr>
@@ -783,11 +783,10 @@
 							</thead>
 							<tbody>
 								{#each cat_obj.files as file_obj}
-									{#if [search_term.toLowerCase(), search_time].every( (term) => folder_data[file_obj.index]['filename']
-												.toLowerCase()
-												.includes(term) )}
 										<tr
-											class="hover:bg-slate-400"
+											class="hover:bg-slate-400 {[search_term.toLowerCase(), search_time].every( (term) => folder_data[file_obj.index]['filename']
+										.toLowerCase()
+										.includes(term) ) ? 'visible' : 'hidden'}"
 											style={download_tiff &&
 											!folder_data[file_obj.index]['in_limit_conversion'] &&
 											selected_files[file_obj.index]
@@ -1075,12 +1074,11 @@
 												{/if}
 											</td>
 										</tr>
-									{/if}
 								{/each}
 							</tbody>
 						</table>
-					{/if}
-				{/if}
+					</div>
+				</div>
 			{/each}
 		</div>
 
