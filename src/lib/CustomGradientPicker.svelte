@@ -57,6 +57,8 @@
 	export let num_digits: number = 1; // digits to round color bar numbers to
 	export let toggle_gradient: boolean = false; // gradient mode
 
+	export let showScaleWarning: boolean = false;
+
 	let steps = 21;
 	let input_steps = 21;
 
@@ -773,7 +775,7 @@
 									? 'bg-success-700'
 									: 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
 									? 'h-[28px]'
-									: 'mb-1'}"
+									: 'mb-1'} {!forcedGrayScaleMode && showScaleWarning ? '!bg-red-400' : ''}"
 								on:click={() => apply_gray_rescale(true, !forcedGrayScaleMode)}
 								title="Rescale colors to one-dimensional gray-scale. (Use when the value range of data points is very small or just one sided (e.g. only positives)."
 								>Rescale

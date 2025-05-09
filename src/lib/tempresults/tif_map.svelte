@@ -44,6 +44,8 @@
 	let file_search_term: string = ''; // current string input in file search field
 	let file_selector: HTMLSelectElement;
 
+	let showScaleWarning: boolean = false;
+
 	let slider_value: any; // slider value of main slider
 	let slider_index: any; // slider index of main slider
 	let slider_value_diff: any; // slider value of diff slider
@@ -945,15 +947,28 @@
 
 		const layerinfo = info;
 
+		var _min = current_band_metainfo.min;
+		var _max = current_band_metainfo.max;
+
+		var colorScaleTrueRange = Math.max(Math.abs(_min), Math.abs(_max)) * 2.0;
+		var colorScaleCoverage = _max - _min;
+		var colorScaleCovPercent = (colorScaleCoverage / colorScaleTrueRange) * 100.0;
+
+		if (colorScaleCovPercent <= 100.0 / 7.0) {
+			showScaleWarning = true;
+		} else {
+			showScaleWarning = false;
+		}
+
+		// console.log("colorScaleTrueRange: ", colorScaleTrueRange);
+		// console.log("colorScaleCoverage: ", colorScaleCoverage);
+		// console.log("colorScaleCovPercent: ", colorScaleCovPercent);
+		// console.log("showScaleWarning: ", showScaleWarning);
+
 		// force gray rescale if conditions are met
-		if (!cg_picker.get_forcedGrayScaleMode()) {
-			if (
-				(current_band_metainfo.min < 0 && current_band_metainfo.max < 0) ||
-				(current_band_metainfo.min > 0 && current_band_metainfo.max > 0)
-			) {
-				cg_picker.apply_gray_rescale(false, true);
-				cg_picker.update_color_and_value_steps(false);
-			}
+		if (!cg_picker.get_forcedGrayScaleMode() && colorScaleCovPercent <= 100.0 / 21.0) {
+			cg_picker.apply_gray_rescale(false, true);
+			cg_picker.update_color_and_value_steps(false);
 		}
 
 		// console.log('CG_STOPS: \n', cg_picker.get_color_boundaries('rgb'));
@@ -1262,6 +1277,7 @@
 		<CustomGradientPicker
 			cmin_real={current_band_metainfo.min}
 			cmax_real={current_band_metainfo.max}
+			{showScaleWarning}
 			bind:this={cg_picker}
 			bind:horizontal={horizontal_scala}
 			num_digits={2}
