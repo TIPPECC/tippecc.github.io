@@ -34,7 +34,6 @@
 	let current_foldertype = {};
 	foldertypes = foldertypes_full.filter((x) => x.key.startsWith(current_category));
 
-
 	function set_foldertype(new_type: string) {
 		for (let x = 0; x < foldertypes.length; x++) {
 			if (new_type == foldertypes[x].key) {

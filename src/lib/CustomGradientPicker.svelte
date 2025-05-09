@@ -57,6 +57,8 @@
 	export let num_digits: number = 1; // digits to round color bar numbers to
 	export let toggle_gradient: boolean = false; // gradient mode
 
+	export let showScaleWarning: boolean = false;
+
 	let steps = 21;
 	let input_steps = 21;
 
@@ -75,7 +77,7 @@
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
 
-	let forcedGrayScaleMode: boolean = false;
+	export let forcedGrayScaleMode: boolean = false;
 
 	// const VALUE_MODES = ['categorized', 'direct']
 	// export let value_mode: string = VALUE_MODES[0];
@@ -374,7 +376,7 @@
 	 * Updates color_steps and value_steps when needed.
 	 * Dispatches 'color_stops_changed' event.
 	 */
-	function update_color_and_value_steps() {
+	export function update_color_and_value_steps(signalBack: boolean = true) {
 		if (data_mode == 'divergent') {
 			update_color_steps_div();
 			update_value_steps_div();
@@ -394,7 +396,7 @@
 			update_value_steps_indiv();
 		}
 
-		dispatch('color_stops_changed', {});
+		if (signalBack) dispatch('color_stops_changed', {});
 	}
 
 	/**
@@ -487,19 +489,19 @@
 		value_steps = [...value_steps, upper_l];
 	}
 
-	function try_gray_rescale() {
-		if (forcedGrayScaleMode) {
-			forcedGrayScaleMode = false;
-			data_mode = 'divergent';
-			color_scheme = prec_div;
-			color_scheme_key = 'prec_div';
-			update_color_and_value_steps();
-		} else {
-			forcedGrayScaleMode = true;
+	export function apply_gray_rescale(update: boolean = true, value: boolean) {
+		if (value) {
 			data_mode = 'sequential';
 			color_scheme = gray_seq;
 			color_scheme_key = 'gray_seq';
-			update_color_and_value_steps();
+			if (update) update_color_and_value_steps();
+			forcedGrayScaleMode = value;
+		} else {
+			data_mode = 'divergent';
+			color_scheme = prec_div;
+			color_scheme_key = 'prec_div';
+			if (update) update_color_and_value_steps();
+			forcedGrayScaleMode = value;
 		}
 	}
 
@@ -520,6 +522,10 @@
 
 	function update_color_steps_indiv() {
 		update_color_steps_div();
+	}
+
+	export function get_forcedGrayScaleMode() {
+		return forcedGrayScaleMode;
 	}
 
 	/**
@@ -769,8 +775,8 @@
 									? 'bg-success-700'
 									: 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
 									? 'h-[28px]'
-									: 'mb-1'}"
-								on:click={() => try_gray_rescale()}
+									: 'mb-1'} {!forcedGrayScaleMode && showScaleWarning ? '!bg-red-400' : ''}"
+								on:click={() => apply_gray_rescale(true, !forcedGrayScaleMode)}
 								title="Rescale colors to one-dimensional gray-scale. (Use when the value range of data points is very small or just one sided (e.g. only positives)."
 								>Rescale
 							</button>

@@ -28,7 +28,6 @@
 	Chart.register(annotationPlugin);
 
 	const TWELVE_HOURS = 43200000; // 12 hours in ms, for date calculation
-	let time_interval_mode = 0; // 0 .. years, 1 .. months, 2 .. days
 
 	let metadata_loaded: boolean = false; // trigger variable indicating metadata is loaded
 	let loading_map: boolean = false; // trigger variable indicating map is loaded
@@ -44,6 +43,8 @@
 	let virtual_data_url: string = ''; // helper variable carrying selected file as virtual url
 	let file_search_term: string = ''; // current string input in file search field
 	let file_selector: HTMLSelectElement;
+
+	let showScaleWarning: boolean = false;
 
 	let slider_value: any; // slider value of main slider
 	let slider_index: any; // slider index of main slider
@@ -404,7 +405,95 @@
 		await set_color_bounds();
 	}
 
-	function evaluate_timestamp_data(timestemp: any, net_cdf_times: any) {
+	function fill_band_slider_error(net_cdf_times: any) {
+		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(parseFloat(net_cdf_times[i]));
+		}
+	}
+
+	function fill_band_slider_years(net_cdf_times: any, start_date: number) {
+		var time_prefix_multiplier = 365.2425;
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(
+				new Date(
+					start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+				).getFullYear()
+			);
+
+			band_slider_dates.push(
+				start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
+			);
+		}
+	}
+
+	function fill_band_slider_days(
+		net_cdf_times: any,
+		start_date: number,
+		displayYears: boolean = false
+	) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			var curDateStr: string = '';
+			if (displayYears) {
+				curDateStr = curDate.getFullYear().toString();
+			} else {
+				curDateStr = curDate.toLocaleDateString();
+			}
+			band_slider_values.push(curDateStr);
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
+	function fill_band_slider_monthmean(net_cdf_times: any, start_date: number) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			band_slider_values.push(
+				new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).toLocaleDateString(
+					'en-US',
+					{ month: 'long' }
+				)
+			);
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
+	function getSeason(date: Date) {
+		const month = date.getMonth(); // 0 for January, 11 for December
+
+		switch (month) {
+			case 2: // March
+			case 3: // April
+			case 4: // May
+				return 'Spring';
+			case 5: // June
+			case 6: // July
+			case 7: // August
+				return 'Summer';
+			case 8: // September
+			case 9: // October
+			case 10: // November
+				return 'Autumn';
+			case 11: // December
+			case 0: // January
+			case 1: // February
+				return 'Winter';
+			default:
+				return 'Unknown'; // Handle potential unexpected month values
+		}
+	}
+
+	function fill_band_slider_seasons(net_cdf_times: any, start_date: number) {
+		for (let i = 0; i < net_cdf_times.length; i++) {
+			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			band_slider_values.push(getSeason(curDate));
+
+			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		}
+	}
+
+	function evaluate_timestamp_data(net_cdf_times: any) {
 		// read timestamp and calculated values for the bandslider
 		band_slider_values = [];
 
@@ -420,7 +509,7 @@
 
 		var start_date = NaN;
 		var time_prefix = 'days';
-		// we assume always some form of "days/years since timestemp..."
+		// we assume always some form of "days/years since timestamp..."
 		for (var i = 0; i < timestamp_data.length; i++) {
 			var cur_el: string = timestamp_data[i];
 			if (doesNotContainNumber(cur_el)) {
@@ -450,50 +539,48 @@
 			throw new Error('Metadata timestamp is invalid.');
 		}
 
-		var time_prefix_multiplier = 1.0;
-		// days of a year after gregorian calendar - multiplier
-		if (time_prefix == 'years') time_prefix_multiplier = 365.2425;
-		// console.log("Time Prefix and Multi: ", time_prefix, " ", time_prefix_multiplier);
+		// console.log('PREFIX: ', time_prefix);
+		// console.log('timestamp_begin: ', timestamp_begin);
+		// console.log('start_date: ', start_date);
 
 		try {
-			var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-			if (last_date > 365.0) {
-				time_interval_mode = 0;
-			} else {
-				time_interval_mode = 1;
-			}
-			if (timestamp_begin == '') {
-				// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					band_slider_values.push(parseFloat(net_cdf_times[i]));
-				}
-			} else {
-				// valid timestamp -> calculate years (for now) and assign to bandslider values
-				for (let i = 0; i < net_cdf_times.length; i++) {
-					if (time_interval_mode == 0) {
-						band_slider_values.push(
-							new Date(
-								start_date +
-									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-							).getFullYear()
-						);
-					} else if (time_interval_mode == 1) {
-						band_slider_values.push(
-							new Date(
-								start_date +
-									parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-							).toLocaleDateString()
-						);
-					}
+			var full_band_date_diff =
+				parseFloat(net_cdf_times[net_cdf_times.length - 1]) - parseFloat(net_cdf_times[0]);
+			var first_band_diff = 0;
 
-					band_slider_dates.push(
-						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2 * time_prefix_multiplier
-					);
+			if (net_cdf_times.length >= 2) {
+				// diff between the first 2 band time values if exist
+				first_band_diff = parseFloat(net_cdf_times[1]) - parseFloat(net_cdf_times[0]);
+			}
+
+			// console.log('full_band_date_diff: ', full_band_date_diff);
+			// console.log('first_band_diff: ', first_band_diff);
+			// console.log('net_cdf_times.length: ', net_cdf_times.length);
+
+			// cases for different timestep interpretations
+			if (timestamp_begin == '') {
+				fill_band_slider_error(net_cdf_times);
+			} else if (net_cdf_times.length == 12 && first_band_diff >= 28 && first_band_diff <= 32) {
+				fill_band_slider_monthmean(net_cdf_times, start_date);
+			} else if (net_cdf_times.length == 4 && first_band_diff >= 70 && first_band_diff <= 110) {
+				fill_band_slider_seasons(net_cdf_times, start_date);
+			} else if (time_prefix == 'years') {
+				fill_band_slider_years(net_cdf_times, start_date);
+			} else if (time_prefix == 'days') {
+				if (full_band_date_diff > 365.0) {
+					// displays dates as years
+					fill_band_slider_days(net_cdf_times, start_date, true);
+				} else {
+					fill_band_slider_days(net_cdf_times, start_date);
 				}
+			} else {
+				// case where every condition fails for example unknown time_prefix
+				fill_band_slider_error(net_cdf_times);
 			}
 		} catch (error) {
 			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
 		}
+
 		if (band_slider_values.length > 1) {
 			show_chart = true;
 		} else {
@@ -562,63 +649,7 @@
 			current_diff_band_metainfo.max = 1000.0;
 		}
 
-		evaluate_timestamp_data(file_metadata['time#units'], net_cdf_times);
-
-		// // read timestamp and calculated values for the bandslider
-		// band_slider_values = [];
-
-		// var timestamp_begin = file_metadata['time#units'];
-		// var timestamp_data = timestamp_begin.split(' ');
-		// console.log('TIMESTAMP DATA: \n', timestamp_data);
-
-		// // start date of the metadata timestamp in milliseconds
-		// var start_date = NaN;
-		// for (var i = 0; i < timestamp_data.length; i++) {
-		// 	start_date = Date.parse(timestamp_data[i]);
-		// 	if (!isNaN(start_date)) {
-		// 		break;
-		// 	}
-		// }
-
-		// if (isNaN(start_date)) {
-		// 	console.log('Could not parse metadata timestamp.');
-		// 	timestamp_begin = '';
-		// 	throw new Error('Metadata timestamp is invalid.');
-		// }
-
-		// try {
-		// 	var last_date = parseFloat(net_cdf_times[net_cdf_times.length - 1]);
-		// 	if (last_date > 365.0) {
-		// 		time_interval_mode = 0;
-		// 	} else {
-		// 		time_interval_mode = 1;
-		// 	}
-		// 	if (timestamp_begin == '') {
-		// 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
-		// 		for (let i = 0; i < net_cdf_times.length; i++) {
-		// 			band_slider_values.push(parseFloat(net_cdf_times[i]));
-		// 		}
-		// 	} else {
-		// 		// valid timestamp -> calculate years (for now) and assign to bandslider values
-		// 		for (let i = 0; i < net_cdf_times.length; i++) {
-		// 			if (time_interval_mode == 0) {
-		// 				band_slider_values.push(
-		// 					new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).getFullYear()
-		// 				);
-		// 			} else if (time_interval_mode == 1) {
-		// 				band_slider_values.push(
-		// 					new Date(
-		// 						start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2
-		// 					).toLocaleDateString()
-		// 				);
-		// 			}
-
-		// 			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
-		// 		}
-		// 	}
-		// } catch (error) {
-		// 	console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
-		// }
+		evaluate_timestamp_data(net_cdf_times);
 	}
 
 	/**
@@ -864,6 +895,7 @@
 	 * (Re)-build and (re)-place layer and source for the map.
 	 */
 	function visualize_band() {
+		if (!cg_picker) return;
 		// Important note:
 		// band selection is a bit tricky here..
 		// - band numbers always start at 1
@@ -915,6 +947,30 @@
 
 		const layerinfo = info;
 
+		var _min = current_band_metainfo.min;
+		var _max = current_band_metainfo.max;
+
+		var colorScaleTrueRange = Math.max(Math.abs(_min), Math.abs(_max)) * 2.0;
+		var colorScaleCoverage = _max - _min;
+		var colorScaleCovPercent = (colorScaleCoverage / colorScaleTrueRange) * 100.0;
+
+		if (colorScaleCovPercent <= 100.0 / 7.0) {
+			showScaleWarning = true;
+		} else {
+			showScaleWarning = false;
+		}
+
+		// console.log("colorScaleTrueRange: ", colorScaleTrueRange);
+		// console.log("colorScaleCoverage: ", colorScaleCoverage);
+		// console.log("colorScaleCovPercent: ", colorScaleCovPercent);
+		// console.log("showScaleWarning: ", showScaleWarning);
+
+		// force gray rescale if conditions are met
+		if (!cg_picker.get_forcedGrayScaleMode() && colorScaleCovPercent <= 100.0 / 21.0) {
+			cg_picker.apply_gray_rescale(false, true);
+			cg_picker.update_color_and_value_steps(false);
+		}
+
 		// console.log('CG_STOPS: \n', cg_picker.get_color_boundaries('rgb'));
 		// build a color object for openlayers based on the current configuration
 		const color_thing = generate_openlayers_case_stops(
@@ -922,6 +978,7 @@
 			layerinfo,
 			current_band_metainfo['noDataValue']
 		);
+
 		// console.log('GENERATED STOPS: \n', color_thing);
 
 		// create new layer, with the newly created source and style
@@ -1220,6 +1277,7 @@
 		<CustomGradientPicker
 			cmin_real={current_band_metainfo.min}
 			cmax_real={current_band_metainfo.max}
+			{showScaleWarning}
 			bind:this={cg_picker}
 			bind:horizontal={horizontal_scala}
 			num_digits={2}
