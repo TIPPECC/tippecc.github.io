@@ -212,8 +212,7 @@
 			if (
 				folder_data[i]['filename'].toLowerCase().includes(search_term.toLowerCase()) &&
 				(folder_data[i]['filename'].includes(search_time) || search_time == '_')
-			)
-			{
+			) {
 				selected_files[i] = true;
 			}
 		}
@@ -1082,7 +1081,13 @@
 											{/if}
 										</td>
 									</tr>
-									<tr>
+									<tr
+										class={[search_term.toLowerCase(), search_time].every((term) =>
+											folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+										)
+											? 'visible'
+											: 'hidden'}
+									>
 										<td colspan="7" class="p-2">
 											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
 												<FileDetails {folder_data} {file_obj} {foldertype} />
