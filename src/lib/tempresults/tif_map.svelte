@@ -1192,6 +1192,7 @@
 				<h2>Layer meta data <b>#{selected_band}:</b></h2>
 				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
 				<div id="band_max">MAX: {current_band_metainfo['max']}</div>
+				<div id="unit">Unit: {file_metadata['varinfo']['unit']}</div>
 				<div id="noDataValue">
 					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
 				</div>
@@ -1216,6 +1217,7 @@
 					<h2>Layer meta data <b>#{selected_band_diff}:</b></h2>
 					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
 					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
+					<div id="unit">Unit: {file_metadata['varinfo']['unit']}</div>
 					<div id="noDataValue">
 						nDV: {parseFloat(current_diff_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
 					</div>
@@ -1236,7 +1238,7 @@
 			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
 				<h2>Single layer metadata</h2>
 				<div id="band_min">
-					MIN - MAX: {current_band_metainfo['min']} - {current_band_metainfo['max']}
+					MIN - MAX: {current_band_metainfo['min']} - {current_band_metainfo['max']} (Unit: {file_metadata['varinfo']['unit']})
 				</div>
 				<div id="noDataValue">
 					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
