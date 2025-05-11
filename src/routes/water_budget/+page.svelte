@@ -78,7 +78,7 @@
 	let query = '';
 
 	let url = '';
-
+	let scroll_to_key = 1;
 	let tabSet: number = 0;
 
 	// PLACEHOLDER showcase for wget display styling
@@ -122,6 +122,11 @@
 		{ time: '1981_2010', show: 'false' },
 		{ time: '2011_2040', show: 'false' },
 		{ time: '2071_2099', show: 'false' }
+	];
+	let aggregation = [
+		{ time: 'yearly', show: 'false' },
+		{ time: 'seasonal', show: 'false' },
+		{ time: 'monthly', show: 'false' }
 	];
 
 	onMount(() => {
@@ -477,9 +482,20 @@
 					console.log('found file in folder_data', file_obj);
 
 					get_metadata_and_prov(folder_data[key2]['filename'], foldertype, found, 0);
+
+					// scroll to the file
+					scroll_to_key = key2;
+
 					break;
 				}
 			}
+		}
+	}
+
+	function scroll_to_file(key: number) {
+		const element = document.getElementById('checkbox_' + key);
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}
 
@@ -518,6 +534,12 @@
 			console.log('Refreshing folder content failed.');
 		} finally {
 			loading = false;
+			// wait 0,5 seconds to scroll to file
+			setTimeout(() => {
+				scroll_to_file(scroll_to_key);
+				// unset scroll_to_key
+				scroll_to_key = 1;
+			}, 500);
 		}
 	}
 
