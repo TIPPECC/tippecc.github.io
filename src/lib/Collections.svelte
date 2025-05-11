@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { API_URL } from '../../app.config';
+	import { API_URL } from '../app.config';
 	import {
 		_fetch_foldercontent_by_type,
 		_fetch_foldercontent_force_update
 	} from '$lib/fetch_folder_content';
 	import { browser } from '$app/environment';
-	import { tempresult_selection } from '../store/tempresult_store';
+	import { tempresult_selection } from '../routes/store/tempresult_store';
 	import { goto } from '$app/navigation';
 	import networking from '$lib/icons/networking-collaboration-svgrepo-com.svg';
 	import FolderTree from '$lib/icons/folder_tree.svelte';
@@ -26,6 +26,8 @@
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 	import FileDetails from '$lib/FileDetails.svelte';
 
+	export let filter_by_status = '';
+	console.log('Status: ', filter_by_status);
 	type FileinfoFormat = {
 		fileversion: string;
 		num_bands: number;
@@ -216,7 +218,8 @@
 			// set all files true which are shown (filtered result)
 			if (
 				folder_data[i]['filename'].toLowerCase().includes(search_term.toLowerCase()) &&
-				(folder_data[i]['filename'].includes(search_time) || search_time == '_')
+				(folder_data[i]['filename'].includes(search_time) || search_time == '_') &&
+				(folder_data[i]['filename'].includes(search_aggregation) || search_aggregation == '_')
 			) {
 				selected_files[i] = true;
 			}
@@ -422,6 +425,7 @@
 
 		// check if filename contains abs_change, 20 or 30y times and set to false for all
 		uncheck_times();
+		uncheck_aggregation();
 
 		for (let x = 0; x < folder_data.length; x++) {
 			var filename: string = folder_data[x]['filename'];
@@ -429,6 +433,7 @@
 
 			// check if filename contains abs_change, 20 or 30y times and set to true if includes
 			check_times(filename);
+			check_aggregation(filename);
 
 			if (match && match.length >= 3) {
 				const category = match[0];
@@ -560,6 +565,10 @@
 		search_time = variable;
 	}
 
+	let search_aggregation = '_';
+	function set_search_aggregation(variable: string) {
+		search_aggregation = variable;
+	}
 	function check_times(filename: string | string[]) {
 		// check if filename contains abs_change times and set to true if includes
 		for (let i = 0; i < abs_change.length; i++) {
@@ -594,6 +603,22 @@
 		}
 		// set search_time to '_'
 		search_time = '_';
+	}
+
+	function check_aggregation(filename: string | string[]) {
+		// check if filename contains aggregation times and set to true if includes
+		for (let i = 0; i < aggregation.length; i++) {
+			if (filename.includes(aggregation[i].time)) {
+				aggregation[i].show = 'true';
+			}
+		}
+	}
+
+	function uncheck_aggregation() {
+		// uncheck all times
+		for (let i = 0; i < aggregation.length; i++) {
+			aggregation[i].show = 'false';
+		}
 	}
 
 	let filetype = 'nc';
@@ -644,16 +669,19 @@
 	<FoldertypeChooser
 		bind:foldertype
 		bind:filter
+		bind:filter_by_status
 		on:foldertype_changed={() => refresh_foldercontent(false)}
 	/>
-	<div class="ml-2">
-		<button
-			class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-			on:click={() => refresh_foldercontent(true)}
-		>
-			Force Update
-		</button>
-	</div>
+	{#if filter_by_status == 'internal'}
+		<div class="ml-2">
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => refresh_foldercontent(true)}
+			>
+				Force Update
+			</button>
+		</div>
+	{/if}
 
 	<div class="p-2">
 		<input
@@ -695,6 +723,13 @@
 				<!--check if one entry has show is true-->
 				{#if twenty_years_period.some((variable) => variable.show == 'true')}
 					⏳ 20y ⟶ ⌛:
+					<button
+						class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+						'20y'
+							? 'font-bold'
+							: ''}"
+						on:click={() => set_search_time('20y')}>all 20y</button
+					>
 				{/if}
 				{#each twenty_years_period as variable}
 					{#if variable.show == 'true'}
@@ -712,6 +747,13 @@
 				<!--check if one entry has show is true-->
 				{#if thirty_years_period.some((variable) => variable.show == 'true')}
 					⏳ 30y ⟶ ⌛:
+					<button
+						class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+						'30y'
+							? 'font-bold'
+							: ''}"
+						on:click={() => set_search_time('30y')}>all 30y</button
+					>
 				{/if}
 				{#each thirty_years_period as variable}
 					{#if variable.show == 'true'}
@@ -730,6 +772,28 @@
 					class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
 					on:click={() => set_search_time('_')}>reset ⏳</button
 				>
+			{/if}
+			{#if aggregation.some((variable) => variable.show == 'true')}
+				<div class="flow gap-2 items-center ml-2">
+					Σ Sum / Avg:
+					{#each aggregation as variable}
+						{#if variable.show == 'true'}
+							<button
+								class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_aggregation ===
+								variable.time
+									? 'font-bold'
+									: ''}"
+								on:click={() => set_search_aggregation(variable.time)}>{variable.time}</button
+							>
+						{/if}
+					{/each}
+					{#if search_aggregation !== '_'}
+						<button
+							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
+							on:click={() => set_search_aggregation('_')}>reset Σ</button
+						>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	{/if}
@@ -773,7 +837,7 @@
 			{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
 				<div
 					class={cat_obj.files.filter((a) =>
-						[search_term.toLowerCase(), search_time].every((term) =>
+						[search_term.toLowerCase(), search_time, search_aggregation].every((term) =>
 							a.filename.toLowerCase().includes(term)
 						)
 					).length > 0
@@ -798,7 +862,7 @@
 							</div>
 							<h2 class="text-xl ml-2">
 								{folder_cat} ({cat_obj.files.filter((a) =>
-									[search_term.toLowerCase(), search_time].every((term) =>
+									[search_term.toLowerCase(), search_time, search_aggregation].every((term) =>
 										a.filename.toLowerCase().includes(term)
 									)
 								).length})
@@ -820,8 +884,12 @@
 							<tbody>
 								{#each cat_obj.files as file_obj}
 									<tr
-										class="hover:bg-slate-400 {[search_term.toLowerCase(), search_time].every(
-											(term) => folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+										class="hover:bg-slate-400 {[
+											search_term.toLowerCase(),
+											search_time,
+											search_aggregation
+										].every((term) =>
+											folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
 										)
 											? 'visible'
 											: 'hidden'}"
@@ -1104,8 +1172,8 @@
 										</td>
 									</tr>
 									<tr
-										class={[search_term.toLowerCase(), search_time].every((term) =>
-											folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+										class={[search_term.toLowerCase(), search_time, search_aggregation].every(
+											(term) => folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
 										)
 											? 'visible'
 											: 'hidden'}

@@ -5,7 +5,8 @@
 		"description": "Raw CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data"
+		"lineage": "Derived from CORDEX-CORE data",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_raw_stat",
@@ -13,7 +14,8 @@
 		"description": "Sum/Mean over time (20/30 years) for raw CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data"
+		"lineage": "Derived from CORDEX-CORE data",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_bias",
@@ -21,7 +23,8 @@
 		"description": "Bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_bias_stat",
@@ -29,7 +32,8 @@
 		"description": "Sum/Mean over time (20/30 years) for bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_raw_ind",
@@ -37,7 +41,8 @@
 		"description": "Indicator based on CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data"
+		"lineage": "Derived from CORDEX-CORE data",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_raw_ind_stat",
@@ -45,7 +50,8 @@
 		"description": "Sum/Mean over time (20/30 years) for raw CORDEX-CORE indicator data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data"
+		"lineage": "Derived from CORDEX-CORE data",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_bias_ind",
@@ -53,7 +59,8 @@
 		"description": "Indicator with bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_bias_ind_stat",
@@ -61,7 +68,8 @@
 		"description": "Sum/Mean over time (20/30 years) for bias adjusted CORDEX-CORE indicator data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_full",
@@ -69,7 +77,8 @@
 		"description": "Full indicator data (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from full indicator data for TIPPECC area"
+		"lineage": "Derived from full indicator data for TIPPECC area",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_slices20",
@@ -77,7 +86,8 @@
 		"description": "Indicator slices at 20 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area"
+		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area",
+		"status": "public"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_slices30",
@@ -85,7 +95,8 @@
 		"description": "Indicator slices at 30 years intervals (only TIPPECC area). Data description: https://landsurf.geo.uni-halle.de/docs-page_en.html#section-3",
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area"
+		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area",
+		"status": "public"
 	},
 	{
 		"key": "CMIP6_raw",
@@ -93,7 +104,8 @@
 		"description": "CMIP6 raw data for TIPPECC area",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
+		"lineage": "Derived from CMIP6 data",
+		"status": "public"
 	},
 	{
 		"key": "CMIP6_raw_stat",
@@ -101,7 +113,8 @@
 		"description": "Sum/Mean over time (20/30 years) for CMIP6 raw data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
+		"lineage": "Derived from CMIP6 data",
+		"status": "public"
 	},
 	{
 		"key": "CMIP6_raw_ind",
@@ -109,7 +122,8 @@
 		"description": "CMIP6 indicator data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
+		"lineage": "Derived from CMIP6 data",
+		"status": "public"
 	},
 	{
 		"key": "CMIP6_raw_ind_stat",
@@ -117,21 +131,24 @@
 		"description": "Sum/Mean over time (20/30 years) for CMIP6 indicator data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CMIP6 data"
+		"lineage": "Derived from CMIP6 data",
+		"status": "public"
 	},
 	{
 		"key": "CCAM_raw",
 		"display_name": "CCAM Raw Test",
 		"description": "CCAM raw data for TIPPECC area",
 		"citation": "",
-		"header_regex": ""
+		"header_regex": "",
+		"status": "internal"
 	},
 	{
 		"key": "CCAM_raw_ind",
 		"display_name": "CCAM Raw Indicator Test",
 		"description": "CCAM raw data for TIPPECC area",
 		"citation": "",
-		"header_regex": ""
+		"header_regex": "",
+		"status": "internal"
 	},
 	{
 		"key": "CHIRPS",
@@ -139,7 +156,8 @@
 		"description": "Raw CHIRPS data",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from CHIRPS data"
+		"lineage": "Derived from CHIRPS data",
+		"status": "internal"
 	},
 	{
 		"key": "GLEAM",
@@ -147,7 +165,8 @@
 		"description": "GLEAM potEt data",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from GLEAM data"
+		"lineage": "Derived from GLEAM data",
+		"status": "internal"
 	},
 	{
 		"key": "kariba_CORDEX",
@@ -155,7 +174,8 @@
 		"description": "CORDEX-CORE data for Kariba dam catchment",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment",
+		"status": "internal"
 	},
 	{
 		"key": "vaal_CORDEX",
@@ -163,7 +183,8 @@
 		"description": "CORDEX-CORE data for Vaal dam catchment",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment",
+		"status": "internal"
 	},
 	{
 		"key": "vaal_CHIRPS",
@@ -171,7 +192,8 @@
 		"description": "CHIRPS data for Vaal dam catchment",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from CHIRPS data for Vaal dam catchment"
+		"lineage": "Derived from CHIRPS data for Vaal dam catchment",
+		"status": "internal"
 	},
 	{
 		"key": "vaal_ERA5_LAND",
@@ -179,7 +201,8 @@
 		"description": "ERA5-LAND data for Vaal dam catchment",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment"
+		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment",
+		"status": "internal"
 	},
 	{
 		"key": "luanginga_CORDEX",
@@ -187,7 +210,8 @@
 		"description": "CORDEX-CORE data for Luanginga dam catchment",
 		"citation": "",
 		"header_regex": "",
-		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment"
+		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment",
+		"status": "internal"
 	},
 
 	{
@@ -196,7 +220,8 @@
 		"description": "ERA5-LAND data for Kunene dam catchment",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "Downloaded from CDS"
+		"lineage": "Downloaded from CDS",
+		"status": "internal"
 	},
 	{
 		"key": "kunene_GLEAM",
@@ -204,7 +229,8 @@
 		"description": "GLEAM data for Kunene dam catchment",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": ""
+		"lineage": "",
+		"status": "internal"
 	},
 	{
 		"key": "sftlf",
@@ -212,7 +238,8 @@
 		"description": "sftlf",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": "sftlf"
+		"lineage": "sftlf",
+		"status": "internal"
 	},
 	{
 		"key": "orog",
@@ -220,7 +247,8 @@
 		"description": "Orog data for TIPPECC area",
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
-		"lineage": ""
+		"lineage": "",
+		"status": "internal"
 	},
 	{
 		"key": "paper",
@@ -228,6 +256,7 @@
 		"description": "Research papers and articles",
 		"citation": "",
 		"header_regex": "",
-		"lineage": ""
+		"lineage": "",
+		"status": "internal"
 	}
 ]

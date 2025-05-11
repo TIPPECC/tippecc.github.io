@@ -14,6 +14,12 @@
 		const nameB = b.entity.value.split('/').slice(-1)[0].toLowerCase();
 		return nameA.localeCompare(nameB);
 	});
+
+	// get url path
+	const url = window.location.href;
+	const urlParts = url.split('/');
+	const lastPart = urlParts[urlParts.length - 1];
+
 </script>
 
 <div class="ml-2">
@@ -22,7 +28,7 @@
 			{#if source_file['collection_id']}
 				<li class="underline">
 					<a
-						href="water_budget?type={source_file.collection_id
+						href="{lastPart}?type={source_file.collection_id
 							.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
 						target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
 					>

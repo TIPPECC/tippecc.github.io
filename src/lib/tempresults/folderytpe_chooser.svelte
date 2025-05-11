@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
-	import { set } from 'ol/transform';
 
 	export var filter: string = '';
 	export var foldertype: string = 'CORDEX_raw_ind';
-
+	export let filter_by_status: string = 'public';
+	console.log('Status: ', filter_by_status);
 	let current_category: string = foldertype.split('_')[0];
 
 	//set_filter(current_category);
@@ -17,12 +17,15 @@
 		citation: string;
 		header_regex: string;
 		lineage: string;
+		status: string;
 	}[] = folder_types;
 	const foldertypes_full = foldertypes;
 	// filter out the folder types that are not relevant
-	if (filter.length > 0) {
-		foldertypes = foldertypes.filter((x) => x.key.startsWith(filter));
-	}
+	console.log('Filter: ', filter_by_status);
+	foldertypes = foldertypes
+		.filter((x) => x.key.startsWith(filter))
+		.filter((x) => x.status == filter_by_status || x.status == 'public');
+
 	let categories: string[] = [];
 	for (let x = 0; x < foldertypes.length; x++) {
 		let cat = foldertypes[x].key.split('_')[0];
