@@ -8,9 +8,25 @@
 		"lineage": "Derived from CORDEX-CORE data"
 	},
 	{
+		"key": "CORDEX_raw_stat",
+		"display_name": "Σ CORDEX-CORE Raw",
+		"description": "Sum/Mean over time (20/30 years) for raw CORDEX-CORE data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data"
+	},
+	{
 		"key": "CORDEX_bias",
 		"display_name": "CORDEX-CORE Bias",
 		"description": "Bias adjusted CORDEX-CORE data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+	},
+	{
+		"key": "CORDEX_bias_stat",
+		"display_name": "Σ CORDEX-CORE Bias",
+		"description": "Sum/Mean over time (20/30 years) for bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
@@ -24,9 +40,25 @@
 		"lineage": "Derived from CORDEX-CORE data"
 	},
 	{
+		"key": "CORDEX_raw_ind_stat",
+		"display_name": "Σ CORDEX-CORE Raw Indicator",
+		"description": "Sum/Mean over time (20/30 years) for raw CORDEX-CORE indicator data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data"
+	},
+	{
 		"key": "CORDEX_bias_ind",
 		"display_name": "CORDEX-CORE Bias Indicator",
 		"description": "Indicator with bias adjusted CORDEX-CORE data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
+	},
+	{
+		"key": "CORDEX_bias_ind_stat",
+		"display_name": "Σ CORDEX-CORE Bias Indicator",
+		"description": "Sum/Mean over time (20/30 years) for bias adjusted CORDEX-CORE indicator data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment"
