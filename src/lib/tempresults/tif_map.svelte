@@ -405,6 +405,47 @@
 		await set_color_bounds();
 	}
 
+	function parseReferenceDate(units) {
+		const match = units.match(/(\w+) since (\d{4}-\d{2}-\d{2})/);
+		return {
+			unit: match[1],
+			refDate: new Date(match[2])
+		};
+	}
+	function convertToDate(offset, refDate, calendar) {
+		const date = new Date(refDate.getTime());
+
+		switch (calendar) {
+			case 'gregorian':
+			case 'proleptic_gregorian':
+			case 'standard':
+				// Standard behavior
+				date.setUTCDate(date.getUTCDate() + offset);
+				return date;
+				// Standard behavior
+				date.setUTCDate(date.getUTCDate() + offset);
+				return date;
+
+			case '365_day':
+				// Add 365-day years and no leap days
+				date.setUTCFullYear(date.getUTCFullYear() + Math.floor(offset / 365));
+				date.setUTCDate(date.getUTCDate() + (offset % 365));
+				return date;
+
+			case '360_day':
+				// Each year = 360 days (12 months × 30 days)
+				const totalDays = Math.floor(offset);
+				const year = refDate.getUTCFullYear() + Math.floor(totalDays / 360);
+				const rem = totalDays % 360;
+				const month = Math.floor(rem / 30);
+				const day = (rem % 30) + 1;
+				return new Date(Date.UTC(year, month, day));
+
+			default:
+				throw new Error('Unsupported calendar: ' + calendar);
+		}
+	}
+
 	function fill_band_slider_error(net_cdf_times: any) {
 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
 		for (let i = 0; i < net_cdf_times.length; i++) {
@@ -432,8 +473,11 @@
 		start_date: number,
 		displayYears: boolean = false
 	) {
-		for (let i = 0; i < net_cdf_times.length; i++) {
-			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		const { unit, refDate } = parseReferenceDate('days since 1850-01-01');
+		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
+		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		for (let i = 0; i < dates.length; i++) {
+			var curDate = dates[i];
 			var curDateStr: string = '';
 			if (displayYears) {
 				curDateStr = curDate.getFullYear().toString();
@@ -442,55 +486,62 @@
 			}
 			band_slider_values.push(curDateStr);
 
-			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			band_slider_dates.push(dates[i]);
 		}
 	}
 
 	function fill_band_slider_monthmean(net_cdf_times: any, start_date: number) {
-		for (let i = 0; i < net_cdf_times.length; i++) {
-			band_slider_values.push(
-				new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2).toLocaleDateString(
-					'en-US',
-					{ month: 'long' }
-				)
-			);
+		const { unit, refDate } = parseReferenceDate('days since 1850-01-01');
+		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
+		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
 
-			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		for (let i = 0; i < dates.length; i++) {
+			band_slider_values.push(dates[i].toLocaleDateString('en-US', { month: 'long' }));
+
+			band_slider_dates.push(dates[i]);
 		}
 	}
 
 	function getSeason(date: Date) {
 		const month = date.getMonth(); // 0 for January, 11 for December
-
+		console.log('Month: ', month);
 		switch (month) {
-			case 2: // March
+			//case 2: // March
 			case 3: // April
 			case 4: // May
-				return 'Spring';
+				return 'Autumn (MAM)';
 			case 5: // June
 			case 6: // July
 			case 7: // August
-				return 'Summer';
+				return 'Winter (JJA)';
 			case 8: // September
 			case 9: // October
 			case 10: // November
-				return 'Autumn';
+				return 'Spring (SON)';
 			case 11: // December
 			case 0: // January
 			case 1: // February
-				return 'Winter';
+			case 2: // March
+				return 'Summer (DJF)';
 			default:
 				return 'Unknown'; // Handle potential unexpected month values
 		}
 	}
 
 	function fill_band_slider_seasons(net_cdf_times: any, start_date: number) {
-		for (let i = 0; i < net_cdf_times.length; i++) {
-			var curDate = new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+		const { unit, refDate } = parseReferenceDate('days since 1850-01-01');
+		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
+		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		console.log('Dates: ', dates);
+		console.log('Calendar: ', file_metadata['time#calendar']);
+		for (let i = 0; i < dates.length; i++) {
+			var curDate = dates[i];
+			// new Date(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
 			band_slider_values.push(getSeason(curDate));
 
-			band_slider_dates.push(start_date + parseFloat(net_cdf_times[i]) * TWELVE_HOURS * 2);
+			band_slider_dates.push(dates[i]);
 		}
+		console.log('Seasons: ', band_slider_values);
 	}
 
 	function evaluate_timestamp_data(net_cdf_times: any) {
@@ -1238,7 +1289,9 @@
 			<div class="variant-outline-tertiary grid grid-cols-1 justify-items-center p-2">
 				<h2>Single layer metadata</h2>
 				<div id="band_min">
-					MIN - MAX: {current_band_metainfo['min']} - {current_band_metainfo['max']} (Unit: {file_metadata['varinfo']['unit']})
+					MIN - MAX: {current_band_metainfo['min']} - {current_band_metainfo['max']} (Unit: {file_metadata[
+						'varinfo'
+					]['unit']})
 				</div>
 				<div id="noDataValue">
 					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
