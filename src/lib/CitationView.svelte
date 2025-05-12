@@ -16,7 +16,7 @@
 			license?: string;
 		};
 	}
-	
+
 	export let file: File = {};
 	export let in_main_page: boolean = true;
 
@@ -92,7 +92,7 @@
 	{#if file['citation_historical_scenario_source']}
 		<div class="bg-box">
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-				ℹ️ Citation: Scenario Source
+				ℹ️ Citation: Historical & Scenario Source
 			</h2>
 			<div>
 				<span class="font-bold text-blue-400">Short reference:</span>
