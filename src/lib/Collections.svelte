@@ -82,6 +82,7 @@
 	let url = '';
 	let scroll_to_key = 1;
 	let tabSet: number = 0;
+	let in_main_page = true;
 
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
@@ -1180,7 +1181,7 @@
 									>
 										<td colspan="7" class="p-2">
 											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-												<FileDetails {folder_data} {file_obj} {foldertype} />
+												<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page}/>
 											{/if}
 										</td>
 									</tr>

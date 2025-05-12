@@ -18,8 +18,8 @@
 
 	// get url path
 	const url = window.location.href;
-	const urlParts = url.split('/');
-	const lastPart = urlParts[urlParts.length - 1];
+	const urlParts = url.split(/\/|\?|&/);
+	const urlPath = urlParts[1];
 
 </script>
 
@@ -29,7 +29,7 @@
 			{#if source_file['collection_id']}
 				<li class="underline">
 					<a
-						href="{lastPart}?type={source_file.collection_id
+						href="{urlPath}?type={source_file.collection_id
 							.value}&filename={source_file.entity.value.split('/').slice(-1)[0]}.nc"
 						target="_self">{source_file.entity.value.split('/').slice(-1)[0]}</a
 					>

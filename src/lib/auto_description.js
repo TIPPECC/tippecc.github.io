@@ -69,8 +69,7 @@ export function auto_description(filename, foldertype, metadata) {
     if (filename.includes("_mean_")){
         mean = true
         let matchComparison = filename.match(/_mean_(\d{4})_(\d{4})-(\d{4})_(\d{4})/);
-        let matchSingle = filename.match(/_mean_(\d{4}_\d{4})/);
-
+        let matchSingle = filename.match(/_mean_(\d{4})_(\d{4})/);
         if (matchComparison) {
             period_2 = `${matchComparison[1]}–${matchComparison[2]}`;
             period_1 = `${matchComparison[3]}–${matchComparison[4]}`;
