@@ -7,7 +7,7 @@
 		_fetch_foldercontent_force_update,
 		_fetch_file_info
 	} from '$lib/fetch_folder_content';
-    import FileDetails from '$lib/FileDetails.svelte';
+    import FileDetails from '$lib/FileDetailsSingleFile.svelte';
 
     let metadata: any = ([] = []);
     let folder_data: FileinfoFormat;

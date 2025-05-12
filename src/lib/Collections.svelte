@@ -1181,7 +1181,7 @@
 									>
 										<td colspan="7" class="p-2">
 											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-												<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page}/>
+												<FileDetails {folder_data} {file_obj} {foldertype}/>
 											{/if}
 										</td>
 									</tr>
