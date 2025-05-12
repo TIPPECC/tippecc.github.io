@@ -1,3 +1,40 @@
+## Version 0.5.0 (2025-05 -11)
+
+### _Frontend_
+
+**Features:**
+
+- **Public Collection Page**: Add a new public collection page ([#63](https://github.com/TIPPECC/tippecc.github.io/issues/63))
+- **Map View**: Add units ([#73](https://github.com/TIPPECC/tippecc.github.io/issues/73))
+- **Map View Scale**: Forced gray rescale under specific conditions ([#68](https://github.com/TIPPECC/tippecc.github.io/issues/68))
+- **Map View Chart**: Show months for monthly data and seasons for seasonal data ([#65](https://github.com/TIPPECC/tippecc.github.io/issues/65))
+- **Load File**: Add scroll to file when loading via URL ([#72]([https://gi](https://github.com/TIPPECC/tippecc.github.io/issues/72)))
+- **Collection View**: Add filter by monthly, seasonal, and annual data ([64]([https://gi](https://github.com/TIPPECC/tippecc.github.io/issues/64)))
+
+**Bugfixes:**
+- **Collection View**: Prevent excessive DOM manipulation on water_budget page ([#69](https://github.com/TIPPECC/tippecc.github.io/issues/69))
+- **Select All Files**: Fix select all files selects invisible as well ([#70](https://github.com/TIPPECC/tippecc.github.io/issues/70))
+- **Map View Chart**: Times are not decoded correctly ([#76](https://github.com/TIPPECC/tippecc.github.io/issues/76))
+
+### _Backend_
+**Features:**
+Add CORDEX & CMIP stats folder ([#75](https://github.com/TIPPECC/tippecc.github.io/issues/75))
+
+**Bugfixes:**
+-**Exception Handling**: Fix exception handling in the backend ([#104](https://github.com/geofranzi/geoportal/issues/101))
+
+### _Data_
+- correct climatology boundaries not set correctly (end: YYYY-01-01 instead of YYYY-12-31)
+- fix error YYYY-12-31 does not exists in 360day calenders
+- correct PET / water budget units
+- new file name structure for periods sum/means
+- calculate sum/mean periods for all variables (CORDEX / CORDEX bias & CMIP - 70% done)
+- correct units for sum variables files (pr -> mm yr-1, radiation -> J m-2)
+- add license information to extracted metadata files
+- add provenance information to CORDEX raw & bias files (without scenario)
+- add missing provenance to slice time aridity index (1850 -> 1950)
+- integrate update in provenance graph creation (include functions)
+
 ## Version 0.4.0 (2025-05-08)
 
 ### _Frontend_
