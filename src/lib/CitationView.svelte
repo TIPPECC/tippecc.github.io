@@ -16,8 +16,15 @@
 			license?: string;
 		};
 	}
-
+	
 	export let file: File = {};
+	export let in_main_page: boolean = true;
+
+	let showCitations = true;
+	if (!in_main_page){
+		showCitations = false;
+	}
+
 </script>
 
 <div class="bg-box">
@@ -27,74 +34,84 @@
 		<span>coming soon</span>
 	</div>
 </div>
-{#if file['citation_historical_source']}
-	<div class="bg-box">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Citation: Historical Source
-		</h2>
-		<div>
-			<span class="font-bold text-blue-400">Short reference:</span>
-			<span>{file['citation_historical_source']['short_data_reference']}</span>
-		</div>
-		<div>
-			<span class="font-bold text-blue-400">DOI:</span>
-			<span
-				><a href={file['citation_historical_source']['doi']} target="_blank">
-					{file['citation_historical_source']['doi']}</a
-				></span
-			>
-		</div>
-		<div>
-			<span class="font-bold text-blue-400">License:</span>
-			<span>{file['citation_historical_source']['license']}</span>
-		</div>
-	</div>
+{#if ! in_main_page}
+	<button
+		class="bg-cyan-700 w-full h-[36px] flex items-center hover:bg-gray-700 transition"
+		on:click={() => showCitations = !showCitations}
+	>
+		{showCitations ? '🔽 More Citations' : '▶️ More Citations'}
+	</button>
 {/if}
-{#if file['citation_scenario_source']}
-	<div class="bg-box">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Citation: Scenario Source
-		</h2>
-		<div>
-			<span class="font-bold text-blue-400">Short reference:</span>
-			<span>{file['citation_scenario_source']['short_data_reference']}</span>
+	{#if showCitations}
+	{#if file['citation_historical_source']}
+		<div class="bg-box">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+				ℹ️ Citation: Historical Source
+			</h2>
+			<div>
+				<span class="font-bold text-blue-400">Short reference:</span>
+				<span>{file['citation_historical_source']['short_data_reference']}</span>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">DOI:</span>
+				<span
+					><a href={file['citation_historical_source']['doi']} target="_blank">
+						{file['citation_historical_source']['doi']}</a
+					></span
+				>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">License:</span>
+				<span>{file['citation_historical_source']['license']}</span>
+			</div>
 		</div>
-		<div>
-			<span class="font-bold text-blue-400">DOI:</span>
-			<span
-				><a href={file['citation_scenario_source']['doi']} target="_blank">
-					{file['citation_scenario_source']['doi']}</a
-				></span
-			>
+	{/if}
+	{#if file['citation_scenario_source']}
+		<div class="bg-box">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+				ℹ️ Citation: Scenario Source
+			</h2>
+			<div>
+				<span class="font-bold text-blue-400">Short reference:</span>
+				<span>{file['citation_scenario_source']['short_data_reference']}</span>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">DOI:</span>
+				<span
+					><a href={file['citation_scenario_source']['doi']} target="_blank">
+						{file['citation_scenario_source']['doi']}</a
+					></span
+				>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">License:</span>
+				<span>{file['citation_scenario_source']['license']}</span>
+			</div>
 		</div>
-		<div>
-			<span class="font-bold text-blue-400">License:</span>
-			<span>{file['citation_scenario_source']['license']}</span>
+	{/if}
+	{#if file['citation_historical_scenario_source']}
+		<div class="bg-box">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+				ℹ️ Citation: Scenario Source
+			</h2>
+			<div>
+				<span class="font-bold text-blue-400">Short reference:</span>
+				<span>{file['citation_historical_scenario_source']['short_data_reference']}</span>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">DOI:</span>
+				<span
+					><a href={file['citation_historical_scenario_source']['doi']} target="_blank">
+						{file['citation_historical_scenario_source']['doi']}</a
+					></span
+				>
+			</div>
+			<div>
+				<span class="font-bold text-blue-400">License:</span>
+				<span>{file['citation_historical_scenario_source']['license']}</span>
+			</div>
 		</div>
-	</div>
-{/if}
-{#if file['citation_historical_scenario_source']}
-	<div class="bg-box">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Citation: Scenario Source
-		</h2>
-		<div>
-			<span class="font-bold text-blue-400">Short reference:</span>
-			<span>{file['citation_historical_scenario_source']['short_data_reference']}</span>
-		</div>
-		<div>
-			<span class="font-bold text-blue-400">DOI:</span>
-			<span
-				><a href={file['citation_historical_scenario_source']['doi']} target="_blank">
-					{file['citation_historical_scenario_source']['doi']}</a
-				></span
-			>
-		</div>
-		<div>
-			<span class="font-bold text-blue-400">License:</span>
-			<span>{file['citation_historical_scenario_source']['license']}</span>
-		</div>
-	</div>
+	{/if}
 {/if}
 
 <style>

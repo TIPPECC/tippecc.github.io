@@ -35,6 +35,7 @@
 			};
 		};
 	} = {};
+	export let in_main_page = true;
 	let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
 </script>
 
@@ -114,19 +115,19 @@
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Source Files (e.g. downloaded from the ESGF portal + additional files)
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} />
+		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} in_main_page = {in_main_page}/>
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Result Files (products of the processing chain)
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} />
+		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} in_main_page = {in_main_page}/>
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Files based on this file
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} />
+		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} in_main_page = {in_main_page}/>
 	</div>
 {/if}
 

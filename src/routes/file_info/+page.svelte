@@ -188,8 +188,8 @@
 
 
 </script>
-
-<h1>{file}</h1>
-{#if folder_data}
-	<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page} />
-{/if}
+<div class="content-div">
+	{#if folder_data && folder_data.metadata}
+		<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page} />
+	{/if}
+</div>

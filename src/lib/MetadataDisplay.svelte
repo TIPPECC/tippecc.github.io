@@ -1,7 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
+	import {sizeofFmt, round} from '$lib/toolbox'
 	export let data;
+	export let in_main_page = true;
 
 	const excludedKeys = ['file'];
 
@@ -24,25 +26,6 @@
 		console.log(filteredData);
 	});
 
-	function round(value, digits = 4) {
-		const num = parseFloat(value);
-		return isNaN(num) ? value : num.toFixed(digits);
-	}
-
-	/**
-	 * @param {number} num
-	 */
-	function sizeofFmt(num, suffix = 'B') {
-		const units = ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi'];
-		for (let unit of units) {
-			if (Math.abs(num) < 1024.0) {
-				return `${num.toFixed(1)} ${unit}${suffix}`;
-			}
-			num /= 1024.0;
-		}
-		return `${num.toFixed(1)}Yi${suffix}`;
-	}
-
 	/**
 	 * @param {any} value
 	 */
@@ -62,31 +45,32 @@
 {#if typeof excludedData === 'object' && !Array.isArray(data) && data !== null}
 	{#each Object.entries(excludedData) as [key, value]}
 		{#if key == 'file'}
-			<!-- File Information -->
-			<div class="bg-box mt-4">
-				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-					📁 File Information
-				</h2>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
-					<div>
-						<span class="font-bold text-label">Format:</span>
-						<span class="font-medium text-zinc-300">{value['file_format']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Size:</span>
-						<span class="font-medium text-zinc-300">{sizeofFmt(value['file_size'])}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Created:</span>
-						<span class="font-medium text-zinc-300">{value['birth_time']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Last Modified:</span>
-						<span class="font-medium text-zinc-300">{value['last_modification_time']}</span>
+			{#if in_main_page}
+				<!-- File Information -->
+				<div class="bg-box mt-4">
+					<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						📁 File Information
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
+						<div>
+							<span class="font-bold text-label">Format:</span>
+							<span class="font-medium text-zinc-300">{value['file_format']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Size:</span>
+							<span class="font-medium text-zinc-300">{sizeofFmt(value['file_size'])}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Created:</span>
+							<span class="font-medium text-zinc-300">{value['birth_time']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Last Modified:</span>
+							<span class="font-medium text-zinc-300">{value['last_modification_time']}</span>
+						</div>
 					</div>
 				</div>
-			</div>
-
+			{/if}
 			<!-- Temporal Coverage -->
 			<div class="bg-box">
 				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
@@ -147,49 +131,49 @@
 					</div>
 				</div>
 			</div>
+			{#if in_main_page}
+				<!-- Geospatial Information -->
+				<div class="bg-box">
+					<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						🌍 Geospatial Information
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
+						<div class="grid grid-cols-3 grid-rows-3 text-zinc-200 text-center text-sm">
+							<!-- Top (Lat Max) -->
+							<div />
+							<div>
+								<span class="font-bold text-label">{round(value['geospatial_lat_max'], 4)}°</span><br
+								/><span class="font-medium text-zinc-300">↑</span>
+							</div>
+							<div />
 
-			<!-- Geospatial Information -->
-			<div class="bg-box">
-				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-					🌍 Geospatial Information
-				</h2>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
-					<div class="grid grid-cols-3 grid-rows-3 text-zinc-200 text-center text-sm">
-						<!-- Top (Lat Max) -->
-						<div />
-						<div>
-							<span class="font-bold text-label">{round(value['geospatial_lat_max'], 4)}°</span><br
-							/><span class="font-medium text-zinc-300">↑</span>
-						</div>
-						<div />
+							<!-- Middle Row: Lon Min / Spacer / Lon Max -->
+							<div>
+								<span class="font-bold text-label">{round(value['geospatial_lon_min'], 4)}°</span><br
+								/><span class="font-medium text-zinc-300">←</span>
+							</div>
+							<div />
+							<div>
+								<span class="font-bold text-label">{round(value['geospatial_lon_max'], 4)}°</span><br
+								/><span class="font-medium text-zinc-300">→</span>
+							</div>
 
-						<!-- Middle Row: Lon Min / Spacer / Lon Max -->
-						<div>
-							<span class="font-bold text-label">{round(value['geospatial_lon_min'], 4)}°</span><br
-							/><span class="font-medium text-zinc-300">←</span>
+							<!-- Bottom (Lat Min) -->
+							<div />
+							<div>
+								<span class="font-medium text-zinc-300">↓</span><br /><span
+									class="font-bold text-label">{round(value['geospatial_lat_min'], 4)}°</span
+								>
+							</div>
+							<div />
 						</div>
-						<div />
 						<div>
-							<span class="font-bold text-label">{round(value['geospatial_lon_max'], 4)}°</span><br
-							/><span class="font-medium text-zinc-300">→</span>
+							<span class="font-bold text-label">Resolution:</span>
+							<span class="font-medium text-zinc-300">{value['nominal_resolution']}</span>
 						</div>
-
-						<!-- Bottom (Lat Min) -->
-						<div />
-						<div>
-							<span class="font-medium text-zinc-300">↓</span><br /><span
-								class="font-bold text-label">{round(value['geospatial_lat_min'], 4)}°</span
-							>
-						</div>
-						<div />
-					</div>
-					<div>
-						<span class="font-bold text-label">Resolution:</span>
-						<span class="font-medium text-zinc-300">{value['nominal_resolution']}</span>
 					</div>
 				</div>
-			</div>
-
+			{/if}
 			<!-- Variable Details -->
 			<div class="bg-box">
 				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
