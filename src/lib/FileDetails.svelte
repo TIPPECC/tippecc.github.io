@@ -28,13 +28,18 @@
 		{#if folder_data[file_obj.index]['tif_convertable']}
 			<Tab bind:group={tabSet} name="tab4" value={4}>Map</Tab>
 		{/if}
+
+		{#if folder_data[file_obj.index]['metadata_exists']}
 			<div class="ml-auto">
-				<a href="/file_info?type={foldertype}&filename={selected_file}"
-				class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-				style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;">
+				<a
+					href="/file_info?type={foldertype}&filename={selected_file}"
+					class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+					style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;"
+				>
 					File Information View
 				</a>
 			</div>
+		{/if}
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
 			{#if tabSet === 0}
@@ -69,7 +74,6 @@
 						<ProvenanceListView
 							data={folder_data[file_obj.index]['metadata_prov_stats']?.['base_for_entities']}
 							only_links={true}
-
 						/>
 					</div>
 					<div class="bg-box" id="base_for_entities_{random_id}">
@@ -79,12 +83,10 @@
 						<ProvenanceListView
 							data={folder_data[file_obj.index]['metadata_prov_stats']?.['source_entities']}
 							only_links={true}
-
 						/>
 						<ProvenanceListView
 							data={folder_data[file_obj.index]['metadata_prov_stats']?.['result_entities']}
 							only_links={true}
-
 						/>
 					</div>
 				{:else}
@@ -112,7 +114,6 @@
 						<ProvenanceView
 							bind:metadata_prov={folder_data[file_obj.index]['metadata_prov']}
 							bind:metadata_prov_stats={folder_data[file_obj.index]['metadata_prov_stats']}
-
 						/>
 					{/if}
 				{:else}
@@ -132,7 +133,6 @@
 		</svelte:fragment>
 	</TabGroup>
 </div>
-
 
 <style>
 	.text-label {
