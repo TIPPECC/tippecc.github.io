@@ -413,36 +413,37 @@
 		};
 	}
 	function convertToDate(offset, refDate, calendar) {
-  const msPerDay = 86400 * 1000; // 1 day in milliseconds
-  const date = new Date(refDate.getTime());
+		const msPerDay = 86400 * 1000; // 1 day in milliseconds
+		const date = new Date(refDate.getTime());
 
-  switch (calendar) {
-    case "gregorian":
-    case "proleptic_gregorian":
-      return new Date(refDate.getTime() + offset * msPerDay);
+		switch (calendar) {
+			case 'gregorian':
+			case 'proleptic_gregorian':
+			case 'standard':
+				return new Date(refDate.getTime() + offset * msPerDay);
 
-    case "365_day":
-      // Simulate non-leap-year logic if needed
-      const days = Math.floor(offset);
-      const remainder = offset - days;
-      date.setUTCFullYear(date.getUTCFullYear() + Math.floor(days / 365));
-      date.setUTCDate(date.getUTCDate() + (days % 365));
-      date.setUTCHours(24 * remainder); // approximate
-      return date;
+			case '365_day':
+				// Simulate non-leap-year logic if needed
+				const days = Math.floor(offset);
+				const remainder = offset - days;
+				date.setUTCFullYear(date.getUTCFullYear() + Math.floor(days / 365));
+				date.setUTCDate(date.getUTCDate() + (days % 365));
+				date.setUTCHours(24 * remainder); // approximate
+				return date;
 
-    case "360_day":
-      const totalDays = offset;
-      const year = refDate.getUTCFullYear() + Math.floor(totalDays / 360);
-      const rem = totalDays % 360;
-      const month = Math.floor(rem / 30);
-      const day = Math.floor(rem % 30) + 1;
-      const fraction = rem % 1;
-      return new Date(Date.UTC(year, month, day, 24 * fraction));
+			case '360_day':
+				const totalDays = offset;
+				const year = refDate.getUTCFullYear() + Math.floor(totalDays / 360);
+				const rem = totalDays % 360;
+				const month = Math.floor(rem / 30);
+				const day = Math.floor(rem % 30) + 1;
+				const fraction = rem % 1;
+				return new Date(Date.UTC(year, month, day, 24 * fraction));
 
-    default:
-      throw new Error("Unsupported calendar: " + calendar);
-  }
-}
+			default:
+				throw new Error('Unsupported calendar: ' + calendar);
+		}
+	}
 
 	function fill_band_slider_error(net_cdf_times: any) {
 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
