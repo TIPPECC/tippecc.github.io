@@ -82,7 +82,10 @@ export function auto_description(filename, foldertype, metadata) {
     if (mean){
         description += "mean value of ";
     }
-    description += frequency + " data of " + variable_name + " ";
+    if(frequency != "nonely"){
+        description += frequency + " data of "
+    }
+    description +=  variable_name + " ";
     if (global_type != "None"){
         description += "based on " + global_type + " ";
         if (global_model != "None"){
