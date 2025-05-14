@@ -218,12 +218,18 @@
 			| Float32Array<ArrayBuffer>
 			| Float64Array<ArrayBuffer>
 	) {
-		const years = band_slider_values; // Example years
+		const years = band_slider_values.map(Number); // Ensure years are numeric
+		const numericData = data.map(Number); // Ensure data is numeric
 
 		// Calculate trendline
-		const regressionData = years.map((year, i) => [year, data[i]]);
+		const regressionData = years
+			.map((year, i) => [year, numericData[i]])
+			.filter(([x, y]) => !isNaN(x) && !isNaN(y));
+		console.log('Regression Data: ', regressionData);
 		const trend = regression.linear(regressionData);
 		const trendValues = years.map((year) => trend.predict(year)[1]); // Get y-values for trendline
+		console.log('Trend: ', trend);
+		console.log('Trend Values: ', trendValues);
 
 		// Moving Window Average
 		let ema = [];
@@ -236,6 +242,7 @@
 		for (let i = 1; i < data.length; i++) {
 			ema[i] = (data[i] - ema[i - 1]) * multiplier + ema[i - 1];
 		}
+		console.log('EMA: ', ema);
 
 		//$show_chart = true;
 		chart.data.labels = years;
