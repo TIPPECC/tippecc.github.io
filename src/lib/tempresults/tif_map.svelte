@@ -218,7 +218,11 @@
 			| Float32Array<ArrayBuffer>
 			| Float64Array<ArrayBuffer>
 	) {
-		const years = band_slider_values.map(Number); // Ensure years are numeric
+		let years = band_slider_values; // Ensure years are numeric
+		if (!isNaN(Number(years[0]))) {
+			years = years.map(Number);
+		}
+
 		const numericData = data.map(Number); // Ensure data is numeric
 
 		// Calculate trendline
