@@ -1,6 +1,7 @@
 <script lang="ts">
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 	import ProvenanceListView from '$lib/ProvenanceListView.svelte';
+	import ProvenanceProcessingView from './ProvenanceProcessingView.svelte';
 
 	export let metadata_prov = {};
 	export let metadata_prov_stats: {
@@ -105,7 +106,7 @@
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 				ℹ️ Provenance: Last Processing Step
 			</h2>
-			<RecursiveDisplay data={metadata_prov} />
+			<ProvenanceProcessingView data={metadata_prov} />
 		</div>
 	{/if}
 {/if}
