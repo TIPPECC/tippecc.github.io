@@ -103,7 +103,7 @@
 <div class="mt-6">
 	<div class="flex ml-2">
 		<span><img src={selected} alt="..." width="30px" class="mr-1" /></span>
-		<h1 class="h4">{foldertypes.find((x) => x.key == foldertype)?.display_name}</h1>
+		<h1 class="h4">{foldertypes.find((x) => x.key == foldertype)?.display_name ?? 'Please select'}</h1>
 	</div>
 	<li class="text-sm ml-10">
 		{foldertypes.find((x) => x.key == foldertype)?.description ?? 'No description available'}
