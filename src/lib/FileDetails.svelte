@@ -32,7 +32,7 @@
 		{#if folder_data[file_obj.index]['metadata_exists']}
 			<div class="ml-auto">
 				<a
-					href="/file_info?type={foldertype}&filename={selected_file}"
+					href="/climate_services_gateway/file_info?type={foldertype}&filename={selected_file}"
 					class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
 					style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;"
 				>

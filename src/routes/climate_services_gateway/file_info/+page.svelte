@@ -1,34 +1,34 @@
 <script lang="ts">
-    import { API_URL } from '../../app.config';
+	import { API_URL } from '../../app.config';
 	import { browser } from '$app/environment';
-    import { onMount, tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import {
 		_fetch_foldercontent_by_type,
 		_fetch_foldercontent_force_update,
 		_fetch_file_info
 	} from '$lib/fetch_folder_content';
-    import FileDetails from '$lib/FileDetailsSingleFile.svelte';
+	import FileDetails from '$lib/FileDetailsSingleFile.svelte';
 
-    let metadata: any = ([] = []);
-    let folder_data: FileinfoFormat;
-    const file_obj = null
-	const in_main_page = false
+	let metadata: any = ([] = []);
+	let folder_data: FileinfoFormat;
+	const file_obj = null;
+	const in_main_page = false;
 	let foldertype = '';
 	let file = '';
 
-    $: if (browser) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-        if (type) {
-            foldertype = type;
-        }
-        const filename = urlParams.get('filename');
-        if (filename) {
-            file = filename;
-        }
-    }
+	$: if (browser) {
+		const urlParams = new URLSearchParams(window.location.search);
+		const type = urlParams.get('type');
+		if (type) {
+			foldertype = type;
+		}
+		const filename = urlParams.get('filename');
+		if (filename) {
+			file = filename;
+		}
+	}
 
-    type FileinfoFormat = {
+	type FileinfoFormat = {
 		fileversion: string;
 		num_bands: number;
 		creation_date: string;
@@ -53,13 +53,10 @@
 	async function loadFileInfo(foldertype: string, file: string) {
 		folder_data = await _fetch_file_info(foldertype, file);
 		console.log(folder_data); // Jetzt hast du das richtige Datenobjekt
-		get_metadata_and_prov(file,foldertype)
+		get_metadata_and_prov(file, foldertype);
 	}
 
-    async function get_metadata_and_prov(
-		filename: string,
-		foldertype: string,
-	) {
+	async function get_metadata_and_prov(filename: string, foldertype: string) {
 		console.log('get_metadata_and_prov', filename, foldertype, file_obj);
 		folder_data['tabset'] = 0;
 		const res = await fetch(
@@ -175,19 +172,18 @@
 
 		folder_data['metadata_show'] = true;
 		if (browser) {
-				history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
+			history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
 		}
 	}
 
-    onMount(() => {
+	onMount(() => {
 		if (browser) {
-			loadFileInfo(foldertype, file)
-			console.log(folder_data)
+			loadFileInfo(foldertype, file);
+			console.log(folder_data);
 		}
 	});
-
-
 </script>
+
 <div class="content-div">
 	{#if folder_data && folder_data.metadata}
 		<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page} />
