@@ -65,14 +65,12 @@ export async function _fetch_foldercontent_force_update(type, convertable = fals
 	return result;
 }
 
-
 /**
  * @param {string | undefined} [type]
  * @param {string | undefined} [name]
  */
 export async function _fetch_file_info(type, name) {
 	var helper = API_URL + '/climate/get_file_info?type=' + type + '&filename=' + name;
-
 
 	const custom_url = helper;
 
@@ -87,7 +85,6 @@ export async function _fetch_file_info(type, name) {
 	}
 
 	result = await res.json();
-
 
 	// console.log('folder_data', result['content']);
 

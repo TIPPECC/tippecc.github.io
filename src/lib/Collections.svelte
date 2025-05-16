@@ -667,6 +667,13 @@
 		</div>
 	</div>
 
+	<div class="p-2 mb-2 ml-2">
+		The Climate Services Gateway (CSG) is a platform that provides access to high resolution climate
+		projections and analysis ready data for the southern African region. The Gateway development is
+		still ongoing as well as the processing of datasets. Here you can explore the available
+		collections of datasets by model family or region.
+	</div>
+
 	<FoldertypeChooser
 		bind:foldertype
 		bind:filter
@@ -674,7 +681,7 @@
 		on:foldertype_changed={() => refresh_foldercontent(false)}
 	/>
 	{#if filter_by_status == 'internal'}
-		<div class="ml-2">
+		<div class="ml-10 mt-4">
 			<button
 				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
 				on:click={() => refresh_foldercontent(true)}
@@ -686,7 +693,7 @@
 
 	<div class="p-2">
 		<input
-			class="input w-full mt-4 p-2"
+			class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
 			type="text"
 			placeholder="Type to filter filenames..."
 			bind:value={search_term}
@@ -1181,7 +1188,7 @@
 									>
 										<td colspan="7" class="p-2">
 											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-												<FileDetails {folder_data} {file_obj} {foldertype}/>
+												<FileDetails {folder_data} {file_obj} {foldertype} />
 											{/if}
 										</td>
 									</tr>
