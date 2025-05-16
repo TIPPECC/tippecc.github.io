@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
-	import {sizeofFmt, round} from '$lib/toolbox'
+	import { sizeofFmt, round } from '$lib/toolbox';
 	export let data;
 	export let in_main_page = true;
 
@@ -70,67 +70,68 @@
 						</div>
 					</div>
 				</div>
-			{/if}
-			<!-- Temporal Coverage -->
-			<div class="bg-box">
-				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-					🕒 Temporal Coverage
-				</h2>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
-					<div>
-						<span class="font-bold text-label">Start:</span>
-						<span class="font-medium text-zinc-300">{value['time_coverage_start']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">End:</span>
-						<span class="font-medium text-zinc-300">{value['time_coverage_end']}</span>
-					</div>
-					{#if value['climatology_bounds']}
+
+				<!-- Temporal Coverage -->
+				<div class="bg-box">
+					<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						🕒 Temporal Coverage
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
 						<div>
-							<span class="font-bold text-label">Climatology Bounds Start:</span>
-							<span class="font-medium text-zinc-300"
-								>{format_c_bound(value['climatology_bounds'][0][0])}</span
-							>
+							<span class="font-bold text-label">Start:</span>
+							<span class="font-medium text-zinc-300">{value['time_coverage_start']}</span>
 						</div>
 						<div>
-							<span class="font-bold text-label">Climatology Bounds End:</span>
-							<span class="font-medium text-zinc-300"
-								>{format_c_bound(value['climatology_bounds'][0][1])}</span
-							>
+							<span class="font-bold text-label">End:</span>
+							<span class="font-medium text-zinc-300">{value['time_coverage_end']}</span>
 						</div>
-					{/if}
-					{#if value['climatology_bounds_details']}
+						{#if value['climatology_bounds']}
+							<div>
+								<span class="font-bold text-label">Climatology Bounds Start:</span>
+								<span class="font-medium text-zinc-300"
+									>{format_c_bound(value['climatology_bounds'][0][0])}</span
+								>
+							</div>
+							<div>
+								<span class="font-bold text-label">Climatology Bounds End:</span>
+								<span class="font-medium text-zinc-300"
+									>{format_c_bound(value['climatology_bounds'][0][1])}</span
+								>
+							</div>
+						{/if}
+						{#if value['climatology_bounds_details']}
+							<div>
+								<span class="font-bold text-label">Climatology Bounds 1st Period:</span>
+								<span class="font-medium text-zinc-300"
+									>{format_c_bound(value['climatology_bounds_details'][0])}</span
+								>
+							</div>
+							<div>
+								<span class="font-bold text-label">Climatology Bounds 2nd Period:</span>
+								<span class="font-medium text-zinc-300"
+									>{format_c_bound(value['climatology_bounds_details'][1])}</span
+								>
+							</div>
+						{/if}
 						<div>
-							<span class="font-bold text-label">Climatology Bounds 1st Period:</span>
-							<span class="font-medium text-zinc-300"
-								>{format_c_bound(value['climatology_bounds_details'][0])}</span
-							>
+							<span class="font-bold text-label">Time Units:</span>
+							<span class="font-medium text-zinc-300">{value['time_units']}</span>
 						</div>
 						<div>
-							<span class="font-bold text-label">Climatology Bounds 2nd Period:</span>
-							<span class="font-medium text-zinc-300"
-								>{format_c_bound(value['climatology_bounds_details'][1])}</span
-							>
+							<span class="font-bold text-label">Calendar:</span>
+							<span class="font-medium text-zinc-300">{value['time_calendar']}</span>
 						</div>
-					{/if}
-					<div>
-						<span class="font-bold text-label">Time Units:</span>
-						<span class="font-medium text-zinc-300">{value['time_units']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Calendar:</span>
-						<span class="font-medium text-zinc-300">{value['time_calendar']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Time Steps:</span>
-						<span class="font-medium text-zinc-300">{value['num_time_steps']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Frequency:</span>
-						<span class="font-medium text-zinc-300">{value['frequency']}</span>
+						<div>
+							<span class="font-bold text-label">Time Steps:</span>
+							<span class="font-medium text-zinc-300">{value['num_time_steps']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Frequency:</span>
+							<span class="font-medium text-zinc-300">{value['frequency']}</span>
+						</div>
 					</div>
 				</div>
-			</div>
+			{/if}
 			{#if in_main_page}
 				<!-- Geospatial Information -->
 				<div class="bg-box">
@@ -142,20 +143,20 @@
 							<!-- Top (Lat Max) -->
 							<div />
 							<div>
-								<span class="font-bold text-label">{round(value['geospatial_lat_max'], 4)}°</span><br
-								/><span class="font-medium text-zinc-300">↑</span>
+								<span class="font-bold text-label">{round(value['geospatial_lat_max'], 4)}°</span
+								><br /><span class="font-medium text-zinc-300">↑</span>
 							</div>
 							<div />
 
 							<!-- Middle Row: Lon Min / Spacer / Lon Max -->
 							<div>
-								<span class="font-bold text-label">{round(value['geospatial_lon_min'], 4)}°</span><br
-								/><span class="font-medium text-zinc-300">←</span>
+								<span class="font-bold text-label">{round(value['geospatial_lon_min'], 4)}°</span
+								><br /><span class="font-medium text-zinc-300">←</span>
 							</div>
 							<div />
 							<div>
-								<span class="font-bold text-label">{round(value['geospatial_lon_max'], 4)}°</span><br
-								/><span class="font-medium text-zinc-300">→</span>
+								<span class="font-bold text-label">{round(value['geospatial_lon_max'], 4)}°</span
+								><br /><span class="font-medium text-zinc-300">→</span>
 							</div>
 
 							<!-- Bottom (Lat Min) -->
@@ -173,45 +174,46 @@
 						</div>
 					</div>
 				</div>
-			{/if}
-			<!-- Variable Details -->
-			<div class="bg-box">
-				<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-					🔬 Variable And Simulation Details
-				</h2>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
-					<div>
-						<span class="font-bold text-label">Short Name:</span>
-						<span class="font-medium text-zinc-300">{value['short_variable_name']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Long Name:</span>
-						<span class="font-medium text-zinc-300">{value['long_name']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Unit:</span>
-						<span class="font-medium text-zinc-300">{value['unit']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Global Min / Max:</span>
-						<span class="font-medium text-zinc-300"
-							>{round(value['global_min'], 2)} / {round(value['global_max'], 2)}</span
-						>
-					</div>
-					<div>
-						<span class="font-bold text-label">Experiment ID:</span>
-						<span class="font-medium text-zinc-300">{value['experiment_id']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Bias Correction:</span>
-						<span class="font-medium text-zinc-300">{value['bias_correction']}</span>
-					</div>
-					<div>
-						<span class="font-bold text-label">Indicator:</span>
-						<span class="font-medium text-zinc-300">{value['indicator']}</span>
+
+				<!-- Variable Details -->
+				<div class="bg-box">
+					<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						🔬 Variable And Simulation Details
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200">
+						<div>
+							<span class="font-bold text-label">Short Name:</span>
+							<span class="font-medium text-zinc-300">{value['short_variable_name']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Long Name:</span>
+							<span class="font-medium text-zinc-300">{value['long_name']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Unit:</span>
+							<span class="font-medium text-zinc-300">{value['unit']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Global Min / Max:</span>
+							<span class="font-medium text-zinc-300"
+								>{round(value['global_min'], 2)} / {round(value['global_max'], 2)}</span
+							>
+						</div>
+						<div>
+							<span class="font-bold text-label">Experiment ID:</span>
+							<span class="font-medium text-zinc-300">{value['experiment_id']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Bias Correction:</span>
+							<span class="font-medium text-zinc-300">{value['bias_correction']}</span>
+						</div>
+						<div>
+							<span class="font-bold text-label">Indicator:</span>
+							<span class="font-medium text-zinc-300">{value['indicator']}</span>
+						</div>
 					</div>
 				</div>
-			</div>
+			{/if}
 		{/if}
 	{/each}
 {/if}

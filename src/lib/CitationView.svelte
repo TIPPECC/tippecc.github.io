@@ -21,28 +21,22 @@
 	export let in_main_page: boolean = true;
 
 	let showCitations = true;
-	if (!in_main_page){
+	if (!in_main_page) {
 		showCitations = false;
 	}
-
 </script>
 
-<div class="bg-box">
-	<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Cite as:</h2>
-	<div>
-		<span class="font-bold text-blue-400">Reference:</span>
-		<span>coming soon</span>
+{#if in_main_page}
+	<div class="bg-box">
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Cite as:</h2>
+		<div>
+			<span class="font-bold text-blue-400">Reference:</span>
+			<span>coming soon</span>
+		</div>
 	</div>
-</div>
-{#if ! in_main_page}
-	<button
-		class="bg-cyan-700 w-full h-[36px] flex items-center hover:bg-gray-700 transition"
-		on:click={() => showCitations = !showCitations}
-	>
-		{showCitations ? '🔽 More Citations' : '▶️ More Citations'}
-	</button>
 {/if}
-	{#if showCitations}
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
 	{#if file['citation_historical_source']}
 		<div class="bg-box">
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
@@ -112,7 +106,7 @@
 			</div>
 		</div>
 	{/if}
-{/if}
+</div>
 
 <style>
 	.bg-box {

@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { API_URL } from '../../app.config';
+	import { API_URL } from '../../../app.config';
 	import { browser } from '$app/environment';
+	import metadata_icon from '$lib/icons/tag-label-svgrepo-com.svg';
+
 	import { onMount, tick } from 'svelte';
 	import {
 		_fetch_foldercontent_by_type,
@@ -185,6 +187,16 @@
 </script>
 
 <div class="content-div">
+	<div class="flex">
+		<h1 class="content-heading">File Information</h1>
+		<img src={metadata_icon} alt="..." width="30px" />
+	</div>
+
+	<blockquote class="content-blockquote mb-4">
+		This page shows detailed information for a single file in the Climate Services Gateway. Download
+		is currently only available view the collection view.
+	</blockquote>
+
 	{#if folder_data && folder_data.metadata}
 		<FileDetails {folder_data} {file_obj} {foldertype} {in_main_page} />
 	{/if}

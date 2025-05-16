@@ -136,7 +136,7 @@
 			link={false}
 		/>
 
-		<span class="bg-[#662beb] border-[#662beb] decoration-[#662beb]"></span>
+		<span class="bg-[#662beb] border-[#662beb] decoration-[#662beb]" />
 		<!--
 		bg-[#662beb] border-[#662beb] decoration-[#662beb]-->
 		<!--		<div
