@@ -194,7 +194,7 @@
 
 	<blockquote class="content-blockquote mb-4">
 		This page shows detailed information for a single file in the Climate Services Gateway. Download
-		is currently only available view the collection view.
+		is currently only available via the collection view.
 	</blockquote>
 
 	{#if folder_data && folder_data.metadata}
