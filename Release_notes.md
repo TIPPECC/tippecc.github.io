@@ -31,6 +31,7 @@
    - cite as not provided in metadata for all files (not yet decided and implemented in the backend)
    - high resolution climate projections not yet available
    - CMIP6 bias correction not yet available
+   - Provenance for CORDEX incomplete (no source scenario files information available)
 
 
 
