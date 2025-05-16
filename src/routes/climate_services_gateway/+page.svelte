@@ -136,6 +136,9 @@
 			link={false}
 		/>
 
+		<span class="bg-[#662beb] border-[#662beb] decoration-[#662beb]"></span>
+		<!--
+		bg-[#662beb] border-[#662beb] decoration-[#662beb]-->
 		<!--		<div
 			class="card p-4 m-1 border border-5 border-[#8B910A] mt-5
 
