@@ -1,18 +1,19 @@
-
 ## Version 1.0.0beta (2025-05-16)
 
 ### _Frontend_
+
 **Features:**
+
 - **Collection Page**: Restructure header part ([#81](https://github.com/TIPPECC/tippecc.github.io/issues/81))
 - **Landing Page File**: Add a new landing page for single files ([#62](https://github.com/TIPPECC/tippecc.github.io/issues/62))
 - **Start Page**: Add a temporary start page ([#80](https://github.com/TIPPECC/tippecc.github.io/issues/80))
--
-**Bugfixes:**
+- **Bugfixes:**
 - **Chart Legend**: Fix legend and trend not showing for some charts ([#79](https://github.com/TIPPECC/tippecc.github.io/issues/79))
 
 ### _Backend_
 
 **Bugfixes:**
+
 - **Team Page Error**: Fix team page error ([#107](https://github.com/geofranzi/geoportal/issues/107))
 - **Docker Container**: Fix docker container run out of memory ([#108](https://github.com/geofranzi/geoportal/issues/108))
 
@@ -25,15 +26,13 @@
 - **Precipitation**: Add converted mm to CORDEX, CORDEX bias, and CMIP6 per default
 - **Provenance Graph**: Update provenance graph
 - **Known Issues**:
-   - some SPI / SPEI / KBDI missing (reasons mainly calendar issues)
-   - some units may not correctly set (e.g., mm y-1 for monthly precipitation)
-   - metadata not written back to nc files (e.g., corrected resolution, units, etc.)
-   - cite as not provided in metadata for all files (not yet decided and implemented in the backend)
-   - high resolution climate projections not yet available
-   - CMIP6 bias correction not yet available
-   - Provenance for CORDEX incomplete (no source scenario files information available)
-
-
+  - some SPI / SPEI / KBDI missing (reasons mainly calendar issues)
+  - some units may not correctly set (e.g., mm y-1 for monthly precipitation)
+  - metadata not written back to nc files (e.g., corrected resolution, units, etc.)
+  - "cite as" not provided in metadata for all files (not yet decided and implemented in the backend)
+  - high resolution climate projections not yet available
+  - CMIP6 bias correction not yet available
+  - Provenance for CORDEX incomplete (no source scenario files information available)
 
 ## Version 0.5.0 (2025-05-11)
 
