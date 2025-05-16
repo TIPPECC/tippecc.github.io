@@ -671,7 +671,8 @@
 		The Climate Services Gateway (CSG) is a platform that provides access to high resolution climate
 		projections and analysis ready data for the southern African region. The Gateway development is
 		still ongoing as well as the processing of datasets. Here you can explore the available
-		collections of datasets by model family or region.
+		collections of datasets by model family or region.<br>
+		<br>Please report issues and feedback <span class="text-bold underline"><a href="https://github.com/TIPPECC/tippecc.github.io/issues" target="_blank">here</a></span>.
 	</div>
 
 	<FoldertypeChooser

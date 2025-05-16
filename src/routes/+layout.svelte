@@ -25,7 +25,8 @@
 		{ label: 'Case Studies', path: '/case_studies' },
 		// { label: 'Data', path: '/data' },
 		{ label: 'Team', path: '/team' },
-		{ label: 'Publications', path: '/publications' }
+		{ label: 'Publications', path: '/publications' },
+		{ label: 'Climate Services Gateway', path: '/climate_services_gateway' }
 	];
 
 	$: if (undefined != current_page) {
