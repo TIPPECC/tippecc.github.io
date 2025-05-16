@@ -15,7 +15,7 @@
 </script>
 <ol class="list-decimal ml-6 space-y-4">
     {#each data.processing as step}
-        <li>
+        <li class="[&::marker]">
         {#if step.label}
             <span class="font-bold text-label"><ProvenanceHover value = {step.label}/></span>
             {#if step.description}
@@ -93,4 +93,8 @@
 	.text-label {
 		color: #60a5fa; 
 	}
+    li::marker {
+        font-weight: bold;
+        font-size: 1.25rem; /* text-lg */
+    }
 </style>
