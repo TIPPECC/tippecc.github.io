@@ -46,7 +46,9 @@
 										href="{urlPath}?type={item.collection_id.value}&filename={item.entity.value
 											.split('/')
 											.slice(-1)[0]}.nc"
-										title="{item.entity.value.split('/').slice(-1)[0]}.nc"
+										title="View file in collection view ({item.entity.value
+											.split('/')
+											.slice(-1)[0]}.nc)"
 										target="_self">{node.prefix}{item.entity.value_remainder}</a
 									>
 								</li>

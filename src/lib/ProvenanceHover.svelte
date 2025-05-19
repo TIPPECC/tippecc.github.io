@@ -2,8 +2,7 @@
 	export let value;
 	import { keyList } from '$lib/tempresults/provenanceKeys.js';
 	import { popup } from '@skeletonlabs/skeleton';
-    import JsonView from '$lib/JsonView.svelte';;
-
+	import JsonView from '$lib/JsonView.svelte';
 
 	// Function to stringify JSON
 	/**
@@ -22,8 +21,8 @@
 	>
 		{#if keyList[value]['prov:label']}
 			{keyList[value]['prov:label']}
-        {:else if keyList[value]['sdo:name']}
-            {keyList[value]['sdo:name']}
+		{:else if keyList[value]['sdo:name']}
+			{keyList[value]['sdo:name']}
 		{:else if keyList[value]['name']}
 			{keyList[value]['name']}
 		{:else}
@@ -34,7 +33,7 @@
 		<span class="font-bold">{value}</span>
 		<br />
 		<hr class="my-6 border-t border-gray-300" />
-        <JsonView data = {keyList[value]} />
+		<JsonView data={keyList[value]} />
 		<!-- <ul class="text-sm space-y-1">
 			{#each Object.entries(keyList[value]) as [key, val]}
 				<li>
