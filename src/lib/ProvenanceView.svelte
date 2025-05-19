@@ -104,7 +104,7 @@
 		<!-- print object-->
 		<div class="bg-box">
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-				ℹ️ Provenance: Last Processing Step
+				ℹ️ Provenance: Last Processing Step(s)
 			</h2>
 			<ProvenanceProcessingView data={metadata_prov} />
 		</div>
@@ -114,21 +114,23 @@
 {#if metadata_prov_stats}
 	<div class="bg-box" id="source_files_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Provenance: Source Files (e.g. downloaded from the ESGF portal + additional files)
+			ℹ️ Provenance: Source Files
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} in_main_page = {in_main_page}/>
+		<div class="italic">(e.g. downloaded from the ESGF portal + additional files)</div>
+		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Provenance: Result Files (products of the processing chain)
+			ℹ️ Provenance: Result Files
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} in_main_page = {in_main_page}/>
+		<div class="italic">(files created during previous processing steps)</div>
+		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 			ℹ️ Provenance: Files based on this file
 		</h2>
-		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} in_main_page = {in_main_page}/>
+		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} {in_main_page} />
 	</div>
 {/if}
 
