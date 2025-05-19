@@ -926,10 +926,13 @@
 												/>
 												&nbsp; ... {folder_data[file_obj.index]['filename']
 													.replace(folder_cat, '')
-													.replace(/^_+/, '') }
+													.replace(/^_+/, '')}
 												{#if folder_data[file_obj.index]['filename'].includes('_spi_') || folder_data[file_obj.index]['filename'].includes('_spei_')}
-													<span title="Caution: This dataset may contain errors. We are currently investigating and will replace it once the issue is resolved. ">⚠</span>
-													{/if}
+													<span
+														title="Caution: This dataset may contain errors. We are currently investigating and will replace it once the issue is resolved. "
+														>⚠</span
+													>
+												{/if}
 											</label>
 										</td>
 										<td>
@@ -1164,7 +1167,9 @@
 													<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 													<button
 														class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
-														title="Visualize on map. Note: This will download the file to your browser (~{folder_data[file_obj.index]['filesize']})."
+														title="Visualize on map. Note: This will download the file to your browser (~{folder_data[
+															file_obj.index
+														]['filesize']})."
 														on:click={() =>
 															get_metadata_and_prov(
 																folder_data[file_obj.index]['filename'],
