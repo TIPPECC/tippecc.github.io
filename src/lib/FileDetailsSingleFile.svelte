@@ -59,7 +59,7 @@
 		</h2>
 
 		<a
-			href="/water_budget?type={foldertype}&filename={folder_data['filename']}"
+			href="/climate_services_gateway/collections/?type={foldertype}&filename={folder_data['filename']}"
 			class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
 		>
 			Collection View
