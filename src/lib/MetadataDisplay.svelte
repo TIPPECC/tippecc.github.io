@@ -221,6 +221,10 @@
 	<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 		ℹ️ Other Information
 	</h2>
+	<div class="italic">
+		(Metadata as stored inside the netCDF file. This metadata has not been updated yet!)
+	</div>
+	<br />
 	<RecursiveDisplay data={filteredData} />
 </div>
 

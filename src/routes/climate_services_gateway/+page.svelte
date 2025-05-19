@@ -40,12 +40,14 @@
 		Service Center Germany (GERICS), Helmholtz-Center Hereon Hamburg, Germany. Postprocessing,
 		indicators and CSG development are done by the Friedrich Schiller University Jena, Germany.
 	</blockquote>
-	<div class="mt-4 mb-4"><a
-		href="/climate_services_gateway/collections"
-		class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-	>
-		Explore Data
-	</a></div>
+	<div class="mt-4 mb-4">
+		<a
+			href="/climate_services_gateway/collections"
+			class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+		>
+			Explore Data
+		</a>
+	</div>
 	<div class="grid md:grid-cols-2 max-md:grid-cols-1 pt-4">
 		<WorkPackage
 			wp="Analysis Ready Data"

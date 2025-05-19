@@ -203,7 +203,7 @@
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Cite as:</h2>
 			<div>
 				<span class="font-bold text-blue-400">Reference:</span>
-				<span>coming soon</span>
+				<span>please contact the TIPPECC team</span>
 			</div>
 		</div>
 	</div>
