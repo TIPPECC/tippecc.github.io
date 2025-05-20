@@ -5,7 +5,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip  bg-[#26D7D9] mt-4"><b>WP 4</b></span>
+	<span class="chip static-courser bg-[#26D7D9] mt-4"><b>WP 4</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Regional Tipping Points and co-development of adaptation options
