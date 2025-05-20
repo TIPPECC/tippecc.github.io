@@ -16,6 +16,7 @@
 	import indicator from '$lib/icons/diagram-bar-uptrend-svgrepo-com.svg';
 	import { goto } from '$app/navigation';
 	import WorkPackage from '$lib/work_package.svelte';
+	import CaretRight from '$lib/icons/caret_right.svelte';
 
 	// Workaround for missing tailwind classes
 	// bg-[#D17208] border-[#D17208] decoration-[#D17208]
@@ -41,13 +42,15 @@
 		indicators and CSG development are done by the Friedrich Schiller University Jena, Germany.
 	</blockquote>
 	<div class="mt-4 mb-4">
-		<a
-			href="/climate_services_gateway/collections"
-			class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-		>
-			Explore Data
-		</a>
+	<a
+		href="/climate_services_gateway/collections"
+		class="inline-flex items-center gap-2 px-6 py-3 text-lg bg-blue-500 text-white font-bold rounded-xl shadow-lg hover:bg-blue-600 transition-all duration-200 ease-in-out transform hover:scale-105"
+	>
+		<CaretRight h="24px" />
+		Explore Data 
+	</a>
 	</div>
+
 	<div class="grid md:grid-cols-2 max-md:grid-cols-1 pt-4">
 		<WorkPackage
 			wp="Analysis Ready Data"
