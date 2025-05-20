@@ -53,7 +53,7 @@
 										target="_self"
 									>
 										{#if node.prefix.length == 0 && item.entity.value_remainder.length == 0}
-											{item.entity.value.split('/').slice(-1)[0]}.nc
+											{item.entity.value.split('/').slice(-1)[0]}
 										{:else}
 											{node.prefix}{item.entity.value_remainder}
 										{/if}
