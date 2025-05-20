@@ -130,7 +130,7 @@
 	<h1 class="content-heading">Publications</h1>
 
 	{#each paper as p}
-		<div class="card p-4 m-2 border border-5 border-[#D17208]">
+		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
 			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{p.year}</b></span></div>
 			<div class="flex">
 				<b class="text-lg underline underline-offset-4 decoration-[#D17208] ml-2">{p.title}</b><br
@@ -149,7 +149,7 @@
 	<h1 class="content-heading">Conferences</h1>
 
 	{#each conferences as c}
-		<div class="card p-4 m-2 border border-5 border-[#D17208]">
+		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
 			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{c.year}</b></span></div>
 			<div class="flex">
 				<b class="text-lg underline underline-offset-4 decoration-[#D17208] ml-2">{c.title}</b><br
