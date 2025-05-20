@@ -131,7 +131,7 @@
 				{#if member.first_name}
 					<div
 						id={member.first_name.toLowerCase() + '_' + member.last_name.toLowerCase()}
-						class="card p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
+						class="card mt-4 p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
 					>
 						<div class="text-left mt-[-28px]">
 							<span class="chip static-courser {color[member.related_org]}"><b>{member.related_org}</b></span>
