@@ -1,6 +1,7 @@
 <script>
 	export let nodes;
 	export let urlPath;
+	export let globalPrefix;
 
 	for (const node of nodes) {
 		// set initial state for details (1 or 2 items are always expanded)
@@ -16,7 +17,7 @@
 
 <ul class="ml-10 list-disc">
 	{#each nodes as node}
-		<li>
+		<li class="text-left">
 			<!-- toggle for sub-trie-->
 			{#if node.itemCount > 0}
 				<button
@@ -26,7 +27,7 @@
 					}}
 				>
 					<span class="font-bold">
-						{node.prefix}
+						{node.prefix.length > 2 ? node.prefix : '[...]'}
 					</span>
 					<span class="ml-2 text-sm text-gray-500">
 						({node.itemCount}
@@ -49,8 +50,14 @@
 										title="View file in collection view ({item.entity.value
 											.split('/')
 											.slice(-1)[0]}.nc)"
-										target="_self">{node.prefix}{item.entity.value_remainder}</a
+										target="_self"
 									>
+										{#if node.prefix.length == 0 && item.entity.value_remainder.length == 0}
+											{item.entity.value.split('/').slice(-1)[0]}.nc
+										{:else}
+											{node.prefix}{item.entity.value_remainder}
+										{/if}
+									</a>
 								</li>
 							{:else}
 								<li>

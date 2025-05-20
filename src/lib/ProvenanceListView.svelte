@@ -191,6 +191,6 @@
 	{/if}
 
 	{#if trie && trie.length > 0}
-		<ProvenanceListViewItem nodes={trie} {urlPath} />
+		<ProvenanceListViewItem nodes={trie} {urlPath} {globalPrefix} />
 	{/if}
 </div>
