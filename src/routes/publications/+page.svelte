@@ -1,4 +1,5 @@
 <script>
+	import book from '$lib/icons/book-svgrepo-com.svg';
 	const paper = [
 		{
 			authors: 'Engelbrecht FA, Steinkopf J, Padavatan J, Midgley GF',
@@ -127,8 +128,18 @@
 </svelte:head>
 
 <div class="content-div">
-	<h1 class="content-heading">Publications</h1>
+	<div class="flex">
+		<h1 class="content-heading">Publications</h1>
+		<img src={book} alt="..." width="30px" />
+	</div>
 
+	<blockquote class="content-blockquote mb-4">
+		This page provides an overview of the scientific output by members of the TIPPECC project.
+		These contributions reflect the project’s research focus on hydrological modelling, extrem events, climate change impacts, tipping points and regional climate modelling in southern Africa. 
+		The list highlights the interdisciplinary and collaborative nature of the TIPPECC research team.
+	</blockquote>
+
+	<h1 class="content-heading">Peer-reviewed Puplications</h1>
 	{#each paper as p}
 		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
 			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{p.year}</b></span></div>
