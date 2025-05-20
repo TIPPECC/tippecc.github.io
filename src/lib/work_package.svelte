@@ -26,7 +26,7 @@
 	</a>
 {:else}
 	<span class="card p-4 m-2 border border-5 border-[{color}] hover:bg-surface-600">
-		<div class="text-left mt-[-28px]"><span class="chip bg-[{color}]"><b>{wp}</b></span></div>
+		<div class="text-left mt-[-28px]"><span class="chip bg-[{color}] static-courser"><b>{wp}</b></span></div>
 		<div class="flex">
 			<span><img src={icon} alt="..." width="40px" class="mt-2" /></span>
 

@@ -5,7 +5,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#6B9B2A] mt-4"><b>WP 5</b></span>
+	<span class="chip static-courser bg-[#6B9B2A] mt-4"><b>WP 5</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Stakeholder engagements (continuous participatory co-production)

@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#D17208] mt-4"><b>Case Study 3</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 3</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Transboundary conservation</h1>
 		<img src={fence} alt="..." width="40px" />

@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#D17208] mt-4"><b>Case Study 5</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 5</b></span>
 	<div class="flex">
 		<h1 class="content-heading">cattle industry</h1>
 		<img src={cow} alt="..." width="40px" />

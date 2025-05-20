@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#D17208] mt-4"><b>Case Study 1</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 1</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Rural water supply (Upper Zambezi / Barotse floodplain)</h1>
 		<img src={water} alt="..." width="40px" />

@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#D17208] mt-4"><b>Case Study 2</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 2</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Livelihoods of communities living in semi-arid regions</h1>
 		<img src={income} alt="..." width="40px" />

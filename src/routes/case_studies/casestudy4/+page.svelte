@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#D17208] mt-4"><b>Case Study 4</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 4</b></span>
 	<div class="flex">
 		<h1 class="content-heading">“day zero” events</h1>
 		<img src={no_water} alt="..." width="40px" />

@@ -5,7 +5,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#B93F4A] mt-4"><b>WP 2</b></span>
+	<span class="chip static-courser bg-[#B93F4A] mt-4"><b>WP 2</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Synthesis of comprehensive information on climate change impacts

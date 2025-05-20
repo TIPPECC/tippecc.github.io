@@ -5,7 +5,7 @@
 </script>
 
 <div class="content-div">
-	<span class="chip bg-[#98B1D8] mt-4"><b>WP 3</b></span>
+	<span class="chip static-courser bg-[#98B1D8] mt-4"><b>WP 3</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Climate Services Gateway through co-production</h1>
 		<img src={host_website} alt="..." width="40px" />
