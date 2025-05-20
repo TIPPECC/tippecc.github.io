@@ -139,7 +139,7 @@
 		The list highlights the interdisciplinary and collaborative nature of the TIPPECC research team.
 	</blockquote>
 
-	<h1 class="content-heading">Peer-reviewed Puplications</h1>
+	<h1 class="content-heading">Peer-Reviewed Publications</h1>
 	{#each paper as p}
 		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
 			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{p.year}</b></span></div>
