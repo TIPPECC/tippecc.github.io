@@ -194,6 +194,10 @@
 							<span class="font-medium text-zinc-300">{value['unit']}</span>
 						</div>
 						<div>
+							<span class="font-bold text-label">Cell Method:</span>
+							<span class="font-medium text-zinc-300">{value['cell_method']}</span>
+						</div>
+						<div>
 							<span class="font-bold text-label">Global Min / Max:</span>
 							<span class="font-medium text-zinc-300"
 								>{round(value['global_min'], 2)} / {round(value['global_max'], 2)}</span

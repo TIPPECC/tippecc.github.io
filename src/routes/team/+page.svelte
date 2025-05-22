@@ -119,9 +119,10 @@
 	</blockquote>
 	{#if filter_value != ''}
 		<div>
-			Filtered by: <span class="chip static-courser {color[filter_value]}"><b>{filter_value}</b></span><button
-				on:click={() => remove_filter()}
-				class="pl-4"><span class="underline"><em>remove filter</em></span></button
+			Filtered by: <span class="chip static-courser {color[filter_value]}"
+				><b>{filter_value}</b></span
+			><button on:click={() => remove_filter()} class="pl-4"
+				><span class="underline"><em>remove filter</em></span></button
 			>
 		</div>
 	{/if}
@@ -134,7 +135,9 @@
 						class="card mt-4 p-2 flex flex-col w-full border border-5 border-white scroll-m-6"
 					>
 						<div class="text-left mt-[-28px]">
-							<span class="chip static-courser {color[member.related_org]}"><b>{member.related_org}</b></span>
+							<span class="chip static-courser {color[member.related_org]}"
+								><b>{member.related_org}</b></span
+							>
 						</div>
 
 						<div class="flex">

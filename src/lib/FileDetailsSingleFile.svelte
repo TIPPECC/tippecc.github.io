@@ -86,6 +86,10 @@
 				<span class="ml-2">{folder_data['metadata']['file']['unit']}</span>
 			</div>
 			<div>
+				<span class="font-bold ml-4 text-blue-400">Cell Method:</span>
+				<span class="ml-2">{folder_data['metadata']['file']['cell_method']}</span>
+			</div>
+			<div>
 				<span class="font-bold ml-4 text-blue-400">Global Min / Max:</span>
 				<span class="font-medium text-zinc-300"
 					>{round(folder_data['metadata']['file']['global_min'], 2)} / {round(

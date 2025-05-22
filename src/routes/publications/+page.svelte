@@ -24,14 +24,16 @@
 			volume: '70',
 			pages: '9-28',
 			doi: 'https://library.namscience.com/cgi-bin/koha/opac-detail.pl?biblionumber=97135'
-		},
+		}
 	];
 	const conferences = [
 		{
-			authors: 'Biskop S., Schreiter F., Zander F., Weber T., Remedio A., Kralisch S., Steinkopf J. and Engelbrecht F.',
+			authors:
+				'Biskop S., Schreiter F., Zander F., Weber T., Remedio A., Kralisch S., Steinkopf J. and Engelbrecht F.',
 			year: '2025',
 			title: 'A Robust Signal of Soil Drying across Southern Africa in a Warmer World',
-			conference: 'International Conference on Southern Hemisphere Meteorology and Oceanography (ICSHMO)',
+			conference:
+				'International Conference on Southern Hemisphere Meteorology and Oceanography (ICSHMO)',
 			date: '31 March – 4 April 2025',
 			location: 'Cape Town, South Africa'
 		},
@@ -39,12 +41,14 @@
 			authors: 'Engelbrecht F., Steinkopf J. and Biskop S.',
 			year: '2024',
 			title: 'Can a climate-change induced megadrought bring "day-zero" to Gauteng?',
-			conference: '38th Annual Conference of South African Society for Atmospheric Sciences (SASAS)',
+			conference:
+				'38th Annual Conference of South African Society for Atmospheric Sciences (SASAS)',
 			date: '29-30 October 2024',
 			location: 'Potchefstroom, South Africa'
 		},
 		{
-			authors: 'Perkins J., Remedio A., Weber T., Steinkopf J., Goikantswemang T., Buti K., Mashabane B., Montsiemang B. and Engelbrecht F.',
+			authors:
+				'Perkins J., Remedio A., Weber T., Steinkopf J., Goikantswemang T., Buti K., Mashabane B., Montsiemang B. and Engelbrecht F.',
 			year: '2024',
 			title: 'Following the Ancient Footsteps to Survive the Anthropocene',
 			conference: '38th Annual Conference of the South African Society for Atmospheric Sciences',
@@ -52,9 +56,11 @@
 			location: 'Potchefstroom, South Africa'
 		},
 		{
-			authors: 'Remedio A., Weber T., Sein D., Steinkopf J., Padvatan J., Goikantswemang T., Dhliwayo M., Perkins J. and Engelbrecht F.',
+			authors:
+				'Remedio A., Weber T., Sein D., Steinkopf J., Padvatan J., Goikantswemang T., Dhliwayo M., Perkins J. and Engelbrecht F.',
 			year: '2024',
-			title: 'Representing Historical Drought Conditions using the Latest High-Resolution Regional Climate Simulations over Southern Africa',
+			title:
+				'Representing Historical Drought Conditions using the Latest High-Resolution Regional Climate Simulations over Southern Africa',
 			conference: '38th Annual Conference of the South African Society for Atmospheric Sciences',
 			date: '29-30 October 2024',
 			location: 'Potchefstroom, South Africa'
@@ -62,7 +68,8 @@
 		{
 			authors: 'Biskop S., Kralisch S., Lumsden T., Malherbe J., Moseki C. and Engelbrecht F.',
 			year: '2024',
-			title: 'Hydrological projections for a ‘day-zero drought’ risk assessment in the Integrated Vaal River System, South Africa',
+			title:
+				'Hydrological projections for a ‘day-zero drought’ risk assessment in the Integrated Vaal River System, South Africa',
 			conference: '9th GEWEX Open Science Conference',
 			date: '8-12 July 2024',
 			location: 'Sapporo, Japan'
@@ -71,14 +78,17 @@
 			authors: 'Biskop S. and Engelbrecht F.',
 			year: '2024',
 			title: 'Methodologies in Attribution Modelling of Hydrological Extremes',
-			conference: 'Caribbean Climate Science Workshop Series: Detection & Attribution Science Workshop',
+			conference:
+				'Caribbean Climate Science Workshop Series: Detection & Attribution Science Workshop',
 			date: '10-14 June 2024',
 			location: 'Kingston, Jamaica'
 		},
 		{
-			authors: 'Remedio A., Weber T., Engelbrecht F., Biskop S., Steinkopf J., Padvatan J., Van der Waal C., Wassenaar W., Banda K., Tlhalerwa K. and Perkins J.',
+			authors:
+				'Remedio A., Weber T., Engelbrecht F., Biskop S., Steinkopf J., Padvatan J., Van der Waal C., Wassenaar W., Banda K., Tlhalerwa K. and Perkins J.',
 			year: '2024',
-			title: 'Projected climate change signals for selected hotspot regions using regional climate simulations in southern Africa',
+			title:
+				'Projected climate change signals for selected hotspot regions using regional climate simulations in southern Africa',
 			conference: 'EGU General Assembly Conference Abstracts',
 			date: '2024',
 			location: 'Vienna, Austria'
@@ -134,15 +144,18 @@
 	</div>
 
 	<blockquote class="content-blockquote mb-4">
-		This page provides an overview of the scientific output by members of the TIPPECC project.
-		These contributions reflect the project’s research focus on hydrological modelling, extrem events, climate change impacts, tipping points and regional climate modelling in southern Africa. 
-		The list highlights the interdisciplinary and collaborative nature of the TIPPECC research team.
+		This page provides an overview of the scientific output by members of the TIPPECC project. These
+		contributions reflect the project’s research focus on hydrological modelling, extrem events,
+		climate change impacts, tipping points and regional climate modelling in southern Africa. The
+		list highlights the interdisciplinary and collaborative nature of the TIPPECC research team.
 	</blockquote>
 
 	<h1 class="content-heading">Peer-Reviewed Publications</h1>
 	{#each paper as p}
 		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
-			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{p.year}</b></span></div>
+			<div class="text-left mt-[-28px]">
+				<span class="chip static-courser bg-[#D17208]"><b>{p.year}</b></span>
+			</div>
 			<div class="flex">
 				<b class="text-lg underline underline-offset-4 decoration-[#D17208] ml-2">{p.title}</b><br
 				/>
@@ -161,7 +174,9 @@
 
 	{#each conferences as c}
 		<div class="card p-4 m-2 mt-4 border border-5 border-[#D17208]">
-			<div class="text-left mt-[-28px]"><span class="chip static-courser bg-[#D17208]"><b>{c.year}</b></span></div>
+			<div class="text-left mt-[-28px]">
+				<span class="chip static-courser bg-[#D17208]"><b>{c.year}</b></span>
+			</div>
 			<div class="flex">
 				<b class="text-lg underline underline-offset-4 decoration-[#D17208] ml-2">{c.title}</b><br
 				/>
