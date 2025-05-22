@@ -5,7 +5,7 @@
 
 	for (const node of nodes) {
 		// set initial state for details (1 or 2 items are always expanded)
-		if (node.itemCount <= 2) {
+		if (node.itemCount <= 2 || node.items.length == 1) {
 			node.details = true;
 		} else {
 			node.details = false;
@@ -27,11 +27,7 @@
 					}}
 				>
 					<span class="font-bold">
-						{node.prefix.length > 2 &&
-						node.items.length != 1 &&
-						node.items[0].entity.value_remainder == 0
-							? node.prefix
-							: '[...]'}
+						{node.prefix.length > 2 && node.items.length != 1 ? node.prefix : '[...]'}
 					</span>
 					<span class="ml-2 text-sm text-gray-500">
 						({node.itemCount}
