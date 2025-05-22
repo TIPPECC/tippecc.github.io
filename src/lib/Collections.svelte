@@ -896,7 +896,7 @@
 							<tbody>
 								{#each cat_obj.files as file_obj}
 									<tr
-										class="hover:bg-slate-400 {[
+										class="hover:bg-slate-400 border-t spaced-row {[
 											search_term.toLowerCase(),
 											search_time,
 											search_aggregation
@@ -924,9 +924,13 @@
 													bind:checked={selected_files[file_obj.index]}
 													on:change={on_folder_checkbox_change}
 												/>
+												<span
+												class:text-blue-300={selected_files[file_obj.index]}
+												>
 												&nbsp; ... {folder_data[file_obj.index]['filename']
 													.replace(folder_cat, '')
 													.replace(/^_+/, '')}
+												</span>
 												{#if folder_data[file_obj.index]['filename'].includes('_spi_') || folder_data[file_obj.index]['filename'].includes('_spei_')}
 													<span
 														title="Caution: This dataset may contain errors. We are currently investigating and will replace it once the issue is resolved. "
@@ -1201,11 +1205,12 @@
 											? 'visible'
 											: 'hidden'}
 									>
-										<td colspan="7" class="p-2">
-											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+										
+										{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+											<td colspan="7">
 												<FileDetails {folder_data} {file_obj} {foldertype} />
-											{/if}
-										</td>
+											</td>
+										{/if}
 									</tr>
 								{/each}
 							</tbody>
@@ -1347,3 +1352,11 @@
 		</div>
 	</div>-->
 </div>
+
+
+<style>
+  .spaced-row td {
+    padding-top: 10px;
+	padding-bottom: 10px; 
+  }
+</style>
