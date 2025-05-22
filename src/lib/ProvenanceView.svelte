@@ -94,6 +94,13 @@
 							'N/A'}</span
 					>
 				</div>
+				<div class="flex gap-2">
+					<span class="font-bold text-blue-400">Number of used functions:</span>
+					<span
+						>{metadata_prov_stats?.count?.results?.bindings?.['0']?.functionCount?.value ??
+							'N/A'}</span
+					>
+				</div>
 			</div>
 		</div>
 	{/if}

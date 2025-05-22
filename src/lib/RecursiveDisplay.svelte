@@ -6,7 +6,7 @@
 	let collapsed = {};
 
 	import { popup } from '@skeletonlabs/skeleton';
-
+	let showFullText = false; // State to toggle between truncated and full text
 	// Toggle collapse state for a given key
 	/**
 	 * @param {string} key
@@ -211,7 +211,7 @@
 {#if typeof data === 'object' && !Array.isArray(data) && data !== null}
 	{#each Object.entries(data) as [key, value]}
 		{#if key != 'NETCDF_DIM_time_VALUES'}
-			<div class="ml-4 collapsible flex">
+			<div class="ml-4 flex">
 				<span
 					class="font-bold text-blue-400"
 					role="button"
@@ -255,7 +255,24 @@
 	</div>
 {:else}
 	<div class="ml-4">
-		{data}
+		{#if data && data.length > 400}
+			<!-- Adjust the length threshold as needed -->
+			<span>
+				{data.slice(0, 100)}... <!-- Display truncated text -->
+				<button
+					class="text-blue-500 underline ml-2"
+					on:click={() => (showFullText = !showFullText)}
+				>
+					{showFullText ? 'Show less' : 'Show more'}
+				</button>
+			</span>
+			{#if showFullText}
+				<div class="mt-2">{data}</div>
+				<!-- Display full text when toggled -->
+			{/if}
+		{:else}
+			{data} <!-- Display full text if it's short -->
+		{/if}
 	</div>
 {/if}
 

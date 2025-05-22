@@ -27,7 +27,11 @@
 					}}
 				>
 					<span class="font-bold">
-						{node.prefix.length > 2 ? node.prefix : '[...]'}
+						{node.prefix.length > 2 &&
+						node.items.length != 1 &&
+						node.items[0].entity.value_remainder == 0
+							? node.prefix
+							: '[...]'}
 					</span>
 					<span class="ml-2 text-sm text-gray-500">
 						({node.itemCount}
