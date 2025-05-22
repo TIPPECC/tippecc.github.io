@@ -195,7 +195,7 @@
 						</div>
 						<div>
 							<span class="font-bold text-label">Cell Method:</span>
-							<span class="font-medium text-zinc-300">{value['cell_method']}</span>
+							<span class="font-medium text-zinc-300">{value['cell_methods']}</span>
 						</div>
 						<div>
 							<span class="font-bold text-label">Global Min / Max:</span>

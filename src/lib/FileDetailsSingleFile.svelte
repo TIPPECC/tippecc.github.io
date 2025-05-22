@@ -87,7 +87,7 @@
 			</div>
 			<div>
 				<span class="font-bold ml-4 text-blue-400">Cell Method:</span>
-				<span class="ml-2">{folder_data['metadata']['file']['cell_method']}</span>
+				<span class="ml-2">{folder_data['metadata']['file']['cell_methods']}</span>
 			</div>
 			<div>
 				<span class="font-bold ml-4 text-blue-400">Global Min / Max:</span>
