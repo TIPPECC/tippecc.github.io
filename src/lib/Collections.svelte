@@ -20,6 +20,8 @@
 	import CaretDown from '$lib/icons/caret_down.svelte';
 	import CaretRight from '$lib/icons/caret_right.svelte';
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
+	import magnifier from '$lib/icons/magnifier-svgrepo-com.svg';
+	import resetCircle from '$lib/icons/reset-svgrepo-com.svg';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
@@ -83,6 +85,7 @@
 	let scroll_to_key = 1;
 	let tabSet: number = 0;
 	let in_main_page = true;
+	let varButtonHight: number;
 
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
@@ -468,6 +471,8 @@
 			delete categories['No Category'];
 		}
 		cat_folder_data = categories;
+		let maxVarLength = Math.max(...variables.map(v => show_variable(v).length));
+		varButtonHight = Math.ceil(maxVarLength / 14) * 24; // 14 is the maximum ammount of caharacter per line in var button, 24 is the height for one line
 		variables = [...variables];
 
 		if (start_file.length > 0) {
@@ -563,12 +568,23 @@
 
 	let search_time = '_';
 	function set_search_time(variable: string) {
-		search_time = variable;
+		if (search_time !== variable){
+			search_time = variable;
+		}
+		else {
+			search_time = '_';
+		}
+		
 	}
 
 	let search_aggregation = '_';
 	function set_search_aggregation(variable: string) {
-		search_aggregation = variable;
+		if (search_aggregation !== variable){
+			search_aggregation = variable;
+		}
+		else {
+			search_aggregation = '_';
+		}
 	}
 	function check_times(filename: string | string[]) {
 		// check if filename contains abs_change times and set to true if includes
@@ -684,6 +700,19 @@
 		bind:filter_by_status
 		on:foldertype_changed={() => refresh_foldercontent(false)}
 	/>
+	<br/>
+	<div class="flex gap-2">
+		<img src={magnifier} alt="..." width="30px" />
+		<h1 class="h4">Filtering Datasets </h1>
+		<button
+			class="p-1 variant-filled-surface hover:bg-tertiary-900 items-center rounded-md w-[30px] h-[30px]"
+			on:click={() => {search_term = ""; search_time = "_"; search_aggregation= "_"}}
+			type="button"
+			>
+			<img src={resetCircle} alt="Reset" class="w-5 h-5" />
+		</button>
+	</div>
+	<br/>
 	{#if filter_by_status == 'internal'}
 		<div class="ml-10 mt-4">
 			<button
@@ -694,25 +723,41 @@
 			</button>
 		</div>
 	{/if}
-
+	{#if variables.length > 0}
+		<div class="grid gap-2 justify-start items-center ml-2 grid-cols-[repeat(auto-fit,minmax(120px,_120px))]">
+			{#each variables as variable}
+				<div>
+				<button
+					class="w-[120px] h-[{varButtonHight}px] break-words variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 
+					{search_term.includes(String(variable))
+						? 'font-bold'
+						: ''}"
+					style = "height: {varButtonHight}px"
+					on:click={set_search_term(variable)}>{show_variable(variable).replaceAll("_", "_\u200b")}</button
+				>
+				</div>
+			{/each}
+		</div>
+	{/if}
 	<div class="p-2">
-		<input
-			class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
-			type="text"
-			placeholder="Type to filter filenames..."
-			bind:value={search_term}
-		/>
+		<div class="relative w-full">
+			<input
+				class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
+				type="text"
+				placeholder="Type to filter filenames or click label above..."
+				bind:value={search_term}
+			/>
+			<button
+				class="absolute right-2 top-[60%] -translate-y-1/2 hover:text-gray-600 text-2xl"
+				on:click={() => search_term = ''}
+				aria-label="Clear input"
+			>
+				&times;
+			</button>
+		</div>
 	</div>
 	{#if variables.length > 0}
 		<div>
-			<div class="flow gap-2 items-center ml-2">
-				{#each variables as variable}
-					<button
-						class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-						on:click={set_search_term(variable)}>{show_variable(variable)}</button
-					>
-				{/each}
-			</div>
 			<div class="flow gap-2 items-center ml-2">
 				<!--check if one entry has show is true-->
 				{#if abs_change.some((variable) => variable.show == 'true')}
@@ -779,12 +824,6 @@
 					{/if}
 				{/each}
 			</div>
-			{#if search_time !== '_'}
-				<button
-					class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-					on:click={() => set_search_time('_')}>reset ⏳</button
-				>
-			{/if}
 			{#if aggregation.some((variable) => variable.show == 'true')}
 				<div class="flow gap-2 items-center ml-2">
 					Σ Sum / Avg:
@@ -799,12 +838,6 @@
 							>
 						{/if}
 					{/each}
-					{#if search_aggregation !== '_'}
-						<button
-							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2"
-							on:click={() => set_search_aggregation('_')}>reset Σ</button
-						>
-					{/if}
 				</div>
 			{/if}
 		</div>
