@@ -21,12 +21,16 @@
 	import CaretRight from '$lib/icons/caret_right.svelte';
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
 	import magnifier from '$lib/icons/magnifier-svgrepo-com.svg';
-	import resetCircle from '$lib/icons/reset-svgrepo-com.svg';
+	import list from '$lib/icons/list-ul-alt-svgrepo-com.svg';
+	import Process from '$lib/icons/start-process.svelte';
+	import File from '$lib/icons/file-text.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
 	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 	import FileDetails from '$lib/FileDetails.svelte';
+	import StartProcess from './icons/start-process.svelte';
+	import FileText from '$lib/icons/file-text.svelte';
 
 	export let filter_by_status = '';
 	console.log('Status: ', filter_by_status);
@@ -471,7 +475,7 @@
 			delete categories['No Category'];
 		}
 		cat_folder_data = categories;
-		let maxVarLength = Math.max(...variables.map(v => show_variable(v).length));
+		let maxVarLength = Math.max(...variables.map((v) => show_variable(v).length));
 		varButtonHight = Math.ceil(maxVarLength / 14) * 24; // 14 is the maximum ammount of caharacter per line in var button, 24 is the height for one line
 		variables = [...variables];
 
@@ -568,21 +572,18 @@
 
 	let search_time = '_';
 	function set_search_time(variable: string) {
-		if (search_time !== variable){
+		if (search_time !== variable) {
 			search_time = variable;
-		}
-		else {
+		} else {
 			search_time = '_';
 		}
-		
 	}
 
 	let search_aggregation = '_';
 	function set_search_aggregation(variable: string) {
-		if (search_aggregation !== variable){
+		if (search_aggregation !== variable) {
 			search_aggregation = variable;
-		}
-		else {
+		} else {
 			search_aggregation = '_';
 		}
 	}
@@ -700,21 +701,21 @@
 		bind:filter_by_status
 		on:foldertype_changed={() => refresh_foldercontent(false)}
 	/>
-	<br/>
+	<br />
 	<div class="flex gap-2">
-		<img src={magnifier} alt="..." width="30px" />
-		<h1 class="h4">Filtering Datasets </h1>
-		<button
+		<h4 class="h4 ml-2">Dataset Filters</h4>
+		<img src={magnifier} alt="..." width="20px" />
+		<!--<button
 			class="p-1 variant-filled-surface hover:bg-tertiary-900 items-center rounded-md w-[30px] h-[30px]"
 			on:click={() => {search_term = ""; search_time = "_"; search_aggregation= "_"}}
 			type="button"
 			>
 			<img src={resetCircle} alt="Reset" class="w-5 h-5" />
-		</button>
+		</button>-->
 	</div>
-	<br/>
+
 	{#if filter_by_status == 'internal'}
-		<div class="ml-10 mt-4">
+		<div class="ml-10 mt-2">
 			<button
 				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
 				on:click={() => refresh_foldercontent(true)}
@@ -724,17 +725,18 @@
 		</div>
 	{/if}
 	{#if variables.length > 0}
-		<div class="grid gap-2 justify-start items-center ml-2 grid-cols-[repeat(auto-fit,minmax(120px,_120px))]">
+		<div
+			class="grid gap-2 justify-start items-center ml-2 grid-cols-[repeat(auto-fit,minmax(120px,_120px))]"
+		>
 			{#each variables as variable}
 				<div>
-				<button
-					class="w-[120px] h-[{varButtonHight}px] break-words variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 
-					{search_term.includes(String(variable))
-						? 'font-bold'
-						: ''}"
-					style = "height: {varButtonHight}px"
-					on:click={set_search_term(variable)}>{show_variable(variable).replaceAll("_", "_\u200b")}</button
-				>
+					<button
+						class="w-[120px] h-[{varButtonHight}px] break-words variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2
+					{search_term.includes(String(variable)) ? 'font-bold' : ''}"
+						style="height: {varButtonHight}px"
+						on:click={set_search_term(variable)}
+						>{show_variable(variable).replaceAll('_', '_\u200b')}</button
+					>
 				</div>
 			{/each}
 		</div>
@@ -749,7 +751,7 @@
 			/>
 			<button
 				class="absolute right-2 top-[60%] -translate-y-1/2 hover:text-gray-600 text-2xl"
-				on:click={() => search_term = ''}
+				on:click={() => (search_term = '')}
 				aria-label="Clear input"
 			>
 				&times;
@@ -842,7 +844,11 @@
 			{/if}
 		</div>
 	{/if}
-	<div class="flex gap-4 mt-2 p-2">
+	<div class="flex gap-2 mt-6">
+		<h4 class="h4 ml-2">Filtered Datasets</h4>
+		<img src={list} alt="..." width="20px" />
+	</div>
+	<div class="flex flex-wrap gap-4 p-2">
 		<div>
 			<button
 				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
@@ -915,14 +921,14 @@
 						</button>
 					</div>
 					<div class={cat_obj.toggled ? 'visible' : 'hidden'}>
-						<table class="table-fixed mb-1">
+						<table class="table-fixed mb-1 m-2">
 							<thead>
 								<tr>
-									<th class="text-left">Filename</th>
-									<th class="text-left min-w-[80px] max-w-[80px]">Metadata</th>
-									<th class="text-left min-w-[80px] max-w-[80px]">Filesize</th>
-									<th class="text-left min-w-[140px] max-w-[140px]">Last modified</th>
-									<th class="text-left min-w-[122px] max-w-[122px]">Download Link</th>
+									<th class="text-left">File Name</th>
+									<th class="text-left min-w-[85px] max-w-[85px]">Metadata</th>
+									<th class="text-left min-w-[80px] max-w-[80px]">File Size</th>
+									<th class="text-left min-w-[140px] max-w-[140px]">Last Modified</th>
+									<th class="text-left min-w-[122px] max-w-[122px]">Download</th>
 									<th class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
 								</tr>
 							</thead>
@@ -957,12 +963,10 @@
 													bind:checked={selected_files[file_obj.index]}
 													on:change={on_folder_checkbox_change}
 												/>
-												<span
-												class:text-blue-300={selected_files[file_obj.index]}
-												>
-												&nbsp; ... {folder_data[file_obj.index]['filename']
-													.replace(folder_cat, '')
-													.replace(/^_+/, '')}
+												<span class:text-blue-300={selected_files[file_obj.index]}>
+													&nbsp; ... {folder_data[file_obj.index]['filename']
+														.replace(folder_cat, '')
+														.replace(/^_+/, '')}
 												</span>
 												{#if folder_data[file_obj.index]['filename'].includes('_spi_') || folder_data[file_obj.index]['filename'].includes('_spei_')}
 													<span
@@ -975,7 +979,7 @@
 										<td>
 											{#if !folder_data[file_obj.index]['metadata_show']}
 												<button
-													class="ml-5 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+													class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
 													title="Show metadata and provenance information"
 													on:click={() =>
 														get_metadata_and_prov(
@@ -983,14 +987,18 @@
 															foldertype,
 															file_obj
 														)}
-													>Show
+												>
+													<FileText />
+													Show
 												</button>
 											{:else}
 												<button
-													class="ml-5 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+													class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
 													title="Show metadata and provenance information"
 													on:click={() => (folder_data[file_obj.index]['metadata_show'] = false)}
-													>Hide
+												>
+													<FileText />
+													Hide
 												</button>
 											{/if}
 										</td>
@@ -1009,7 +1017,7 @@
 											<div class="flex">
 												{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 													<button
-														class="mr-1 max-h-[33px] p-1 flex items-center variant-filled-primary hover:bg-tertiary-900 justify-center rounded-md"
+														class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md"
 													>
 														<a
 															href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1028,7 +1036,7 @@
 													</button>
 													{#if folder_data[file_obj.index]['nc_clipped_exists']}
 														<button
-															class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
+															class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
 														>
 															<a
 																href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1049,7 +1057,7 @@
 
 													{#if folder_data[file_obj.index]['dat_exists']}
 														<button
-															class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
+															class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
 														>
 															<a
 																href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1068,7 +1076,7 @@
 														</button>
 													{:else if folder_data[file_obj.index]['in_limit_conversion']}
 														<button
-															class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+															class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md"
 															on:click={() =>
 																try_to_generate_dat_file(
 																	folder_data[file_obj.index]['filename'],
@@ -1082,8 +1090,8 @@
 																	][0]}&type={foldertype}"
 																	class="flex"
 																> -->
-															<Download />
-															<div class="ml-1 flex place-items-center justify-items-center">
+															<Process />
+															<div class="flex place-items-center text-white justify-items-center">
 																.dat
 																<!-- </a> -->
 															</div></button
@@ -1096,7 +1104,7 @@
 
 													{#if folder_data[file_obj.index]['dat_clipped_exists']}
 														<button
-															class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
+															class="mr-1 max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
 														>
 															<a
 																href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1118,7 +1126,7 @@
 													{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 														<!-- CASE 1: Try to generate tif. -->
 														<button
-															class="max-h-[33px] p-1 flex items-center justify-center bg-fuchsia-700 hover:bg-fuchsia-900 rounded-md"
+															class="max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md"
 															on:click={() =>
 																try_to_access_tiff_file(
 																	folder_data[file_obj.index]['filename'],
@@ -1126,17 +1134,15 @@
 																)}
 															title="Generate TIFF file for download (might fail)"
 														>
-															<Download />
-															<div
-																class="ml-1 flex text-white place-items-center justify-items-center"
-															>
+															<Process />
+															<div class="flex text-white place-items-center justify-items-center">
 																.tif
 															</div>
 														</button>
 													{:else if folder_data[file_obj.index]['tif_exists']}
 														<!-- CASE 2: Tif file exists. -->
 														<button
-															class="max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
+															class="max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
 														>
 															<a
 																href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1160,7 +1166,7 @@
 													<!-- Other Filetypes -->
 												{:else}
 													<button
-														class="mr-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-primary hover:bg-tertiary-900 rounded-md"
+														class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
 													>
 														<a
 															href="{API_URL}/climate/get_temp_file?name={folder_data[
@@ -1203,7 +1209,7 @@
 												{#if folder_data[file_obj.index]['tif_convertable']}
 													<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
 													<button
-														class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center variant-filled-primary hover:bg-primary-900 rounded-md"
+														class="max-h-[33px] h-[33px] w-[80px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-primary-900 rounded-md"
 														title="Visualize on map. Note: This will download the file to your browser (~{folder_data[
 															file_obj.index
 														]['filesize']})."
@@ -1238,7 +1244,6 @@
 											? 'visible'
 											: 'hidden'}
 									>
-										
 										{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
 											<td colspan="7">
 												<FileDetails {folder_data} {file_obj} {foldertype} />
@@ -1386,10 +1391,9 @@
 	</div>-->
 </div>
 
-
 <style>
-  .spaced-row td {
-    padding-top: 10px;
-	padding-bottom: 10px; 
-  }
+	.spaced-row td {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
 </style>
