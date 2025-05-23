@@ -53,7 +53,7 @@
 										target="_self"
 									>
 										{#if node.prefix.length == 0 && item.entity.value_remainder.length == 0}
-											{item.entity.value.split('/').slice(-1)[0]}
+											{item.entity.value.split('/').pop()}
 										{:else}
 											{node.prefix}{item.entity.value_remainder}
 										{/if}
@@ -61,8 +61,13 @@
 								</li>
 							{:else}
 								<li>
-									<span title={item.entity.value.split('/').slice(-1)[0]}
-										>{node.prefix}{item.entity.value_remainder}</span
+									<span title={item.entity.value.split('/').slice(-1)[0]}>
+										{#if node.prefix.length == 0 && item.entity.value_remainder.length == 0}
+											{item.entity.value.split('/').pop()}
+										{:else}
+											{node.prefix}{item.entity.value_remainder}
+										{/if}
+									</span
 									>
 								</li>
 							{/if}
