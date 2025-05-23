@@ -1,18 +1,17 @@
 import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 export default defineConfig({
-	plugins: [sveltekit(), purgeCss()],
+	plugins: [sveltekit(), purgeCss(),cssInjectedByJsPlugin()],
 	server: {
 		fs: {
 			// Allow serving files from one level up to the project root
 			allow: ['static']
 		}
-	},
-	build: {
-		rollupOptions: {
-			external: ['ol/ol.css'], // Ensure external CSS is included
-		},
-	},
+	},// given by ol package
+    build: {
+        sourcemap: true
+    }
 });
