@@ -9,5 +9,10 @@ export default defineConfig({
 			// Allow serving files from one level up to the project root
 			allow: ['static']
 		}
-	}
+	},
+	build: {
+		rollupOptions: {
+			external: ['ol/ol.css'], // Ensure external CSS is included
+		},
+	},
 });
