@@ -133,10 +133,6 @@
 	];
 </script>
 
-<svelte:head>
-	<title>Publications</title>
-</svelte:head>
-
 <div class="content-div">
 	<div class="flex">
 		<h1 class="content-heading">Publications</h1>

@@ -53,6 +53,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>TIPPECC</title>
+</svelte:head>
+
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
