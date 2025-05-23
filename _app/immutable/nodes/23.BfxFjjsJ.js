@@ -17,3 +17,4 @@ import{s as n,n as a,d as r,i as l,l as c,c as d,m as h,h as m}from"../chunks/CA
 	further use. It should be noted that a climate service such as the one to be developed here does not
 	currently exist in the SADC region, yet there is an immense demand for such a capability. An important
 	stakeholder in the co-production process to develop the Climate Services Gateway is SASSCAL itself.`;return{c(){e=m("div"),e.innerHTML=s,this.h()},l(t){e=d(t,"DIV",{class:!0,"data-svelte-h":!0}),h(e)!=="svelte-171rh5s"&&(e.innerHTML=s),this.h()},h(){c(e,"class","content-div")},m(t,o){l(t,e,o)},p:a,i:a,o:a,d(t){t&&r(e)}}}class C extends p{constructor(e){super(),f(this,e,null,b,n,{})}}export{C as component};
+//# sourceMappingURL=23.BfxFjjsJ.js.map

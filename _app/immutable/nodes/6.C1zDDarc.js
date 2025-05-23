@@ -23,3 +23,4 @@ import{s as r,n as a,d as o,i as l,l as d,c,m as h,h as u}from"../chunks/CAmWBqA
 		points in time at which such key adaptive strategies such as corridors that link conservation
 		areas between eastern and southern Africa, to form a new TFCA such as the Kalahari-Rift Valley
 		(KALARIVA) (Perkins, 2019) must be in place.</blockquote>`;return{c(){e=u("div"),e.innerHTML=i,this.h()},l(t){e=c(t,"DIV",{class:!0,"data-svelte-h":!0}),h(e)!=="svelte-1rxad80"&&(e.innerHTML=i),this.h()},h(){d(e,"class","content-div")},m(t,n){l(t,e,n)},p:a,i:a,o:a,d(t){t&&o(e)}}}class k extends m{constructor(e){super(),p(this,e,null,b,r,{})}}export{k as component};
+//# sourceMappingURL=6.C1zDDarc.js.map

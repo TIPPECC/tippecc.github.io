@@ -27,3 +27,4 @@ import{s,n as a,d as r,i as c,l,c as d,m as h,h as g}from"../chunks/CAmWBqAG.js"
 	2). Through this work we thus intend to better understand together (the research team and the actors
 	engaged) how we can better cope with some of the key tipping points at the regional but also at the
 	very local scale in a changing climate and socio-economic context.`;return{c(){e=g("div"),e.innerHTML=n,this.h()},l(t){e=d(t,"DIV",{class:!0,"data-svelte-h":!0}),h(e)!=="svelte-95fgp5"&&(e.innerHTML=n),this.h()},h(){l(e,"class","content-div")},m(t,i){c(t,e,i)},p:a,i:a,o:a,d(t){t&&r(e)}}}class _ extends m{constructor(e){super(),p(this,e,null,w,s,{})}}export{_ as component};
+//# sourceMappingURL=25.C0ZcuMuR.js.map

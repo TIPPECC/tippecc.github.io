@@ -15,3 +15,4 @@ import{s as o,n as i,d as r,i as l,l as c,c as d,m as h,h as g}from"../chunks/CA
 		livestock foraging ecology, changes in resource access rules, options for climate change
 		adaptation and alternative livelihoods, and the role of permanent water provisioning in driving
 		economic, social and environmental change.</blockquote>`;return{c(){e=g("div"),e.innerHTML=a,this.h()},l(t){e=d(t,"DIV",{class:!0,"data-svelte-h":!0}),h(e)!=="svelte-12iqsqr"&&(e.innerHTML=a),this.h()},h(){c(e,"class","content-div")},m(t,s){l(t,e,s)},p:i,i,o:i,d(t){t&&r(e)}}}class S extends m{constructor(e){super(),p(this,e,null,v,o,{})}}export{S as component};
+//# sourceMappingURL=5.DfohfPEp.js.map

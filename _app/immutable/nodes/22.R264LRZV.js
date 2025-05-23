@@ -16,3 +16,4 @@ import{s as n,n as t,d as r,i as c,l,c as h,m as d,h as p}from"../chunks/CAmWBqA
 	through WP3. It is expected that these products will find wide application across the southern African
 	region in terms of climate change impacts – far beyond the reach of this project. However, the indicators
 	are also of critical importance for the assessment of regional tipping points as per WP4 of the project.`;return{c(){e=p("div"),e.innerHTML=i,this.h()},l(a){e=h(a,"DIV",{class:!0,"data-svelte-h":!0}),d(e)!=="svelte-w3bnbi"&&(e.innerHTML=i),this.h()},h(){l(e,"class","content-div")},m(a,o){c(a,e,o)},p:t,i:t,o:t,d(a){a&&r(e)}}}class T extends f{constructor(e){super(),m(this,e,null,b,n,{})}}export{T as component};
+//# sourceMappingURL=22.R264LRZV.js.map

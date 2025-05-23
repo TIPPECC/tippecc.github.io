@@ -13,3 +13,4 @@ import{s as n,n as s,d as a,i as h,l,c,m as d,h as p}from"../chunks/CAmWBqAG.js"
 				by users of discussion boards, guestbooks or mailinglists provided on his page.</p> <h4 class="h4">Legal validity of this disclaimer</h4> <p>This disclaimer is to be regarded as part of the internet publication which you were
 				referred from. If sections or individual terms of this statement are not legal or correct,
 				the content or validity of the other parts remain uninfluenced by this fact.</p></div></section>`;return{c(){e=p("div"),e.innerHTML=i,this.h()},l(t){e=c(t,"DIV",{class:!0,"data-svelte-h":!0}),d(e)!=="svelte-vgvgt"&&(e.innerHTML=i),this.h()},h(){l(e,"class","content-div")},m(t,r){h(t,e,r)},p:s,i:s,o:s,d(t){t&&a(e)}}}class v extends f{constructor(e){super(),m(this,e,null,g,n,{})}}export{v as component};
+//# sourceMappingURL=13.TwyFLfIP.js.map

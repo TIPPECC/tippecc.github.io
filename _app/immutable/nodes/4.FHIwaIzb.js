@@ -16,3 +16,4 @@ import{s as n,n as t,d as r,i as l,l as c,c as d,m as u,h as p}from"../chunks/CA
 		humans and livestocks. This case study will focus on the Upper Zambezi because of deteriorating
 		surface water quality (Nyambe et al, 2018), high groundwater salinity and poor inhabitants who
 		depend on groundwater (Banda et al, 2019).</blockquote>`;return{c(){e=p("div"),e.innerHTML=s,this.h()},l(a){e=d(a,"DIV",{class:!0,"data-svelte-h":!0}),u(e)!=="svelte-1fu46mp"&&(e.innerHTML=s),this.h()},h(){c(e,"class","content-div")},m(a,o){l(a,e,o)},p:t,i:t,o:t,d(a){a&&r(e)}}}class k extends h{constructor(e){super(),m(this,e,null,y,n,{})}}export{k as component};
+//# sourceMappingURL=4.FHIwaIzb.js.map

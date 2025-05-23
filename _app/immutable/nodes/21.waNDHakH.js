@@ -15,3 +15,4 @@ import{s as n,n as a,d as l,i as r,l as c,c as d,m as h,h as p}from"../chunks/CA
 	regional climate change projections will be stored at a public database and made available for other
 	scientists from different sectors and SASSCAL projects. This dissemination will take place through
 	the project’s Climate Service Gateway (WP3).`;return{c(){e=p("div"),e.innerHTML=i,this.h()},l(t){e=d(t,"DIV",{class:!0,"data-svelte-h":!0}),h(e)!=="svelte-s0s5aq"&&(e.innerHTML=i),this.h()},h(){c(e,"class","content-div")},m(t,o){r(t,e,o)},p:a,i:a,o:a,d(t){t&&l(e)}}}class I extends m{constructor(e){super(),f(this,e,null,b,n,{})}}export{I as component};
+//# sourceMappingURL=21.waNDHakH.js.map

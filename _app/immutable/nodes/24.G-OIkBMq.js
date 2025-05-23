@@ -29,3 +29,4 @@ import{s as n,n as a,d as r,i as l,l as c,c as h,m as d,h as p}from"../chunks/CA
 	points may also be reached in terms of rural water scarcity and oppressive temperatures impacting on
 	communities and their livelihoods. Such tipping points will also be explored and adaptation options
 	will be sought through a co-production approach with stakeholders.`;return{c(){e=p("div"),e.innerHTML=i,this.h()},l(t){e=h(t,"DIV",{class:!0,"data-svelte-h":!0}),d(e)!=="svelte-jrrbvu"&&(e.innerHTML=i),this.h()},h(){c(e,"class","content-div")},m(t,o){l(t,e,o)},p:a,i:a,o:a,d(t){t&&r(e)}}}class T extends m{constructor(e){super(),u(this,e,null,v,n,{})}}export{T as component};
+//# sourceMappingURL=24.G-OIkBMq.js.map
