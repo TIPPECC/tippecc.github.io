@@ -2,6 +2,7 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import Navbar from '$lib/navbar.svelte';
 	import Footer from '$lib/Footer.svelte';
 
@@ -15,6 +16,11 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+	import { initializeStores } from '@skeletonlabs/skeleton';
+
+	// Initialize Skeleton stores
+	initializeStores();
 
 	$: current_page = $page.url.pathname;
 	$: current = '';
@@ -51,6 +57,24 @@
 				current_page.slice(0, 1).toUpperCase() + current_page.slice(1, current_page.length);
 		}
 	}
+
+	// Dynamically set verticality based on screen size
+	let verticality = true;
+
+	const updateVerticality = () => {
+		verticality = window.innerWidth >= 768; // Set to false for small screens (<768px)
+	};
+
+	onMount(() => {
+		// Ensure this code only runs in the browser
+		updateVerticality(); // Set initial value
+		window.addEventListener('resize', updateVerticality);
+
+		// Cleanup the event listener when the component is destroyed
+		return () => {
+			window.removeEventListener('resize', updateVerticality);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -62,7 +86,7 @@
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<div class="flex">
-			<Navbar {current} verticality={true} {nav_elements} />
+			<Navbar {current} {verticality} {nav_elements} />
 		</div>
 	</svelte:fragment>
 	<!-- Page Route Content -->

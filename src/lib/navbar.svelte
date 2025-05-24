@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+	// Import necessary types
 	/**
 	 * Hint: - you would want to type annotate this as an Array
 	 *       - but i can not get it working without ts errors
@@ -26,6 +27,12 @@
 	function decreaseZoom() {
 		zoomLevel = Math.max(0.1, zoomLevel - 0.1);
 		document.body.style.zoom = zoomLevel;
+	}
+
+	let isDrawerOpen = false; // State to toggle the drawer menu
+
+	function toggleDrawer() {
+		isDrawerOpen = !isDrawerOpen;
 	}
 </script>
 
@@ -175,23 +182,31 @@
 		</div>
 	</div>
 {:else}
-	<div class="z-40 bg-primary-600 grow overflow-hidden">
-		<div class="grow">
-			<ul>
-				{#each nav_elements as el}
-					<li
-						class="grow flex items-center {current === el['label']
-							? 'bg-secondary-500'
-							: 'bg-transparent'}"
-					>
-						<a class="grow flex" href={el['path']}>
-							<div class="m-3 ml-7">
-								{el['label']}
-							</div>
-						</a>
-					</li>
-				{/each}
-			</ul>
+	<!-- Drawer Button for Mobile Screens -->
+	<button on:click={toggleDrawer} class="btn-icon btn-icon-sm lg:!hidden p-2">
+		<i class="fa-solid fa-bars text-xl" />Menu
+	</button>
+
+	<!-- Horizontal Navbar for Mobile Screens -->
+	{#if isDrawerOpen}
+		<div class="z-40 bg-primary-600 grow overflow-hidden">
+			<div class="grow">
+				<ul class="flex flex-col">
+					{#each nav_elements as el}
+						<li
+							class="flex items-center {current === el['label']
+								? 'bg-secondary-500'
+								: 'bg-transparent'}"
+						>
+							<a class="grow flex" href={el['path']}>
+								<div class="m-3 ml-7">
+									{el['label']}
+								</div>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
 		</div>
-	</div>
+	{/if}
 {/if}

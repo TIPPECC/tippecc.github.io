@@ -911,7 +911,7 @@
 									<CaretRight h="24px" />
 								{/if}
 							</div>
-							<h2 class="text-xl ml-2">
+							<h2 class="md:text-xl ml-2">
 								{folder_cat} ({cat_obj.files.filter((a) =>
 									[search_term.toLowerCase(), search_time, search_aggregation].every((term) =>
 										a.filename.toLowerCase().includes(term)
@@ -921,7 +921,7 @@
 						</button>
 					</div>
 					<div class={cat_obj.toggled ? 'visible' : 'hidden'}>
-						<table class="table-fixed mb-1 m-2">
+						<table class="table-fixed mb-1 m-2 hidden md:block">
 							<thead>
 								<tr>
 									<th class="text-left">File Name</th>
@@ -1253,12 +1253,113 @@
 								{/each}
 							</tbody>
 						</table>
+						<!-- Card layout for smaller screens -->
+						<div class="grid gap-4 md:hidden">
+							{#each cat_obj.files as file_obj}
+								<div class="border rounded-md p-4 shadow-md">
+									<div class="mb-2">
+										<strong>Filename:</strong>
+										<span class="break-all">{folder_data[file_obj.index]['filename']}</span>
+									</div>
+									<div class="mb-2">
+										<div class="flex items-center">
+											<strong>Metadata:</strong>
+											{#if !folder_data[file_obj.index]['metadata_show']}
+												<button
+													class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+													title="Show metadata and provenance information"
+													on:click={() =>
+														get_metadata_and_prov(
+															folder_data[file_obj.index]['filename'],
+															foldertype,
+															file_obj
+														)}
+												>
+													<FileText />
+													Show
+												</button>
+											{:else}
+												<button
+													class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
+													title="Show metadata and provenance information"
+													on:click={() => (folder_data[file_obj.index]['metadata_show'] = false)}
+												>
+													<FileText />
+													Hide
+												</button>
+											{/if}
+										</div>
+									</div>
+									<div class="mb-2">
+										<strong>Filesize:</strong>
+										{folder_data[file_obj.index]['filesize']}
+									</div>
+									<div class="mb-2">
+										<strong>Last Modified:</strong>
+										{folder_data[file_obj.index]['creation_date'].split(' ')[0]}
+									</div>
+									<div class="mb-2">
+										<strong>Download:</strong>
+										(deactivated on mobile devices)
+									</div>
+									<div>
+										<div class="flex items-center">
+											{#if folder_data[file_obj.index]['tif_convertable']}
+												<strong>Visualize:</strong>
+												<!-- CASE 2: Tif file exists. Jump straight to visualization. -->
+												<button
+													class="max-h-[33px] h-[33px] w-[80px] ml-2 mr-2 p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-primary-900 rounded-md"
+													title="Visualize on map. Note: This will download the file to your browser (~{folder_data[
+														file_obj.index
+													]['filesize']})."
+													on:click={() =>
+														get_metadata_and_prov(
+															folder_data[file_obj.index]['filename'],
+															foldertype,
+															file_obj,
+															4
+														)}
+												>
+													<Earth />
+													<div class="ml-1 flex text-white place-items-center justify-items-center">
+														View
+													</div>
+												</button>
+												<span>( ⚠ {folder_data[file_obj.index]['filesize']} are downloaded)</span>
+											{:else}
+												<!-- CASE 3: Tif not creatable. -->
+												<div class="flex w-full pr-2 items-center justify-center">
+													<!--<XDisabled />-->
+												</div>
+											{/if}
+										</div>
+									</div>
+								</div>
+								<div
+									class="break-all {[
+										search_term.toLowerCase(),
+										search_time,
+										search_aggregation
+									].every((term) =>
+										folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+									)
+										? 'visible'
+										: 'hidden'}"
+								>
+									{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+										<td colspan="7">
+											<FileDetails {folder_data} {file_obj} {foldertype} />
+										</td>
+									{/if}
+								</div>
+							{/each}
+						</div>
 					</div>
 				</div>
 			{/each}
 		</div>
 
-		<div class="flex gap-x-1 pl-2">
+		<div class="flex gap-x-1 pl-2 hidden md:block">
 			<button
 				type="button"
 				class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"

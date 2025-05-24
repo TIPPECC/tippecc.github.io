@@ -17,7 +17,7 @@
 </script>
 
 <div class="bg-surface-700">
-	<TabGroup>
+	<TabGroup class="flex flex-wrap gap-2 w-full">
 		<Tab bind:group={tabSet} name="tab1" value={0}>
 			<svelte:fragment slot="lead" />
 			<span>Metadata</span>

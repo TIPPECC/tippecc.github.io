@@ -67,8 +67,7 @@
 										{:else}
 											{node.prefix}{item.entity.value_remainder}
 										{/if}
-									</span
-									>
+									</span>
 								</li>
 							{/if}
 						{/each}
