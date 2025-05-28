@@ -74,7 +74,7 @@
 					cat
 						? 'font-bold bg-[#873c07] underline text-white'
 						: ''}"
-					on:click={() => set_filter(cat)}>{cat.replace('CORDEX', 'CORDEX-CORE')}</button
+					on:click={() => set_filter(cat)}>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)'}</button
 				>
 			{/each}
 		</div>
