@@ -63,9 +63,9 @@
 <!-- Backend Folder Content as checkboxes -->
 <div class="pl-4 pb-2 bg-surface-700">
 	<div class="mb-4 mt-2 text-lg font-semibold">
-		<h3>Model Family or Region</h3>
+		<h3>1. Model Family</h3>
 
-		<div class="text-sm ml-2">Select the model family or the region you want to explore.</div>
+		<div class="text-sm ml-2">Select the model family you want to explore.</div>
 		<div class="flow gap-2 items-center">
 			{#each categories as cat}
 				<button
@@ -74,7 +74,8 @@
 					cat
 						? 'font-bold bg-[#873c07] underline text-white'
 						: ''}"
-					on:click={() => set_filter(cat)}>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)')}</button
+					on:click={() => set_filter(cat)}
+					>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)')}</button
 				>
 			{/each}
 		</div>
@@ -82,10 +83,11 @@
 </div>
 <div class="pl-4 pb-2 bg-surface-700 mt-2">
 	<div class="mb-4 mt-2 text-lg font-semibold">
-		<h3>Type of Dataset</h3>
+		<h3>2. Type of Dataset</h3>
 		<div class="text-sm ml-2 pb-2">
-			Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or indicators. Σ
-			contain yearly, monthly, and seasonal aggregates as well as averages over 20/30-year periods.
+			Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or
+			indicators. Σ contain yearly, monthly, and seasonal aggregates as well as averages over
+			20/30-year periods.
 		</div>
 		{#each foldertypes as ftype}
 			<button

@@ -123,15 +123,16 @@
 
 	let abs_change = [{ time: '1981_2000-2080_2099', show: 'false' }];
 	let twenty_years_period = [
-		{ time: '1981_2000', show: 'false' },
-		{ time: '2021_2040', show: 'false' },
-		{ time: '2041_2060', show: 'false' },
-		{ time: '2080_2099', show: 'false' }
+		{ time: '1981_2000', show: 'false', display_name: 'historical' },
+		{ time: '2021_2040', show: 'false', display_name: 'near future' },
+		{ time: '2041_2060', show: 'false', display_name: 'mid future' },
+		{ time: '2080_2099', show: 'false', display_name: 'far future' }
 	];
 	let thirty_years_period = [
-		{ time: '1981_2010', show: 'false' },
-		{ time: '2011_2040', show: 'false' },
-		{ time: '2071_2099', show: 'false' }
+		{ time: '1981_2010', show: 'false', display_name: 'historical' },
+		{ time: '2011_2040', show: 'false', display_name: 'near future' },
+		{ time: '2041_2070', show: 'false', display_name: 'mid future' },
+		{ time: '2071_2099', show: 'false', display_name: 'far future' }
 	];
 	let aggregation = [
 		{ time: 'yearly', show: 'false' },
@@ -654,16 +655,16 @@
 			evspsbl: 'Actual Evaporation',
 			pr: 'Precipitation',
 			tas: 'Air Temp',
-			tasmax: 'Max Air Temp',
-			tasmin: 'Min Air Temp',
+			tasmax: 'Max. Air Temp',
+			tasmin: 'Min. Air Temp',
 			sfcWind: 'Wind Speed',
 			water_budget: 'Water Budget',
 			kbdi: 'KBDI',
 			hurs: 'Rel. Humidity',
 			rlds: 'D. Long Rad.',
 			rsds: 'D. Short Rad.',
-			rsus: 'Up Short Rad.',
-			rlus: 'Up Long Rad.',
+			rsus: 'Up. Short Rad.',
+			rlus: 'Up. Long Rad.',
 			spi: 'SPI',
 			spei: 'SPEI'
 		};
@@ -793,11 +794,12 @@
 				{#each twenty_years_period as variable}
 					{#if variable.show == 'true'}
 						<button
-							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+							class="w-[200px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
 							variable.time
 								? 'font-bold'
 								: ''}"
-							on:click={() => set_search_time(variable.time)}>{variable.time}</button
+							on:click={() => set_search_time(variable.time)}
+							>{variable.display_name} ({variable.time})</button
 						>
 					{/if}
 				{/each}
@@ -817,18 +819,20 @@
 				{#each thirty_years_period as variable}
 					{#if variable.show == 'true'}
 						<button
-							class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+							class="w-[200px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
 							variable.time
 								? 'font-bold'
 								: ''}"
-							on:click={() => set_search_time(variable.time)}>{variable.time}</button
+							on:click={() => set_search_time(variable.time)}
+							>{variable.display_name} ({variable.time})</button
 						>
 					{/if}
 				{/each}
 			</div>
 			{#if aggregation.some((variable) => variable.show == 'true')}
-				<div class="flow gap-2 items-center ml-2">
-					Σ Sum / Avg:
+				<div class="flow gap-2 items-center ml-2 mt-2">
+					Σ Sum | Avg:
+					<span class="mr-4" />
 					{#each aggregation as variable}
 						{#if variable.show == 'true'}
 							<button
