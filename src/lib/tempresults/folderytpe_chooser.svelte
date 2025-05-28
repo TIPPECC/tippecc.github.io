@@ -84,8 +84,8 @@
 	<div class="mb-4 mt-2 text-lg font-semibold">
 		<h3>Type of Dataset</h3>
 		<div class="text-sm ml-2 pb-2">
-			Select the type of data you want to explore. Raw or bias adjusted. Variables or indicator. Σ
-			contain average over 20/years periods.
+			Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or indicators. Σ
+			contain yearly, monthly, and seasonal aggregates as well as averages over 20/30-year periods.
 		</div>
 		{#each foldertypes as ftype}
 			<button
