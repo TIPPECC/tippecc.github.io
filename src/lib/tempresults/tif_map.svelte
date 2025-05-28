@@ -5,6 +5,8 @@
 	import Map from 'ol/Map.js';
 	import View from 'ol/View';
 	import TileLayer from 'ol/layer/WebGLTile.js';
+	import Tile from 'ol/layer/Tile.js';
+	import XYZ from 'ol/source/XYZ.js';
 	import { _fetch_foldercontent_by_type } from '$lib/fetch_folder_content';
 	import { onMount } from 'svelte';
 	import { API_URL } from '../../app.config';
@@ -280,8 +282,12 @@
 		map = new Map({
 			target: 'map_' + random_id,
 			layers: [
-				new TileLayer({
-					source: new OSM()
+				new Tile({
+					source: new XYZ({
+						url: 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png',
+						attributions:
+							'Map data: © <a href="https://opentopomap.org">OpenTopoMap</a>, © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+					})
 				}),
 				vectorLayer
 			],
