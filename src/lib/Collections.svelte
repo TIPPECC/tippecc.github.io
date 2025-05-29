@@ -901,8 +901,8 @@
 				>
 					<div
 						class="w-full h-[36px] flex items-center rounded-md pl-3 {cat_counter % 2 == 0
-							? 'bg-emerald-700'
-							: 'bg-emerald-900'} mb-1"
+							? 'bg-[#124495d4]'
+							: 'bg-[#4472c4e3]'} mb-1"
 					>
 						<button
 							class="w-full flex items-left"
