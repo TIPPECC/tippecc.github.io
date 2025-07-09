@@ -869,22 +869,6 @@
 				<CaretDown /> &nbsp; Close All
 			</button>
 		</div>
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-				on:click={() => select_all_files()}
-			>
-				<SquareCheckmark /> &nbsp; Select All
-			</button>
-		</div>
-		<div>
-			<button
-				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-				on:click={() => unselect_all_files()}
-			>
-				<SquareEmpty /> &nbsp; Unselect All
-			</button>
-		</div>
 	</div>
 
 	{#if folder_data.length > 0}
@@ -1362,7 +1346,24 @@
 				</div>
 			{/each}
 		</div>
-
+		<div class="flex flex-wrap gap-4 p-2">
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => select_all_files()}
+			>
+				<SquareCheckmark /> &nbsp; Select All
+			</button>
+		</div>
+		<div>
+			<button
+				class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+				on:click={() => unselect_all_files()}
+			>
+				<SquareEmpty /> &nbsp; Unselect All
+			</button>
+		</div>
+		</div>
 		<div class="flex gap-x-1 pl-2 hidden md:block">
 			<button
 				type="button"
