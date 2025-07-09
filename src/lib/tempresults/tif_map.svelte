@@ -258,6 +258,8 @@
 		chart.data.datasets[1].data = trendValues;
 		chart.data.datasets[2].data = ema;
 
+		chart.options.scales.y.title.text = 'Value in ' +file_metadata['varinfo']['unit'];
+
 		chart.update();
 	}
 
@@ -1257,12 +1259,12 @@
 			<div
 				class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 			>
-				<h2>Layer meta data <b>#{selected_band}:</b></h2>
-				<div id="band_min">MIN: {current_band_metainfo['min']}</div>
-				<div id="band_max">MAX: {current_band_metainfo['max']}</div>
-				<div id="unit">Unit: {file_metadata['varinfo']['unit']}</div>
+				<h2><b>Layer #{selected_band}:</b></h2>
+				<div id="band_min">Min: <span class="mr-2"></span>{current_band_metainfo['min']}</div>
+				<div id="band_max">Max: <span class="mr-2"></span>{current_band_metainfo['max']}</div>
+				<div id="unit">Unit: <span class="mr-2"></span>{file_metadata['varinfo']['unit']}</div>
 				<div id="noDataValue">
-					nDV: {parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+					nDV: <span class="mr-2"></span>{parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
 				</div>
 			</div>
 			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
@@ -1327,12 +1329,12 @@
 			{#if $coordinates.length > 0}
 				&nbsp;&nbsp;Coordinates: [{$coordinates[0].toFixed(2)}, {$coordinates[1].toFixed(2)}]
 
-				<span> &nbsp;&nbsp;Value: </span><span id="hovering_value" />
+				<span> &nbsp;&nbsp;Value: </span><span id="hovering_value" /> /
 			{:else}
-				<span><em>Hover over map to get pixel value</em></span>
+				<span><em>Hover over map to get pixel value or </em></span>
 			{/if}
 
-			<span><em> / Click on map to view timeseries</em></span>
+			<span><em> click on map to view timeseries</em></span>
 		</div>
 	</div>
 {/if}

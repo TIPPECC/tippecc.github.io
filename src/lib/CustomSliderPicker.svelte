@@ -119,7 +119,7 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-1 place-items-center">
-			Value: {new Date(dateMap[slider_index]).toDateString()} || Band: {slider_index}
+			{`${new Date(dateMap[+slider_index]).toDateString()} (Layer #${(+slider_index + 1)})`}
 		</div>
 	</div>
 {/if}
