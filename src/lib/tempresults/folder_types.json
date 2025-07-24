@@ -160,6 +160,15 @@
 		"status": "internal"
 	},
 	{
+		"key": "CHIRPS3",
+		"display_name": "CHIRPS Warisco area",
+		"description": "Raw CHIRPS data",
+		"citation": "",
+		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
+		"lineage": "Derived from CHIRPS v3 data",
+		"status": "internal"
+	},
+	{
 		"key": "GLEAM",
 		"display_name": "GLEAM potEt",
 		"description": "GLEAM potEt data",
@@ -213,7 +222,15 @@
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment",
 		"status": "internal"
 	},
-
+		{
+		"key": "nwnamibia_CORDEX",
+		"display_name": "CORDEX-CORE NW Namibia",
+		"description": "CORDEX-CORE data for north western namibia research area",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CORDEX-CORE data for north western namibia research area",
+		"status": "internal"
+	},
 	{
 		"key": "kunene_ERA5_LAND",
 		"display_name": "ERA5-LAND Kunene",
