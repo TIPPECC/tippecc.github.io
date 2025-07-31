@@ -117,7 +117,6 @@
 		initialize_map();
 		// TEST
 		// changeInteraction();
-		console.log('test');
 	});
 
 	onMount(() => {
@@ -126,13 +125,13 @@
 		}
 	});
 
-	onMount(() => {
+	onMount(async () => {
 		if (browser) {
 			// if we come from another page and already know the selected file:
 			//	- trigger file_selected
 			if (selected_file != '') {
 				// <Select> does not fire changed when setting selected_file manually
-				file_selected();
+				await file_selected();
 			}
 		}
 	});
@@ -754,6 +753,10 @@
 		const res = await fetch(access_tif_url, {
 			method: 'GET'
 		});
+
+		// overcatious safety measure, wait a second after fetching access to the tif file
+		// in case it was a newly created file
+		await new Promise((r) => setTimeout(r, 1000));
 
 		let result = [];
 		if (!res.ok) {
