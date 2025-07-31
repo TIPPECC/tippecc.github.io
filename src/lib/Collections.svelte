@@ -77,6 +77,8 @@
 	// checked state of all folder_data_checkboxes
 	let selected_files: Array<boolean> = [];
 
+	let is_mobile: boolean = false; // indicating if we are at mobile layout
+
 	$: wget_request_string = '';
 	let download_tiff = false;
 	let num_download_dropped = 0;
@@ -149,6 +151,20 @@
 	onMount(() => {
 		refresh_foldercontent(false);
 	});
+
+	onMount(() => {
+		check_mobile();
+
+		window.addEventListener('resize', check_mobile);
+
+		return () => window.removeEventListener('resize', check_mobile);
+	});
+
+	function check_mobile() {
+		// don't know how to programatically access the custom layout value
+		// so this is hardcoded to default tailwind layout 'md'
+		is_mobile = window.innerWidth < 768;
+	}
 
 	async function send_query() {
 		query = '';
@@ -1225,6 +1241,7 @@
 											{/if}
 										</td>
 									</tr>
+									{#if !is_mobile}
 									<tr
 										class={[search_term.toLowerCase(), search_time, search_aggregation].every(
 											(term) => folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
@@ -1238,6 +1255,7 @@
 											</td>
 										{/if}
 									</tr>
+									{/if}
 								{/each}
 							</tbody>
 						</table>
@@ -1323,6 +1341,7 @@
 										</div>
 									</div>
 								</div>
+								{#if is_mobile}
 								<div
 									class="break-all {[
 										search_term.toLowerCase(),
@@ -1340,6 +1359,7 @@
 										</td>
 									{/if}
 								</div>
+								{/if}
 							{/each}
 						</div>
 					</div>
