@@ -45,6 +45,7 @@
 	export let frame_id = '';
 	let color_scheme = misc_seq; // scheme
 	let color_scheme_key: string; // key for Select element
+	export let diff_scheme_key: string; // equivalent divergent scheme_key for when in diff mode
 	let crect_w = 40; // length of a color bar rect when toggle_gradient false
 
 	let mini_mode: boolean = true; // toggle for when not enough place to display all numbers
@@ -71,13 +72,19 @@
 	export let show_in_bounds = true;
 	export let horizontal = true;
 
+	
 	let value_steps: any[] = [];
 	export let color_steps: any[] = [];
-
+	
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
+	
+	let original_data_mode: string = data_mode;
+	let original_color_scheme = color_scheme;
+	let original_color_scheme_key: string;
 
 	export let forcedGrayScaleMode: boolean = false;
+	// console.log(`Init Gradientpicker with cmin_real: ${cmin_real} data_mode: ${data_mode}`);
 
 	// const VALUE_MODES = ['categorized', 'direct']
 	// export let value_mode: string = VALUE_MODES[0];
@@ -168,8 +175,14 @@
 		cmax_real = max;
 
 		var abs_max = Math.max(Math.abs(cmin_real), Math.abs(cmax_real));
-		cmin = -abs_max;
+		if (data_mode == 'sequential') {
+			cmin = 0.0;
+		} else {
+			cmin = -abs_max;
+		}
 		cmax = abs_max;
+
+		// console.log(`Set bounds real cmin: ${cmin} cmax: ${cmax} cmin_real: ${cmin_real} cmax_real: ${cmax_real}`);
 
 		if (trigger_update) {
 			update_color_and_value_steps();
@@ -418,14 +431,21 @@
 	 * Linear sequence based on #steps.
 	 */
 	function update_value_steps_seq() {
+		var upper_l = 0.0;
 		value_steps = [];
 
-		value_steps = [...value_steps, cmin_real];
-		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, cmin_real + i * ((cmax_real - cmin_real) / steps)];
+		if (custom_max >= 0.01) {
+			upper_l = custom_max;
+		} else {
+			upper_l = cmax;
 		}
 
-		value_steps = [...value_steps, cmax_real];
+		value_steps = [...value_steps, 0.0];
+		for (let i = 1; i < steps; i++) {
+			value_steps = [...value_steps, 0.0 + i * ((upper_l - 0.0) / steps)];
+		}
+
+		value_steps = [...value_steps, upper_l];
 	}
 
 	/**
@@ -491,18 +511,45 @@
 
 	export function apply_gray_rescale(update: boolean = true, value: boolean) {
 		if (value) {
+			original_data_mode = data_mode;
+			original_color_scheme = color_scheme;
+			original_color_scheme_key = color_scheme_key;
 			data_mode = 'sequential';
 			color_scheme = gray_seq;
 			color_scheme_key = 'gray_seq';
+
 			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
 		} else {
-			data_mode = 'divergent';
-			color_scheme = prec_div;
-			color_scheme_key = 'prec_div';
+			data_mode = original_data_mode;
+			color_scheme = original_color_scheme;
+			color_scheme_key = original_color_scheme_key;
+
+			// console.log(`Reverting to original settings: data_mode: ${data_mode} scheme: ${color_scheme} key: ${color_scheme_key}`);
 			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
 		}
+	}
+
+	export function switch_diff_mode(update: boolean = true, value: boolean) {
+		if (value) {
+			original_data_mode = data_mode;
+			original_color_scheme = color_scheme;
+			original_color_scheme_key = color_scheme_key;
+			data_mode = 'divergent';
+			color_scheme = color_schemes[color_scheme_key.replace('_seq', '_div') as keyof typeof color_schemes].scheme;
+			color_scheme_key = diff_scheme_key;
+
+			if (update) update_color_and_value_steps();
+		} else {
+			data_mode = original_data_mode;
+			color_scheme = original_color_scheme;
+			color_scheme_key = original_color_scheme_key;
+
+			if (update) update_color_and_value_steps();
+		}
+
+		console.log(`Switched diff mode: ${value} data_mode: ${data_mode} scheme_key: ${color_scheme_key}`);
 	}
 
 	/**
@@ -892,19 +939,27 @@
 															{value.toFixed(num_digits)}
 														</div>
 													{:else if Math.floor(value_steps.length / 2) - 2 == i || i == Math.floor(value_steps.length / 2)}
-														<div
-															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																8}px;"
-														>
-															{value.toFixed(num_digits)}
-														</div>
+														{#if data_mode != 'sequential'}
+															<div
+																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
+																	8}px;"
+															>
+																{value.toFixed(num_digits)}
+															</div>
+														{:else}
+															<div style="width: {crect_w}px;" />
+														{/if}
 													{:else if i == Math.floor(value_steps.length / 2) - 1}
-														<div
-															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																8}px;"
-														>
-															&nbsp;&nbsp;|
-														</div>
+														{#if data_mode != 'sequential'}
+															<div
+																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
+																	8}px;"
+															>
+																&nbsp;&nbsp;|
+															</div>
+														{:else}
+															<div style="width: {crect_w}px;" />
+														{/if}
 													{:else if i == value_steps.length - 1}
 														<div style="width: {crect_w}px;">
 															{value.toFixed(num_digits)}

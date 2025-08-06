@@ -41,6 +41,88 @@
 	export let foldertype: string = 'water_budget'; // string of selected foldertype
 	export let selected_file: string = ''; // string of selected file
 	export let show_varinfos: boolean = true; // show variable info in the map
+
+	// maps geo-variable short handles to color_scheme and scale_type
+	// used to set initial_color_scheme and initial_data_mode on init
+	let map_vars_mapping = {
+		'hurs': {
+			color_scheme: 'misc_seq',
+			diff_scheme: 'misc_div',
+			scale_type: 'sequential'
+		},
+		'pr': {
+			color_scheme: 'prec_seq',
+			diff_scheme: 'prec_div',
+			scale_type: 'sequential'
+		},
+		'rlds': {
+			color_scheme: 'chem_seq',
+			diff_scheme: 'chem_div',
+			scale_type: 'sequential'
+		},
+		'rlus': {
+			color_scheme: 'chem_seq',
+			diff_scheme: 'chem_div',
+			scale_type: 'sequential'
+		},
+		'rsds': {
+			color_scheme: 'chem_seq',
+			diff_scheme: 'chem_div',
+			scale_type: 'sequential'
+		},
+		'rsus': {
+			color_scheme: 'chem_seq',
+			diff_scheme: 'chem_div',
+			scale_type: 'sequential'
+		},
+		'sfcWind': {
+			color_scheme: 'wind_seq',
+			diff_scheme: 'wind_div',
+			scale_type: 'sequential'
+		},
+		'tas': {
+			color_scheme: 'temp_seq',
+			diff_scheme: 'temp_div',
+			scale_type: 'sequential'
+		},
+		'ai': {
+			color_scheme: 'prec_seq',
+			diff_scheme: 'prec_div',
+			scale_type: 'sequential'
+		},
+		'evspsblpot': {
+			color_scheme: 'chem_seq',
+			diff_scheme: 'chem_div',
+			scale_type: 'sequential'
+		},
+		'water_budget': {
+			color_scheme: 'prec_div',
+			diff_scheme: 'prec_div',
+			scale_type: 'divergent'
+		},
+		'spei': {
+			color_scheme: 'prec_div',
+			diff_scheme: 'prec_div',
+			scale_type: 'divergent'
+		},
+		'spi': {
+			color_scheme: 'prec_div',
+			diff_scheme: 'prec_div',
+			scale_type: 'divergent'
+		},
+		'kbdi': {
+			color_scheme: 'prec_seq',
+			diff_scheme: 'prec_div',
+			scale_type: 'sequential'
+		}
+	}
+
+	let initial_color_scheme: string = 'prec_div';
+	let initial_diff_scheme: string = 'prec_div'
+	let initial_data_mode: string = 'divergent';
+
+	init_map_values_from_filename();
+
 	let selected_tif_url: string = ''; // url of selected file
 	let virtual_data_url: string = ''; // helper variable carrying selected file as virtual url
 	let file_search_term: string = ''; // current string input in file search field
@@ -117,7 +199,6 @@
 		initialize_map();
 		// TEST
 		// changeInteraction();
-		console.log('test');
 	});
 
 	onMount(() => {
@@ -126,13 +207,13 @@
 		}
 	});
 
-	onMount(() => {
+	onMount(async () => {
 		if (browser) {
 			// if we come from another page and already know the selected file:
 			//	- trigger file_selected
 			if (selected_file != '') {
 				// <Select> does not fire changed when setting selected_file manually
-				file_selected();
+				await file_selected();
 			}
 		}
 	});
@@ -261,6 +342,29 @@
 		chart.options.scales.y.title.text = 'Value in ' +file_metadata['varinfo']['unit'];
 
 		chart.update();
+	}
+
+	/**
+	 * Sets different values for map display depending on the filename.
+	 */
+	function init_map_values_from_filename() {
+		const diff_pattern = /\d{4}_\d{4}-\d{4}_\d{4}/;
+		Object.keys(map_vars_mapping).forEach(key => {
+			if (selected_file.toLowerCase().includes(key.toLowerCase())) {
+				initial_color_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].color_scheme;
+				initial_data_mode = map_vars_mapping[key as keyof typeof map_vars_mapping].scale_type;
+				initial_diff_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].diff_scheme;
+				const match = selected_file.match(diff_pattern);
+
+				if (match != null) {
+					initial_color_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].diff_scheme;
+					initial_data_mode = 'divergent';
+				}
+
+				// console.log(`Matched key: ${key} scheme: ${initial_color_scheme} data_mode: ${initial_data_mode}`);
+				return;
+			}
+		});
 	}
 
 	// Function to update highlight dynamically
@@ -494,7 +598,7 @@
 		console.log('Calendar: ', calendar);
 		console.log('NetCDF times: ', net_cdf_times);
 		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
-		console.log('Dates: ', dates);
+		// console.log('Dates: ', dates);
 		for (let i = 0; i < dates.length; i++) {
 			var curDate = dates[i];
 			var curDateStr: string = '';
@@ -755,6 +859,10 @@
 			method: 'GET'
 		});
 
+		// overcatious safety measure, wait a second after fetching access to the tif file
+		// in case it was a newly created file
+		await new Promise((r) => setTimeout(r, 1000));
+
 		let result = [];
 		if (!res.ok) {
 			loading_map = false;
@@ -912,12 +1020,14 @@
 	async function toggle_diff_mode() {
 		diff_mode = !diff_mode;
 		if (diff_mode) {
+			cg_picker.switch_diff_mode(false, diff_mode);
 			cg_picker.set_bounds_real(
 				current_band_metainfo.min - current_diff_band_metainfo.max,
 				current_band_metainfo.max - current_diff_band_metainfo.min
 			);
 			await on_dif_slider_change();
 		} else {
+			cg_picker.switch_diff_mode(false, diff_mode);
 			cg_picker.set_bounds_real(current_band_metainfo.min, current_band_metainfo.max);
 			await on_slider_change();
 		}
@@ -1252,7 +1362,6 @@
 		filesearch_input_changed();
 	}
 </script>
-
 {#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
@@ -1335,6 +1444,17 @@
 			{/if}
 
 			<span><em> click on map to view timeseries</em></span>
+
+			{#if band_slider_values.length >= 2}
+				<span>
+					<button
+						class="variant-filled-tertiary {diff_mode ? '' : 'hover:bg-tertiary-600'} p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+						on:click={() => {
+							toggle_diff_mode();
+						}}>{diff_mode ? 'Normal mode' : 'Compare Layers'}</button
+					>
+				</span>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -1346,6 +1466,7 @@
 	</div>
 {/if}
 
+
 <div class={horizontal_scala ? '' : 'flex'}>
 	<div class="flex justify-center items-center">
 		<CustomGradientPicker
@@ -1355,7 +1476,9 @@
 			bind:this={cg_picker}
 			bind:horizontal={horizontal_scala}
 			num_digits={2}
-			init_color_scheme="prec_div"
+			init_color_scheme={initial_color_scheme}
+			data_mode={initial_data_mode}
+			diff_scheme_key={initial_diff_scheme}
 			on:color_stops_changed={color_stops_changed_signaler}
 		/>
 	</div>
