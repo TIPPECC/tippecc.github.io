@@ -426,14 +426,21 @@
 	 * Linear sequence based on #steps.
 	 */
 	function update_value_steps_seq() {
+		var upper_l = 0.0;
 		value_steps = [];
+
+		if (custom_max >= 0.01) {
+			upper_l = custom_max;
+		} else {
+			upper_l = cmax;
+		}
 
 		value_steps = [...value_steps, 0.0];
 		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, 0.0 + i * ((cmax_real - 0.0) / steps)];
+			value_steps = [...value_steps, 0.0 + i * ((upper_l - 0.0) / steps)];
 		}
 
-		value_steps = [...value_steps, cmax_real];
+		value_steps = [...value_steps, upper_l];
 	}
 
 	/**
