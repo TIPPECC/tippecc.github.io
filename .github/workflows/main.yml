@@ -1,4 +1,6 @@
 name: GitHub Pages
+permissions:
+  contents: read
 
 on:
   push:
@@ -8,6 +10,8 @@ on:
 
 jobs:
   deploy:
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04 # Set platform for runner
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
