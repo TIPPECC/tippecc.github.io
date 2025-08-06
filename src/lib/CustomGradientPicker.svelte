@@ -45,6 +45,7 @@
 	export let frame_id = '';
 	let color_scheme = misc_seq; // scheme
 	let color_scheme_key: string; // key for Select element
+	export let diff_scheme_key: string; // equivalent divergent scheme_key for when in diff mode
 	let crect_w = 40; // length of a color bar rect when toggle_gradient false
 
 	let mini_mode: boolean = true; // toggle for when not enough place to display all numbers
@@ -528,6 +529,27 @@
 			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
 		}
+	}
+
+	export function switch_diff_mode(update: boolean = true, value: boolean) {
+		if (value) {
+			original_data_mode = data_mode;
+			original_color_scheme = color_scheme;
+			original_color_scheme_key = color_scheme_key;
+			data_mode = 'divergent';
+			color_scheme = color_schemes[color_scheme_key.replace('_seq', '_div') as keyof typeof color_schemes].scheme;
+			color_scheme_key = diff_scheme_key;
+
+			if (update) update_color_and_value_steps();
+		} else {
+			data_mode = original_data_mode;
+			color_scheme = original_color_scheme;
+			color_scheme_key = original_color_scheme_key;
+
+			if (update) update_color_and_value_steps();
+		}
+
+		console.log(`Switched diff mode: ${value} data_mode: ${data_mode} scheme_key: ${color_scheme_key}`);
 	}
 
 	/**

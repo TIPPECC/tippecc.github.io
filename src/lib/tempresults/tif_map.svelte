@@ -46,7 +46,7 @@
 	// used to set initial_color_scheme and initial_data_mode on init
 	let map_vars_mapping = {
 		'hurs': {
-			color_scheme: 'misc_seq1',
+			color_scheme: 'misc_seq',
 			diff_scheme: 'misc_div',
 			scale_type: 'sequential'
 		},
@@ -118,6 +118,7 @@
 	}
 
 	let initial_color_scheme: string = 'prec_div';
+	let initial_diff_scheme: string = 'prec_div'
 	let initial_data_mode: string = 'divergent';
 
 	init_map_values_from_filename();
@@ -352,6 +353,7 @@
 			if (selected_file.toLowerCase().includes(key.toLowerCase())) {
 				initial_color_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].color_scheme;
 				initial_data_mode = map_vars_mapping[key as keyof typeof map_vars_mapping].scale_type;
+				initial_diff_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].diff_scheme;
 				const match = selected_file.match(diff_pattern);
 
 				if (match != null) {
@@ -1018,12 +1020,14 @@
 	async function toggle_diff_mode() {
 		diff_mode = !diff_mode;
 		if (diff_mode) {
+			cg_picker.switch_diff_mode(false, diff_mode);
 			cg_picker.set_bounds_real(
 				current_band_metainfo.min - current_diff_band_metainfo.max,
 				current_band_metainfo.max - current_diff_band_metainfo.min
 			);
 			await on_dif_slider_change();
 		} else {
+			cg_picker.switch_diff_mode(false, diff_mode);
 			cg_picker.set_bounds_real(current_band_metainfo.min, current_band_metainfo.max);
 			await on_slider_change();
 		}
@@ -1358,7 +1362,6 @@
 		filesearch_input_changed();
 	}
 </script>
-
 {#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
@@ -1441,6 +1444,17 @@
 			{/if}
 
 			<span><em> click on map to view timeseries</em></span>
+
+			{#if band_slider_values.length >= 2}
+				<span>
+					<button
+						class="variant-filled-tertiary {diff_mode ? '' : 'hover:bg-tertiary-600'} p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
+						on:click={() => {
+							toggle_diff_mode();
+						}}>{diff_mode ? 'Normal mode' : 'Compare Layers'}</button
+					>
+				</span>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -1464,6 +1478,7 @@
 			num_digits={2}
 			init_color_scheme={initial_color_scheme}
 			data_mode={initial_data_mode}
+			diff_scheme_key={initial_diff_scheme}
 			on:color_stops_changed={color_stops_changed_signaler}
 		/>
 	</div>
