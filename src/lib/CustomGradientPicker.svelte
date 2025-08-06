@@ -78,6 +78,10 @@
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
 	
+	let original_data_mode: string = data_mode;
+	let original_color_scheme = color_scheme;
+	let original_color_scheme_key: string;
+
 	export let forcedGrayScaleMode: boolean = false;
 	// console.log(`Init Gradientpicker with cmin_real: ${cmin_real} data_mode: ${data_mode}`);
 
@@ -506,15 +510,21 @@
 
 	export function apply_gray_rescale(update: boolean = true, value: boolean) {
 		if (value) {
+			original_data_mode = data_mode;
+			original_color_scheme = color_scheme;
+			original_color_scheme_key = color_scheme_key;
 			data_mode = 'sequential';
 			color_scheme = gray_seq;
 			color_scheme_key = 'gray_seq';
+
 			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
 		} else {
-			data_mode = 'divergent';
-			color_scheme = prec_div;
-			color_scheme_key = 'prec_div';
+			data_mode = original_data_mode;
+			color_scheme = original_color_scheme;
+			color_scheme_key = original_color_scheme_key;
+
+			// console.log(`Reverting to original settings: data_mode: ${data_mode} scheme: ${color_scheme} key: ${color_scheme_key}`);
 			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
 		}
