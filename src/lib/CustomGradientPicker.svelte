@@ -71,13 +71,15 @@
 	export let show_in_bounds = true;
 	export let horizontal = true;
 
+	
 	let value_steps: any[] = [];
 	export let color_steps: any[] = [];
-
+	
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
-
+	
 	export let forcedGrayScaleMode: boolean = false;
+	// console.log(`Init Gradientpicker with cmin_real: ${cmin_real} data_mode: ${data_mode}`);
 
 	// const VALUE_MODES = ['categorized', 'direct']
 	// export let value_mode: string = VALUE_MODES[0];
@@ -168,8 +170,14 @@
 		cmax_real = max;
 
 		var abs_max = Math.max(Math.abs(cmin_real), Math.abs(cmax_real));
-		cmin = -abs_max;
+		if (data_mode == 'sequential') {
+			cmin = 0.0;
+		} else {
+			cmin = -abs_max;
+		}
 		cmax = abs_max;
+
+		// console.log(`Set bounds real cmin: ${cmin} cmax: ${cmax} cmin_real: ${cmin_real} cmax_real: ${cmax_real}`);
 
 		if (trigger_update) {
 			update_color_and_value_steps();
@@ -420,9 +428,9 @@
 	function update_value_steps_seq() {
 		value_steps = [];
 
-		value_steps = [...value_steps, cmin_real];
+		value_steps = [...value_steps, 0.0];
 		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, cmin_real + i * ((cmax_real - cmin_real) / steps)];
+			value_steps = [...value_steps, 0.0 + i * ((cmax_real - 0.0) / steps)];
 		}
 
 		value_steps = [...value_steps, cmax_real];
@@ -892,19 +900,27 @@
 															{value.toFixed(num_digits)}
 														</div>
 													{:else if Math.floor(value_steps.length / 2) - 2 == i || i == Math.floor(value_steps.length / 2)}
-														<div
-															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																8}px;"
-														>
-															{value.toFixed(num_digits)}
-														</div>
+														{#if data_mode != 'sequential'}
+															<div
+																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
+																	8}px;"
+															>
+																{value.toFixed(num_digits)}
+															</div>
+														{:else}
+															<div style="width: {crect_w}px;" />
+														{/if}
 													{:else if i == Math.floor(value_steps.length / 2) - 1}
-														<div
-															style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																8}px;"
-														>
-															&nbsp;&nbsp;|
-														</div>
+														{#if data_mode != 'sequential'}
+															<div
+																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
+																	8}px;"
+															>
+																&nbsp;&nbsp;|
+															</div>
+														{:else}
+															<div style="width: {crect_w}px;" />
+														{/if}
 													{:else if i == value_steps.length - 1}
 														<div style="width: {crect_w}px;">
 															{value.toFixed(num_digits)}
