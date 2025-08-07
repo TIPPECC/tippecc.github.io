@@ -35,6 +35,7 @@
 	let loading_map: boolean = false; // trigger variable indicating map is loaded
 	let horizontal_scala: boolean = true; // bool indicating horizontal/vertical scala
 	let diff_mode: boolean = false; // bool indicating diff- (comparing 2 bands), or normal-mode (1 band only)
+	let map_drawn_once: boolean = false;
 
 	let folder_data: any[any] = []; // choosable files
 	let fildered_folder_data: any[] = []; // filtered files
@@ -1146,7 +1147,7 @@
 		// console.log("showScaleWarning: ", showScaleWarning);
 
 		// force gray rescale if conditions are met
-		if (!cg_picker.get_forcedGrayScaleMode() && colorScaleCovPercent <= 100.0 / 21.0) {
+		if (!cg_picker.get_forcedGrayScaleMode() && colorScaleCovPercent <= 100.0 / 21.0 && !map_drawn_once) {
 			cg_picker.apply_gray_rescale(false, true);
 			cg_picker.update_color_and_value_steps(false);
 		}
@@ -1187,6 +1188,8 @@
 
 		layer.setOpacity(opacity_value);
 		map.setView(base_view);
+
+		map_drawn_once = true;
 		// console.log("Finished Visualize function.")
 		// console.log("Source Keys: \n", source.getKeys()); // empty
 		// console.log("Source Properties: \n", source.getProperties()); // empty
@@ -1475,6 +1478,7 @@
 			{showScaleWarning}
 			bind:this={cg_picker}
 			bind:horizontal={horizontal_scala}
+			bind:diff_mode
 			num_digits={2}
 			init_color_scheme={initial_color_scheme}
 			data_mode={initial_data_mode}
