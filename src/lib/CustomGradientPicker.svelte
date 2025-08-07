@@ -67,6 +67,7 @@
 	export let cmax = 100; // value steps maximum
 	export let cmin_real = -100; // real data minimum
 	export let cmax_real = 100; // real data maximum
+	export let diff_mode: boolean;
 	let custom_min = 0.0;
 	let custom_max = 0.0;
 	export let show_in_bounds = true;
@@ -440,9 +441,12 @@
 			upper_l = cmax;
 		}
 
-		value_steps = [...value_steps, 0.0];
+		let lower_l = 0.0;
+		if (forcedGrayScaleMode) lower_l = cmin_real;
+
+		value_steps = [...value_steps, lower_l];
 		for (let i = 1; i < steps; i++) {
-			value_steps = [...value_steps, 0.0 + i * ((upper_l - 0.0) / steps)];
+			value_steps = [...value_steps, lower_l + i * ((upper_l - lower_l) / steps)];
 		}
 
 		value_steps = [...value_steps, upper_l];
@@ -511,6 +515,9 @@
 
 	export function apply_gray_rescale(update: boolean = true, value: boolean) {
 		if (value) {
+			// rescale should not be applicable in diff mode
+			if (diff_mode) return;
+			if (forcedGrayScaleMode) return;
 			original_data_mode = data_mode;
 			original_color_scheme = color_scheme;
 			original_color_scheme_key = color_scheme_key;
@@ -518,26 +525,35 @@
 			color_scheme = gray_seq;
 			color_scheme_key = 'gray_seq';
 
-			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
+			if (update) update_color_and_value_steps();
 		} else {
+			if (!forcedGrayScaleMode) return;
 			data_mode = original_data_mode;
 			color_scheme = original_color_scheme;
 			color_scheme_key = original_color_scheme_key;
 
 			// console.log(`Reverting to original settings: data_mode: ${data_mode} scheme: ${color_scheme} key: ${color_scheme_key}`);
-			if (update) update_color_and_value_steps();
 			forcedGrayScaleMode = value;
+			if (update) update_color_and_value_steps();
 		}
 	}
 
 	export function switch_diff_mode(update: boolean = true, value: boolean) {
+		// when rescaling, switch back to original first
+		if (forcedGrayScaleMode) {
+			apply_gray_rescale(false, false);
+		}
+
 		if (value) {
 			original_data_mode = data_mode;
 			original_color_scheme = color_scheme;
 			original_color_scheme_key = color_scheme_key;
 			data_mode = 'divergent';
-			color_scheme = color_schemes[color_scheme_key.replace('_seq', '_div') as keyof typeof color_schemes].scheme;
+			let equiv_div_scheme_key = color_scheme_key.replace('_seq', '_div');
+			if (color_schemes.hasOwnProperty(equiv_div_scheme_key)) {
+				color_scheme = color_schemes[equiv_div_scheme_key as keyof typeof color_schemes].scheme;
+			}
 			color_scheme_key = diff_scheme_key;
 
 			if (update) update_color_and_value_steps();
@@ -549,7 +565,7 @@
 			if (update) update_color_and_value_steps();
 		}
 
-		console.log(`Switched diff mode: ${value} data_mode: ${data_mode} scheme_key: ${color_scheme_key}`);
+		// console.log(`Switched diff mode: ${value} data_mode: ${data_mode} scheme_key: ${color_scheme_key}`);
 	}
 
 	/**
@@ -837,6 +853,7 @@
 									: 'variant-filled-tertiary'} hover:bg-tertiary-600 p-1 w-20 {horizontal
 									? 'h-[28px]'
 									: 'mb-1'} {!forcedGrayScaleMode && showScaleWarning ? '!bg-red-400' : ''}"
+								disabled={diff_mode ? true : false}
 								on:click={() => apply_gray_rescale(true, !forcedGrayScaleMode)}
 								title="Rescale colors to one-dimensional gray-scale. (Use when the value range of data points is very small or just one sided (e.g. only positives)."
 								>Rescale
