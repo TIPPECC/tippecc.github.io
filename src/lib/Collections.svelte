@@ -31,6 +31,7 @@
 	import FileDetails from '$lib/FileDetails.svelte';
 	import StartProcess from './icons/start-process.svelte';
 	import FileText from '$lib/icons/file-text.svelte';
+	import SelectBoundingBox from './components/SelectBoundingBox.svelte';
 
 	export let filter_by_status = '';
 	console.log('Status: ', filter_by_status);
@@ -92,6 +93,12 @@
 	let tabSet: number = 0;
 	let in_main_page = true;
 	let varButtonHight: number;
+    // Variable for bounding box selection
+    let bbox = [null, null, null, null];
+
+    // Variables for date selection
+    let startDate = '';
+    let endDate = '';
 
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
@@ -864,6 +871,27 @@
 			{/if}
 		</div>
 	{/if}
+	<!-- Date selection column -->
+	<div class="flex gap-4">
+		Start date:
+		<input
+			type="date"
+			class="input input-bordered"
+			bind:value={startDate}
+		/>
+		End date:
+		<input
+			type="date"
+			class="input input-bordered"
+			bind:value={endDate}
+		/>
+	</div>
+    <SelectBoundingBox bind:boundingBox={bbox} />
+
+
+
+
+
 	<div class="flex gap-2 mt-6">
 		<h4 class="h4 ml-2">Filtered Datasets</h4>
 		<img src={list} alt="..." width="20px" />
