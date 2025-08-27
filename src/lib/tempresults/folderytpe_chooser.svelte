@@ -61,45 +61,47 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class="pl-4 pb-2 bg-surface-700">
-	<div class="mb-4 mt-2 text-lg font-semibold">
-		<h3>1. Model Family</h3>
+<div class="md:sticky top-0 bg-surface-600 z-30" >
+	<div class="pl-4 pb-2 bg-surface-700">
+		<div class="mb-4 mt-2 text-lg font-semibold">
+			<h3>1. Model Family</h3>
 
-		<div class="text-sm ml-2">Select the model family you want to explore.</div>
-		<div class="flow gap-2 items-center">
-			{#each categories as cat}
+			<div class="text-sm ml-2">Select the model family you want to explore.</div>
+			<div class="flow gap-2 items-center">
+				{#each categories as cat}
+					<button
+						type="button"
+						class="btn-sm bg-[#873c07] m-1 text-lg rounded-md hover:bg-tertiary-500 {current_category ==
+						cat
+							? 'font-bold bg-[#873c07] underline text-white'
+							: ''}"
+						on:click={() => set_filter(cat)}
+						>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)')}</button
+					>
+				{/each}
+			</div>
+		</div>
+	</div>
+	<div class="pl-4 pb-2 bg-surface-700 mt-2">
+		<div class="mb-4 mt-2 text-lg font-semibold">
+			<h3>2. Type of Dataset</h3>
+			<div class="text-sm ml-2 pb-2">
+				Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or
+				indicators. Σ contain yearly, monthly, and seasonal aggregates as well as averages over
+				20/30-year periods.
+			</div>
+			{#each foldertypes as ftype}
 				<button
 					type="button"
-					class="btn-sm bg-[#873c07] m-1 text-lg rounded-md hover:bg-tertiary-500 {current_category ==
-					cat
-						? 'font-bold bg-[#873c07] underline text-white'
+					class="btn-sm bg-[#b05803] m-1 text-lg rounded-md hover:bg-tertiary-500 {foldertype ==
+					ftype.key
+						? 'font-bold bg-[#b05803] underline text-white'
 						: ''}"
-					on:click={() => set_filter(cat)}
-					>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)')}</button
+					on:click={() => set_foldertype(ftype.key)}
+					>{ftype.display_name.replace(current_category, '').replace('-CORE', '')}</button
 				>
 			{/each}
 		</div>
-	</div>
-</div>
-<div class="pl-4 pb-2 bg-surface-700 mt-2">
-	<div class="mb-4 mt-2 text-lg font-semibold">
-		<h3>2. Type of Dataset</h3>
-		<div class="text-sm ml-2 pb-2">
-			Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or
-			indicators. Σ contain yearly, monthly, and seasonal aggregates as well as averages over
-			20/30-year periods.
-		</div>
-		{#each foldertypes as ftype}
-			<button
-				type="button"
-				class="btn-sm bg-[#b05803] m-1 text-lg rounded-md hover:bg-tertiary-500 {foldertype ==
-				ftype.key
-					? 'font-bold bg-[#b05803] underline text-white'
-					: ''}"
-				on:click={() => set_foldertype(ftype.key)}
-				>{ftype.display_name.replace(current_category, '').replace('-CORE', '')}</button
-			>
-		{/each}
 	</div>
 </div>
 <div class="mt-6">
