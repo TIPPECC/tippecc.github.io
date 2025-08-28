@@ -101,6 +101,33 @@
     let startDate = '';
     let endDate = '';
 
+	$: add2FileDownloadUrl = (() => {
+
+    // Check if start and end dates are provided
+    const hasDates = startDate && endDate;
+
+    // Check if the bounding box is valid (no null values)
+    const hasBbox = bbox.every(v => v !== null);
+
+    // Case 1: Dates provided but no valid bounding box
+    if (hasDates && !hasBbox) {
+      return `&timeperiod=${startDate},${endDate}`;
+    }
+
+    // Case 2: Bounding box provided but no valid dates
+    if (hasBbox && !hasDates) {
+      return `&boundingbox=${bbox.join(',')}`;
+    }
+
+    // Case 3: Both dates and bounding box provided
+    if (hasDates && hasBbox) {
+      return `&timeperiod=${startDate},${endDate}&boundingbox=${bbox.join(',')}`;
+    }
+
+    // Case 4: Neither dates nor bounding box provided → return base URL
+    return '';
+  })();
+
 	// PLACEHOLDER showcase for wget display styling
 	// let wget_cmd =
 	// 	"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
@@ -285,13 +312,22 @@
 	async function handle_checkbox_submit() {
 		const custom_url = API_URL + '/climate/select_temp_urls?type=' + foldertype;
 		let checked_boxes = [];
+		let customn_area_bool = false
+		let additional_options = '';
+		if (filetype == 'nc_custom'){
+			customn_area_bool = true;
+			requested_filetype  = 'nc'
+		} else {
+			customn_area_bool = false;
+			requested_filetype = filetype;
+		}
 
 		num_download_dropped = 0;
 
 		for (let i = 0; i < selected_files.length; i++) {
 			if (selected_files[i]) {
 				var f_type = folder_data[i]['filesuffix'];
-				var requested_filetype = folder_data[i]['filename'].split('.').pop();
+				// var requested_filetype = folder_data[i]['filename'].split('.').pop();
 				var requested_filename = folder_data[i]['filename'];
 
 				if (download_tiff && f_type == '.nc') {
@@ -303,16 +339,21 @@
 					requested_filetype = 'tif';
 				}
 				//requested_filetype = requested_filetype == 'nc' ? filetype : requested_filetype;
-				checked_boxes.push([requested_filename, filetype]);
+				checked_boxes.push([requested_filename, requested_filetype]);
 			}
 		}
+		if(customn_area_bool){
+			additional_options = add2FileDownloadUrl
+		}
+		const request_body = JSON.stringify({boxes: checked_boxes, additional_options: additional_options});
 
 		// SEND REQUEST
 		try {
 			const res = await fetch(custom_url, {
-				method: 'POST',
-				body: JSON.stringify(checked_boxes)
+			method: 'POST',
+			body: request_body
 			});
+
 
 			let result = [];
 			if (!res.ok) {
@@ -668,7 +709,7 @@
 	let requested_filetype = 'nc';
 	function handleFileTypeChange(event) {
 		filetype = event.target.value;
-		requested_filetype = filetype;
+		// requested_filetype = filetype;
 	}
 	// array with current geo_data['facets']['file_id']
 
@@ -1055,7 +1096,7 @@
 															<a
 																href="{API_URL}/climate/get_temp_file?name={folder_data[
 																	file_obj.index
-																]['filename']}&type={foldertype}&filetype=nc"
+																]['filename']}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
 																class="flex"
 																title="Download .nc file"
 															>
@@ -1437,6 +1478,16 @@
 							<input
 								type="radio"
 								name="filetype"
+								value="nc_custom"
+								bind:group={filetype}
+								on:change={handleFileTypeChange}
+							/>
+							Filetype .nc (custom area and time)
+						</label>
+						<label>
+							<input
+								type="radio"
+								name="filetype"
 								value="nc_clipped"
 								bind:group={filetype}
 								on:change={handleFileTypeChange}
@@ -1465,8 +1516,6 @@
 							/>
 							Filetype .dat (clipped)
 						</label>
-					</div>
-					<div>
 						<label>
 							<input
 								type="radio"

@@ -18,10 +18,10 @@ $: boundingBox = [...aoiInput];
 
 $: if (map_exists && extent && aoiInput.every(v => v !== null && !isNaN(v))) {
     const extent4326 = [
-        aoiInput[2], // lon-min
-        aoiInput[0], // lat-min
-        aoiInput[3], // lon-max
-        aoiInput[1]  // lat-max
+        aoiInput[0], // lon-min
+        aoiInput[2], // lat-min
+        aoiInput[1], // lon-max
+        aoiInput[3]  // lat-max
     ];
     const extent3857 = transformExtent(extent4326, 'EPSG:4326', 'EPSG:3857');
     extent.setExtent(extent3857);
@@ -34,16 +34,16 @@ $: if (aoiInput[2] !== null && aoiInput[3] !== null && aoiInput[2] > aoiInput[3]
     aoiInput[3] = aoiInput[2];
 }
 // restrict to starting extent
-$: if (aoiInput[0] !== null && aoiInput[0] < startingExtent[1]) {
+$: if (aoiInput[0] !== null && aoiInput[0] < startingExtent[0]) {
     aoiInput[0] = startingExtent[1];
 }
-$: if (aoiInput[1] !== null && aoiInput[1] > startingExtent[3]) {
+$: if (aoiInput[1] !== null && aoiInput[1] > startingExtent[2]) {
     aoiInput[1] = startingExtent[3];
 }
-$: if (aoiInput[2] !== null && aoiInput[2] < startingExtent[0]) {
+$: if (aoiInput[2] !== null && aoiInput[2] < startingExtent[1]) {
     aoiInput[2] = startingExtent[0];
 }
-$: if (aoiInput[3] !== null && aoiInput[3] > startingExtent[2]) {
+$: if (aoiInput[3] !== null && aoiInput[3] > startingExtent[3]) {
     aoiInput[3] = startingExtent[2];
 }
 
@@ -56,7 +56,21 @@ function clearForm() {
     startDate = '';
     endDate = '';
     if (extent) {
-        extent.setExtent(undefined); // entfernt die Bounding Box von der Karte
+        // Remove and re-add the interaction to clear the extent
+        // i did not find a better way to do this
+        // If you find a way to remove the extent from the map without readding the options, replace this
+        map.removeInteraction(extent);
+        extent = new ExtentInteraction({ condition: shiftKeyOnly });
+		map.addInteraction(extent);
+        extent.on('extentchanged', function () {
+            // [minx, miny, maxx, maxy]
+            var lon_lat_extent = transformExtent(extent.getExtent(), 'EPSG:3857', 'EPSG:4326');
+            aoiInput[0] = lon_lat_extent[0]
+            aoiInput[1] = lon_lat_extent[2]
+            aoiInput[2] = lon_lat_extent[1]
+            aoiInput[3] = lon_lat_extent[3]
+        });
+        // extent.setExtent(null); // entfernt die Bounding Box von der Karte
     }
 }
 
@@ -99,10 +113,10 @@ function clearForm() {
 			extent.on('extentchanged', function () {
 				// [minx, miny, maxx, maxy]
 				var lon_lat_extent = transformExtent(extent.getExtent(), 'EPSG:3857', 'EPSG:4326');
-				aoiInput[0] = lon_lat_extent[1]
-                aoiInput[1] = lon_lat_extent[3]
-                aoiInput[2] = lon_lat_extent[0]
-                aoiInput[3] = lon_lat_extent[2]
+                aoiInput[0] = lon_lat_extent[0]
+                aoiInput[1] = lon_lat_extent[2]
+                aoiInput[2] = lon_lat_extent[1]
+                aoiInput[3] = lon_lat_extent[3]
 			});
 		}
 	}
@@ -126,29 +140,13 @@ function clearForm() {
                 </div> 
                 </div>
                 <div class="flex flex-col gap-2 mt-2">
-                    <label class="mb-1 text-sm font-medium">Lat (min):</label>
-                    <input
-                        class="input input-bordered"
-                        type="number"
-                        step="0.1"
-                        placeholder="lat-min"
-                        bind:value={aoiInput[0]}
-                    />
-                    <label class="mb-1 text-sm font-medium">Lat (max):</label>
-                    <input
-                        class="input input-bordered"
-                        type="number"
-                        step="0.1"
-                        placeholder="lat-max"
-                        bind:value={aoiInput[1]}
-                    />
                     <label class="mb-1 text-sm font-medium">Lon (min):</label>
                     <input
                         class="input input-bordered"
                         type="number"
                         step="0.1"
                         placeholder="lon-min"
-                        bind:value={aoiInput[2]}
+                        bind:value={aoiInput[0]}
                     />
                     <label class="mb-1 text-sm font-medium">Lon (max):</label>
                     <input
@@ -156,6 +154,22 @@ function clearForm() {
                         type="number"
                         step="0.1"
                         placeholder="lon-max"
+                        bind:value={aoiInput[1]}
+                    />
+                    <label class="mb-1 text-sm font-medium">Lat (min):</label>
+                    <input
+                        class="input input-bordered"
+                        type="number"
+                        step="0.1"
+                        placeholder="lat-min"
+                        bind:value={aoiInput[2]}
+                    />
+                    <label class="mb-1 text-sm font-medium">Lat (max):</label>
+                    <input
+                        class="input input-bordered"
+                        type="number"
+                        step="0.1"
+                        placeholder="lat-max"
                         bind:value={aoiInput[3]}
                     />
                 </div>
