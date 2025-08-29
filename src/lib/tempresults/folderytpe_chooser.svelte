@@ -9,8 +9,6 @@
 	console.log('Status: ', filter_by_status);
 	let current_category: string = foldertype.split('_')[0];
 
-	let collapsed = false;
-
 	//set_filter(current_category);
 
 	var foldertypes: {
@@ -63,8 +61,7 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class="sticky top-0 bg-surface-600 z-30" >
-	{#if !collapsed}
+<div class="bg-surface-600 z-30" >
 	<div class="pl-4 pb-2 bg-surface-700">
 		<div class="mb-4 mt-2 text-lg font-semibold">
 			<h3>1. Model Family</h3>
@@ -105,24 +102,7 @@
 				>
 			{/each}
 		</div>
-			<button
-		type="button"
-		class="w-full bg-surface-700 text-center text-sm text-gray-400 cursor-pointer hover:bg-surface-500"
-		on:click={() => collapsed = !collapsed}
-		>
-		{collapsed ? '▼ Show' : '▲ Hide'}
-	</button>
 	</div>
-	{/if}
-	{#if collapsed}
-		<button
-			type="button"
-			class="w-full bg-surface-700 text-center text-sm text-gray-400 cursor-pointer hover:bg-surface-500"
-			on:click={() => collapsed = !collapsed}
-		>
-		{collapsed ? '▼ Show' : '▲ Hide'}
-		</button>
-	{/if}
 </div>
 <div class="mt-6">
 	<div class="flex ml-2">

@@ -183,7 +183,7 @@
 	</div>
 {:else}
 	<!-- Drawer Button for Mobile Screens -->
-	<button on:click={toggleDrawer} class="btn-icon btn-icon-sm lg:!hidden p-2">
+	<button on:click={toggleDrawer} class="btn-icon z-40 bg-surface-900 btn-icon-sm lg:!hidden p-2">
 		<i class="fa-solid fa-bars text-xl" />Menu
 	</button>
 
