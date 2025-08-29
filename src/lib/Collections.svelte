@@ -869,14 +869,14 @@
         class="absolute left-full top-0 ml-2 hidden group-hover:block 
                bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
       >
-        Define spatial and temporal boundaries for your dataset. 
+        Define spatial and temporal boundaries for your datasets. 
 		Those options will be applied during nc format single file download or wget download (Select nc (custom area and time) for it).
       </div>
       <ul class="ml-4 text-sm text-gray-300 list-disc mt-1">
-        <li>lat-min: {formatCoord(bbox[0])}</li>
-        <li>lon-min: {formatCoord(bbox[1])}</li>
-        <li>lat-max: {formatCoord(bbox[2])}</li>
-        <li>lon-max: {formatCoord(bbox[3])}</li>
+        <li>lon-min: {formatCoord(bbox[0])}</li>
+        <li>lon-max: {formatCoord(bbox[1])}</li>
+        <li>lat-min: {formatCoord(bbox[2])}</li>
+        <li>lat-max: {formatCoord(bbox[3])}</li>
         <li>start-date: {formatValue(startDate)}</li>
         <li>end-date: {formatValue(endDate)}</li>
       </ul>
