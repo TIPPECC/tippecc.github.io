@@ -16,35 +16,39 @@ export let startingExtent: [number, number, number, number];
 
 $: boundingBox = [...aoiInput];
 
-$: if (map_exists && extent && aoiInput.every(v => v !== null && !isNaN(v))) {
-    const extent4326 = [
-        aoiInput[0], // lon-min
-        aoiInput[2], // lat-min
-        aoiInput[1], // lon-max
-        aoiInput[3]  // lat-max
-    ];
-    const extent3857 = transformExtent(extent4326, 'EPSG:4326', 'EPSG:3857');
-    extent.setExtent(extent3857);
-}
-// makesure min is always smaller than max
-$: if (aoiInput[0] !== null && aoiInput[1] !== null && aoiInput[0] > aoiInput[1]) {
-    aoiInput[1] = aoiInput[0];
-}
-$: if (aoiInput[2] !== null && aoiInput[3] !== null && aoiInput[2] > aoiInput[3]) {
-    aoiInput[3] = aoiInput[2];
-}
-// restrict to starting extent
-$: if (aoiInput[0] !== null && aoiInput[0] < startingExtent[0]) {
-    aoiInput[0] = startingExtent[0];
-}
-$: if (aoiInput[1] !== null && aoiInput[1] > startingExtent[2]) {
-    aoiInput[1] = startingExtent[2];
-}
-$: if (aoiInput[2] !== null && aoiInput[2] < startingExtent[1]) {
-    aoiInput[2] = startingExtent[1];
-}
-$: if (aoiInput[3] !== null && aoiInput[3] > startingExtent[3]) {
-    aoiInput[3] = startingExtent[3];
+function validateInput() {
+    // makesure min is always smaller than max
+    if (aoiInput[0] !== null && aoiInput[1] !== null && aoiInput[0] > aoiInput[1]) {
+        aoiInput[1] = aoiInput[0];
+    }
+    if (aoiInput[2] !== null && aoiInput[3] !== null && aoiInput[2] > aoiInput[3]) {
+        aoiInput[3] = aoiInput[2];
+    }
+    // restrict to starting extent
+    if (aoiInput[0] !== null && (aoiInput[0] < startingExtent[0]|| aoiInput[0] > startingExtent[2])) {
+        aoiInput[0] = startingExtent[0];
+    }
+    if (aoiInput[1] !== null && (aoiInput[1] > startingExtent[2] || aoiInput[1] < startingExtent[0])) {
+        aoiInput[1] = startingExtent[2];
+    }
+    if (aoiInput[2] !== null && (aoiInput[2] < startingExtent[1] || aoiInput[2] > startingExtent[3])) {
+        aoiInput[2] = startingExtent[1];
+    }
+    if (aoiInput[3] !== null && (aoiInput[3] > startingExtent[3] || aoiInput[3] < startingExtent[1])) {
+        aoiInput[3] = startingExtent[3];
+    }
+
+
+    if (map_exists && extent && aoiInput.every(v => v !== null && !isNaN(v))) {
+        const extent4326 = [
+            aoiInput[0], // lon-min
+            aoiInput[2], // lat-min
+            aoiInput[1], // lon-max
+            aoiInput[3]  // lat-max
+        ];
+        const extent3857 = transformExtent(extent4326, 'EPSG:4326', 'EPSG:3857');
+        extent.setExtent(extent3857);
+    }
 }
 
 // $: aoiInput = aoiInput.map(v =>
@@ -57,7 +61,18 @@ function toggleContent() {
     showContent = !showContent;
 }
 
-
+function changeExtant() {
+            // [minx, miny, maxx, maxy]
+            if (extent.getExtent() === null) {
+                aoiInput = [null, null, null, null];
+            }else {
+                var lon_lat_extent = transformExtent(extent.getExtent(), 'EPSG:3857', 'EPSG:4326');
+                aoiInput[0] = lon_lat_extent[0]
+                aoiInput[1] = lon_lat_extent[2]
+                aoiInput[2] = lon_lat_extent[1]
+                aoiInput[3] = lon_lat_extent[3]
+            }
+        }
 function clearForm() {
     aoiInput = [null, null, null, null];
     startDate = '';
@@ -69,14 +84,8 @@ function clearForm() {
         map.removeInteraction(extent);
         extent = new ExtentInteraction({ condition: shiftKeyOnly });
 		map.addInteraction(extent);
-        extent.on('extentchanged', function () {
-            // [minx, miny, maxx, maxy]
-            var lon_lat_extent = transformExtent(extent.getExtent(), 'EPSG:3857', 'EPSG:4326');
-            aoiInput[0] = lon_lat_extent[0]
-            aoiInput[1] = lon_lat_extent[2]
-            aoiInput[2] = lon_lat_extent[1]
-            aoiInput[3] = lon_lat_extent[3]
-        });
+        extent.on('extentchanged', changeExtant
+        );
         // extent.setExtent(null); // entfernt die Bounding Box von der Karte
     }
 }
@@ -116,17 +125,9 @@ function clearForm() {
 			extent = new ExtentInteraction({ condition: shiftKeyOnly });
 			map.addInteraction(extent);
 			map_exists = true;
-
-			extent.on('extentchanged', function () {
-				// [minx, miny, maxx, maxy]
-				var lon_lat_extent = transformExtent(extent.getExtent(), 'EPSG:3857', 'EPSG:4326');
-                aoiInput[0] = lon_lat_extent[0]
-                aoiInput[1] = lon_lat_extent[2]
-                aoiInput[2] = lon_lat_extent[1]
-                aoiInput[3] = lon_lat_extent[3]
-			});
-		}
-	}
+			extent.on('extentchanged',changeExtant)
+        }
+    }
 </script>
 
 <div class="card">
@@ -159,6 +160,7 @@ function clearForm() {
                         step="0.01"
                         placeholder="lon-min"
                         bind:value={aoiInput[0]}
+                        on:blur={validateInput}
                     />
                     <label class="mb-1 text-sm font-medium">Lon (max):</label>
                     <input
@@ -167,6 +169,7 @@ function clearForm() {
                         step="0.01"
                         placeholder="lon-max"
                         bind:value={aoiInput[1]}
+                        on:blur={validateInput}
                     />
                     <label class="mb-1 text-sm font-medium">Lat (min):</label>
                     <input
@@ -175,6 +178,7 @@ function clearForm() {
                         step="0.01"
                         placeholder="lat-min"
                         bind:value={aoiInput[2]}
+                        on:blur={validateInput}
                     />
                     <label class="mb-1 text-sm font-medium">Lat (max):</label>
                     <input
@@ -183,6 +187,7 @@ function clearForm() {
                         step="0.01"
                         placeholder="lat-max"
                         bind:value={aoiInput[3]}
+                        on:blur={validateInput}
                     />
                 </div>
                 <div class="flex flex-col gap-2 mt-4">
