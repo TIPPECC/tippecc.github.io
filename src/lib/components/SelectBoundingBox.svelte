@@ -35,16 +35,16 @@ $: if (aoiInput[2] !== null && aoiInput[3] !== null && aoiInput[2] > aoiInput[3]
 }
 // restrict to starting extent
 $: if (aoiInput[0] !== null && aoiInput[0] < startingExtent[0]) {
-    aoiInput[0] = startingExtent[1];
+    aoiInput[0] = startingExtent[0];
 }
 $: if (aoiInput[1] !== null && aoiInput[1] > startingExtent[2]) {
-    aoiInput[1] = startingExtent[3];
+    aoiInput[1] = startingExtent[2];
 }
 $: if (aoiInput[2] !== null && aoiInput[2] < startingExtent[1]) {
-    aoiInput[2] = startingExtent[0];
+    aoiInput[2] = startingExtent[1];
 }
 $: if (aoiInput[3] !== null && aoiInput[3] > startingExtent[3]) {
-    aoiInput[3] = startingExtent[2];
+    aoiInput[3] = startingExtent[3];
 }
 
 // $: aoiInput = aoiInput.map(v =>
