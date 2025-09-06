@@ -2,12 +2,17 @@
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
 	import selected from '$lib/icons/select-multiple-svgrepo-com.svg';
+	import SelectBoundingBox from '$lib/components/SelectBoundingBox.svelte';
 
 	export var filter: string = '';
 	export var foldertype: string = 'CORDEX_raw_ind';
 	export let filter_by_status: string = 'public';
 	console.log('Status: ', filter_by_status);
 	let current_category: string = foldertype.split('_')[0];
+	export let bbox = [null, null, null, null];
+	export let startDate = '';
+	export let endDate = '';
+	let showBoundingBox = false;
 
 	//set_filter(current_category);
 
@@ -17,7 +22,7 @@
 		description: string;
 		citation: string;
 		header_regex: string;
-		lineage: string;
+		lineage?: string;
 		status: string;
 	}[] = folder_types;
 	const foldertypes_full = foldertypes;
@@ -61,12 +66,12 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class="bg-surface-600 z-30" >
-	<div class="pl-4 pb-2 bg-surface-700">
-		<div class="mb-4 mt-2 text-lg font-semibold">
-			<h3>1. Model Family</h3>
+<div class="bg-surface-600 z-30 ml-2">
+	<div class="pl-2 pb-2 bg-surface-700">
+		<div class="mb-1 mt-2 text-lg">
+			<h3>1. Climate Model / Region</h3>
 
-			<div class="text-sm ml-2">Select the model family you want to explore.</div>
+			<div class="text-sm ml-2">Select the climate model or region you want to explore.</div>
 			<div class="flow gap-2 items-center">
 				{#each categories as cat}
 					<button
@@ -80,16 +85,20 @@
 					>
 				{/each}
 			</div>
+			<div class="text-sm ml-2 italic mt-2">
+				(GCM: Global Climate Model RCM: Regional Climate Model)
+			</div>
 		</div>
 	</div>
-	<div class="pl-4 pr-4 pb-2 bg-surface-700 mt-2">
-		<div class="mb-4 mt-2 text-lg font-semibold">
-			<h3>2. Type of Dataset</h3>
+	<div class="pl-2 pr-4 pb-2 bg-surface-700 mt-2">
+		<div class="mb-1 mt-2 text-lg">
+			<h3>2. Dataset Processing Level, Type & Aggregation</h3>
+
 			<div class="text-sm ml-2 pb-2">
-				Select the type of data you want to explore. Raw (model output) or bias-adjusted. Variables or
-				indicators. Σ contain yearly, monthly, and seasonal aggregates as well as averages over
-				20/30-year periods.
+				Select the processing level: raw (model output) / bias-adjusted of data you want to explore,
+				as well as the type (variables or indicators) and aggregation.
 			</div>
+
 			{#each foldertypes as ftype}
 				<button
 					type="button"
@@ -102,13 +111,45 @@
 				>
 			{/each}
 		</div>
+		<div class="text-sm ml-2 italic mt-2">
+			(Σ contain yearly, monthly, and seasonal aggregates as well as averages over 20/30-year
+			periods)
+		</div>
+	</div>
+	<div class="pl-2 pr-4 pb-2 bg-surface-700 mt-2 hidden md:block">
+		<div class="mb-1 mt-2 text-lg" id="download-extent">
+			<h3>3. Download Extent</h3>
+
+			<div class="text-sm ml-2 pb-2">Set the spatial and/or temporal extent for your download.</div>
+			<button
+				type="button"
+				class="btn-sm bg-[#b05803] m-1 text-lg rounded-md hover:bg-tertiary-500"
+				on:click={() => (showBoundingBox = !showBoundingBox)}
+			>
+				{showBoundingBox ? 'Hide' : 'Show'} Bounding Box & Time Selection
+			</button>
+			{#if showBoundingBox}
+				<SelectBoundingBox
+					bind:boundingBox={bbox}
+					bind:startDate
+					bind:endDate
+					startingExtent={JSON.parse(
+						foldertypes.find((x) => x.key == foldertype)?.bbox
+							? foldertypes.find((x) => x.key == foldertype)?.bbox
+							: '[10, -35, 51, -5]'
+					)}
+				/>
+			{/if}
+		</div>
+		<div class="text-sm ml-2 italic mt-2" />
 	</div>
 </div>
-<div class="mt-6">
+
+<div class="mt-6 w-[50%] border-t-2 border-white pt-1 border-l-2">
 	<div class="flex ml-2">
 		<span><img src={selected} alt="..." width="30px" class="mr-1" /></span>
 		<h1 class="h4">
-			{foldertypes.find((x) => x.key == foldertype)?.display_name ?? 'Please select'}
+			Selected: {foldertypes.find((x) => x.key == foldertype)?.display_name ?? 'Please select'}
 		</h1>
 	</div>
 	<li class="text-sm ml-10">

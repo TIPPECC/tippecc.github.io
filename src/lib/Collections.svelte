@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
 	import { onMount, tick } from 'svelte';
 	import { API_URL } from '../app.config';
 	import {
@@ -7,15 +8,9 @@
 	} from '$lib/fetch_folder_content';
 	import { browser } from '$app/environment';
 	import { tempresult_selection } from '../routes/store/tempresult_store';
-	import { goto } from '$app/navigation';
-	import networking from '$lib/icons/networking-collaboration-svgrepo-com.svg';
 	import FolderTree from '$lib/icons/folder_tree.svelte';
-	import FileQuestion from '$lib/icons/file_question.svelte';
 	import Earth from '$lib/icons/earth.svelte';
-	import XDisabled from '$lib/icons/x_disabled.svelte';
-	import SquareCaretDown from '$lib/icons/square_caret_down.svelte';
 	import Download from '$lib/icons/download.svelte';
-	import CircleQuestion from '$lib/icons/circle_question.svelte';
 	import FoldertypeChooser from '$lib/tempresults/folderytpe_chooser.svelte';
 	import CaretDown from '$lib/icons/caret_down.svelte';
 	import CaretRight from '$lib/icons/caret_right.svelte';
@@ -23,18 +18,23 @@
 	import magnifier from '$lib/icons/magnifier-svgrepo-com.svg';
 	import list from '$lib/icons/list-ul-alt-svgrepo-com.svg';
 	import Process from '$lib/icons/start-process.svelte';
-	import File from '$lib/icons/file-text.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
 	import folder_types from '$lib/tempresults/folder_types.json';
-	import RecursiveDisplay from '$lib/RecursiveDisplay.svelte';
 	import FileDetails from '$lib/FileDetails.svelte';
-	import StartProcess from './icons/start-process.svelte';
 	import FileText from '$lib/icons/file-text.svelte';
-	import SelectBoundingBox from './components/SelectBoundingBox.svelte';
+	import Sidebar from '$lib/Sidebar.svelte';
+
+	// Store for date and bbox selection
+	export const selectionStore = writable({
+		startDate: '',
+		endDate: '',
+		bbox: [null, null, null, null]
+	});
 
 	export let filter_by_status = '';
 	console.log('Status: ', filter_by_status);
+
 	type FileinfoFormat = {
 		fileversion: string;
 		num_bands: number;
@@ -71,6 +71,9 @@
 		[key: string]: CatfolderItem;
 	}
 
+	// Sidebar visibility
+	let sidebarVisible_ = true;
+
 	// folder_data ... filenames of the target backend folder
 	let folder_data: Array<FileinfoFormat> = [];
 	let cat_folder_data: CatFormat = {};
@@ -87,22 +90,22 @@
 	let query_parameter: any[] = [];
 	let geo_data: any = [];
 	let query = '';
-	let sidebarOpen = false;
 
 	let url = '';
 	let scroll_to_key = 1;
-	let tabSet: number = 0;
-	let in_main_page = true;
-	let varButtonHight: number;
-    // Variable for bounding box selection
-    let bbox = [null, null, null, null];
 
-    // Variables for date selection
-    let startDate = '';
-    let endDate = '';
+	let varButtonHight: number;
+	// Variable for bounding box selection
+	let bbox = [null, null, null, null];
+
+	$: selectionStore.set({ startDate, endDate, bbox });
+
+	// Variables for date selection
+	$: startDate = '';
+	$: endDate = '';
 
 	function formatBbox(bbox) {
-		return bbox.map(coord => coord.toFixed(2));
+		return bbox.map((coord) => coord.toFixed(2));
 	}
 
 	let isSmallScreen = false;
@@ -112,12 +115,11 @@
 	}
 
 	$: add2FileDownloadUrl = (() => {
-
 		// Check if start and end dates are provided
 		const hasDates = startDate && endDate;
 
 		// Check if the bounding box is valid (no null values)
-		const hasBbox = bbox.every(v => v !== null);
+		const hasBbox = bbox.every((v) => v !== null);
 
 		// Case 1: Dates provided but no valid bounding box
 		if (hasDates && !hasBbox) {
@@ -211,8 +213,8 @@
 
 	onMount(() => {
 		checkHeight();
-		window.addEventListener("resize", checkHeight);
-		return () => window.removeEventListener("resize", checkHeight);
+		window.addEventListener('resize', checkHeight);
+		return () => window.removeEventListener('resize', checkHeight);
 	});
 
 	function check_mobile() {
@@ -332,11 +334,11 @@
 	async function handle_checkbox_submit() {
 		const custom_url = API_URL + '/climate/select_temp_urls?type=' + foldertype;
 		let checked_boxes = [];
-		let customn_area_bool = false
+		let customn_area_bool = false;
 		let additional_options = '';
-		if (filetype == 'nc_custom'){
+		if (filetype == 'nc_custom') {
 			customn_area_bool = true;
-			requested_filetype  = 'nc'
+			requested_filetype = 'nc';
 		} else {
 			customn_area_bool = false;
 			requested_filetype = filetype;
@@ -362,18 +364,20 @@
 				checked_boxes.push([requested_filename, requested_filetype]);
 			}
 		}
-		if(customn_area_bool){
-			additional_options = add2FileDownloadUrl
+		if (customn_area_bool) {
+			additional_options = add2FileDownloadUrl;
 		}
-		const request_body = JSON.stringify({boxes: checked_boxes, additional_options: additional_options});
+		const request_body = JSON.stringify({
+			boxes: checked_boxes,
+			additional_options: additional_options
+		});
 
 		// SEND REQUEST
 		try {
 			const res = await fetch(custom_url, {
-			method: 'POST',
-			body: request_body
+				method: 'POST',
+				body: request_body
 			});
-
 
 			let result = [];
 			if (!res.ok) {
@@ -723,6 +727,8 @@
 		for (let i = 0; i < aggregation.length; i++) {
 			aggregation[i].show = 'false';
 		}
+		// set search_aggregation to '_'
+		search_aggregation = '_';
 	}
 
 	let filetype = 'nc';
@@ -760,190 +766,25 @@
 		}
 		return variable;
 	}
-  // fallback for empty/invalid values
-  function formatValue(value) {
-    if (value === null || value === undefined || value === "" || value === "_") {
-      return "-";
-    }
-    return value;
-  }
-
-  // format coordinates with 2 decimals or fallback
-  function formatCoord(value) {
-    if (value === null || value === undefined || isNaN(value)) {
-      return "-";
-    }
-    return Number(value).toFixed(2);
-  }
 </script>
 
-
 <div class="grid grid-cols-[auto_1fr]">
-
-<!-- Burger button (only mobile) -->
-<button
-  class="md:hidden fixed top-9 left-0 z-20 bg-gray-800 text-white p-2 rounded"
-  on:click={toggleMenu}
->
-  {#if menuOpen}
-    ✕
-  {:else}
-    ☰
-  {/if}
-</button>
-	<!-- Sidebar --> 
-<aside
-  class={`fixed md:sticky md:top-0 top-9 left-0 z-10 h-full w-64 bg-surface-900 text-white p-4 transform transition-transform duration-300 
-          ${menuOpen ? "translate-x-0" : "-translate-x-full"} ${isSmallScreen && "overflow-y-auto"} md:translate-x-0 md:static md:h-screen`}
->
-	<div class="md:hidden mb-5" /> <!-- Spacer for mobile to avoid overlap with burger button -->
-	<h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-4">
-		Workflow Overview
-	</h2>
-	<nav class="space-y-4">
-    <!-- Step 1 -->
-    <div class="relative group">
-      <div class="flex items-center space-x-2">
-        <a href="#collection" class="font-semibold hover:underline">
-          1. Choose Collection
-        </a>
-		{#if ! isSmallScreen}
-			<span
-			class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-600 text-xs cursor-pointer"
-			>
-			?
-			</span>
+	<!-- Burger button (only mobile) 
+	<button
+		class="md:hidden fixed top-9 left-0 z-20 bg-gray-800 text-white p-2 rounded"
+		on:click={toggleMenu}
+	>
+		{#if menuOpen}
+			✕
+		{:else}
+			☰
 		{/if}
-      </div>
-      <div
-        class="absolute left-full top-0 ml-2 hidden group-hover:block 
-               bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
-      >
-        Select the data collection you want to browse.
-      </div>
-      <p class="text-sm text-gray-300 mt-1">Selected: {formatValue(foldertype)}</p>
-    </div>
+	</button>-->
+	<!-- Sidebar -->
 
-    <!-- Step 2 -->
-    <div class="relative group">
-      <div class="flex items-center space-x-2">
-        <a href="#filter" class="font-semibold hover:underline">
-          2. Dataset Filters
-        </a>
-		{#if ! isSmallScreen}
-			<span
-			class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-600 text-xs cursor-pointer"
-			>
-			?
-			</span>
-		{/if}
-      </div>
-      <div
-        class="absolute left-full top-0 ml-2 hidden group-hover:block  pointer-events-none
-               bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
-      >
-        Narrow down the dataset using variables names, time range and aggregation level.
-      </div>
-      <ul class="ml-4 text-sm text-gray-300 list-disc mt-1">
-        <li>variable: {formatValue(search_term)}</li>
-        <li>time: {formatValue(search_time)}</li>
-        <li>aggregation: {formatValue(search_aggregation)}</li>
-      </ul>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="relative group">
-      <div class="flex items-center space-x-2">
-        <a href="#clipping" class="font-semibold hover:underline">
-          3. Customize Datasets
-        </a>
-		{#if ! isSmallScreen}
-			<span
-			class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-600 text-xs cursor-pointer"
-			>
-			?
-			</span>
-		{/if}
-      </div>
-      <div
-        class="absolute left-full top-0 ml-2 hidden group-hover:block 
-               bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
-      >
-        Define spatial and temporal boundaries for your datasets. 
-		Those options will be applied during nc format single file download or wget download (Select nc (custom area and time) for it).
-      </div>
-      <ul class="ml-4 text-sm text-gray-300 list-disc mt-1">
-        <li>lon-min: {formatCoord(bbox[0])}</li>
-        <li>lon-max: {formatCoord(bbox[1])}</li>
-        <li>lat-min: {formatCoord(bbox[2])}</li>
-        <li>lat-max: {formatCoord(bbox[3])}</li>
-        <li>start-date: {formatValue(startDate)}</li>
-        <li>end-date: {formatValue(endDate)}</li>
-      </ul>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="relative group">
-      <div class="flex items-center space-x-2">
-        <a href="#datasets" class="font-semibold hover:underline">
-          4. Browse Datasets
-        </a>
-		{#if ! isSmallScreen}
-			<span
-			class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-600 text-xs cursor-pointer"
-			>
-			?
-			</span>
-		{/if}
-      </div>
-      <div
-        class="absolute left-full top-0 ml-2 hidden group-hover:block 
-               bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
-      >
-        Browse all available files that fits your requirements. 
-		Use this section for single file downloads, visualization and meta data and provenance information.
-      </div>
-      <p class="text-sm text-gray-300 mt-1">
-		{(Array.isArray(folder_data) ? folder_data : [])
-		.map(file_obj => file_obj.filename)
-		.filter(filename =>
-			[search_term, search_time, search_aggregation]
-			.filter(term => term && term !== "")
-			.every(term => filename.toLowerCase().includes(term.toLowerCase()))
-		).length} files found
-      </p>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="relative group">
-      <div class="flex items-center space-x-2">
-        <a href="#wget" class="font-semibold hover:underline">
-          5. Download With Wget
-        </a>
-		{#if ! isSmallScreen}
-			<span
-			class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-600 text-xs cursor-pointer"
-			>
-			?
-			</span>
-		{/if}
-      </div>
-      <div
-        class="absolute left-full top-0 ml-2 hidden group-hover:block 
-               bg-black text-white text-xs rounded px-2 py-1 shadow-lg z-10 max-w-[200px]"
-      >
-        Copy the wget command to download your selected files.
-      </div>
-      <p class="text-sm text-gray-300 mt-1">
-        files selected: {selected_files.filter((v) => v == true).length} <br />
-		format: {filetype}
-      </p>
-    </div>
-  </nav>
-</aside>
-
-
-	<main class="col-span-1 bg-surface-600 p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]">
+	<main
+		class="col-span-1 bg-surface-600 p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
+	>
 		<div class=" bg-surface-600 p-4">
 			<div class="flex">
 				<h1 class="content-heading">Available Collections</h1>
@@ -951,26 +792,42 @@
 					<FolderTree />
 				</div>
 			</div>
-			<div class="p-2 mb-2 ml-2">
-				The Climate Services Gateway (CSG) is a platform that provides access to high resolution climate
-				projections and analysis ready data for the southern African region. The Gateway development is
-				still ongoing as well as the processing of datasets. Here you can explore the available
-				collections of datasets by model family or region.<br />
+			<div class="p-2 mb-2">
+				The Climate Services Gateway (CSG) is a platform that provides access to high resolution
+				climate projections and analysis ready data for the southern African region. The Gateway
+				development is still ongoing as well as the processing of datasets. Here you can explore the
+				available collections of datasets by climate model or region.<br />
 				<br />Please report issues and feedback
 				<span class="text-bold underline"
-					><a href="https://github.com/TIPPECC/tippecc.github.io/issues" target="_blank">here</a></span
+					><a href="https://github.com/TIPPECC/tippecc.github.io/issues" target="_blank">here</a
+					></span
 				>.
 			</div>
 			<section id="collection" />
 			<FoldertypeChooser
+				bind:startDate
+				bind:endDate
+				bind:bbox
 				bind:foldertype
 				bind:filter
 				bind:filter_by_status
 				on:foldertype_changed={() => refresh_foldercontent(false)}
 			/>
+			{#if filter_by_status == 'internal'}
+				<div class="ml-2 mt-2">
+					<button
+						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+						on:click={() => refresh_foldercontent(true)}
+						type="button"
+						title="Force update the folder content by re-scanning the backend folder"
+					>
+						Force Update
+					</button>
+				</div>
+			{/if}
 			<br />
 			<section id="filter" />
-			<div class="flex gap-2">
+			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Dataset Filters</h4>
 				<img src={magnifier} alt="..." width="20px" />
 				<!--<button
@@ -982,16 +839,6 @@
 				</button>-->
 			</div>
 
-			{#if filter_by_status == 'internal'}
-				<div class="ml-10 mt-2">
-					<button
-						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click={() => refresh_foldercontent(true)}
-					>
-						Force Update
-					</button>
-				</div>
-			{/if}
 			{#if variables.length > 0}
 				<div
 					class="grid gap-2 justify-start items-center ml-2 grid-cols-[repeat(auto-fit,minmax(120px,_120px))]"
@@ -1010,7 +857,7 @@
 				</div>
 			{/if}
 			<div class="p2">
-				<div class="relative w-full">
+				<div class="relative w-full ml-2">
 					<input
 						class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
 						type="text"
@@ -1031,7 +878,8 @@
 					<div class="flow gap-2 items-center ml-2">
 						<!--check if one entry has show is true-->
 						{#if abs_change.some((variable) => variable.show == 'true')}
-							<span class="mr-3">⏳ Δ- ⟶⌛:</span>
+							<!-- <span class="mr-3">⏳ Δ- ⟶⌛:</span> -->
+							<span class="mr-3">⏳ Δ :</span>
 						{/if}
 
 						{#each abs_change as variable}
@@ -1049,7 +897,8 @@
 					<div class="flow gap-2 items-center ml-2">
 						<!--check if one entry has show is true-->
 						{#if twenty_years_period.some((variable) => variable.show == 'true')}
-							⏳ 20y ⟶ ⌛:
+							<!-- ⏳ 20y ⟶ ⌛: -->
+							⏳ 20y:
 							<button
 								class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
 								'20y'
@@ -1074,7 +923,8 @@
 					<div class="flow gap-2 items-center ml-2">
 						<!--check if one entry has show is true-->
 						{#if thirty_years_period.some((variable) => variable.show == 'true')}
-							⏳ 30y ⟶ ⌛:
+							<!-- ⏳ 30y ⟶ ⌛: -->
+							⏳ 30y:
 							<button
 								class="w-[120px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
 								'30y'
@@ -1116,34 +966,34 @@
 				</div>
 			{/if}
 			<!-- Date selection column -->
-			<br>
+			<br />
 			<section id="clipping" />
-			<SelectBoundingBox bind:boundingBox={bbox} bind:startDate={startDate} bind:endDate={endDate} startingExtent={[10,-35,51,-5]}/>
+
 			<section id="datasets" />
-			<div class="flex gap-2 mt-6">
+			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Filtered Datasets</h4>
 				<img src={list} alt="..." width="20px" />
 			</div>
-			<div class="flex flex-wrap gap-4 p-2">
-				<div>
-					<button
-						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click={() => expand_all_categories()}
-					>
-						<CaretRight /> &nbsp; Expand All
-					</button>
-				</div>
-				<div>
-					<button
-						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click={() => close_all_categories()}
-					>
-						<CaretDown /> &nbsp; Close All
-					</button>
-				</div>
-			</div>
 
 			{#if folder_data.length > 0}
+				<div class="flex flex-wrap gap-4 p-2">
+					<div>
+						<button
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							on:click={() => expand_all_categories()}
+						>
+							<CaretRight /> &nbsp; Expand All
+						</button>
+					</div>
+					<div>
+						<button
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							on:click={() => close_all_categories()}
+						>
+							<CaretDown /> &nbsp; Close All
+						</button>
+					</div>
+				</div>
 				<div class="p-2">
 					{#each Object.entries(cat_folder_data) as [folder_cat, cat_obj], cat_counter}
 						<div
@@ -1255,7 +1105,8 @@
 														<button
 															class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
 															title="Show metadata and provenance information"
-															on:click={() => (folder_data[file_obj.index]['metadata_show'] = false)}
+															on:click={() =>
+																(folder_data[file_obj.index]['metadata_show'] = false)}
 														>
 															<FileText />
 															Hide
@@ -1351,7 +1202,9 @@
 																			class="flex"
 																		> -->
 																	<Process />
-																	<div class="flex place-items-center text-white justify-items-center">
+																	<div
+																		class="flex place-items-center text-white justify-items-center"
+																	>
 																		.dat
 																		<!-- </a> -->
 																	</div></button
@@ -1395,7 +1248,9 @@
 																	title="Generate TIFF file for download (might fail)"
 																>
 																	<Process />
-																	<div class="flex text-white place-items-center justify-items-center">
+																	<div
+																		class="flex text-white place-items-center justify-items-center"
+																	>
 																		.tif
 																	</div>
 																</button>
@@ -1412,7 +1267,9 @@
 																		title="Download TIFF file"
 																	>
 																		<Download />
-																		<div class="ml-1 text-white flex place-items-center justify-center">
+																		<div
+																			class="ml-1 text-white flex place-items-center justify-center"
+																		>
 																			.tif
 																		</div>
 																	</a>
@@ -1498,19 +1355,20 @@
 												</td>
 											</tr>
 											{#if !is_mobile}
-											<tr
-												class={[search_term.toLowerCase(), search_time, search_aggregation].every(
-													(term) => folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
-												)
-													? 'visible'
-													: 'hidden'}
-											>
-												{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-													<td colspan="7">
-														<FileDetails {folder_data} {file_obj} {foldertype} />
-													</td>
-												{/if}
-											</tr>
+												<tr
+													class={[search_term.toLowerCase(), search_time, search_aggregation].every(
+														(term) =>
+															folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+													)
+														? 'visible'
+														: 'hidden'}
+												>
+													{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+														<td colspan="7">
+															<FileDetails {folder_data} {file_obj} {foldertype} />
+														</td>
+													{/if}
+												</tr>
 											{/if}
 										{/each}
 									</tbody>
@@ -1544,7 +1402,8 @@
 														<button
 															class="ml-1 max-h-[33px] p-1 flex items-center justify-center variant-filled-surface hover:bg-tertiary-900 rounded-md"
 															title="Show metadata and provenance information"
-															on:click={() => (folder_data[file_obj.index]['metadata_show'] = false)}
+															on:click={() =>
+																(folder_data[file_obj.index]['metadata_show'] = false)}
 														>
 															<FileText />
 															Hide
@@ -1583,11 +1442,15 @@
 																)}
 														>
 															<Earth />
-															<div class="ml-1 flex text-white place-items-center justify-items-center">
+															<div
+																class="ml-1 flex text-white place-items-center justify-items-center"
+															>
 																View
 															</div>
 														</button>
-														<span>( ⚠ {folder_data[file_obj.index]['filesize']} are downloaded)</span>
+														<span
+															>( ⚠ {folder_data[file_obj.index]['filesize']} are downloaded)</span
+														>
 													{:else}
 														<!-- CASE 3: Tif not creatable. -->
 														<div class="flex w-full pr-2 items-center justify-center">
@@ -1598,23 +1461,23 @@
 											</div>
 										</div>
 										{#if is_mobile}
-										<div
-											class="break-all {[
-												search_term.toLowerCase(),
-												search_time,
-												search_aggregation
-											].every((term) =>
-												folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
-											)
-												? 'visible'
-												: 'hidden'}"
-										>
-											{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
-												<td colspan="7">
-													<FileDetails {folder_data} {file_obj} {foldertype} />
-												</td>
-											{/if}
-										</div>
+											<div
+												class="break-all {[
+													search_term.toLowerCase(),
+													search_time,
+													search_aggregation
+												].every((term) =>
+													folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+												)
+													? 'visible'
+													: 'hidden'}"
+											>
+												{#if folder_data[file_obj.index]['metadata'] && folder_data[file_obj.index]['metadata_show']}
+													<td colspan="7">
+														<FileDetails {folder_data} {file_obj} {foldertype} />
+													</td>
+												{/if}
+											</div>
 										{/if}
 									{/each}
 								</div>
@@ -1622,34 +1485,32 @@
 						</div>
 					{/each}
 				</div>
-				<section id="wget" />
-				<div class="flex flex-wrap gap-4 p-2">
-				<div>
-					<button
-						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click={() => select_all_files()}
-					>
-						<SquareCheckmark /> &nbsp; Select All
-					</button>
-				</div>
-				<div>
-					<button
-						class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click={() => unselect_all_files()}
-					>
-						<SquareEmpty /> &nbsp; Unselect All
-					</button>
-				</div>
-				</div>
-				<div class="flex gap-x-1 pl-2 hidden md:block">
-					<button
-						type="button"
-						class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
-						on:click|preventDefault={handle_checkbox_submit}
-						>Generate Wget link for download ({selected_files.filter((value) => value == true).length} selected)</button
-					>
 
-					<div class="filetype-selector flex">
+				<section id="wget" />
+
+				<div class="flex flex-wrap gap-4 p-2">
+					<div>
+						<button
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							on:click={() => select_all_files()}
+						>
+							<SquareCheckmark /> &nbsp; Select All
+						</button>
+					</div>
+					<div>
+						<button
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							on:click={() => unselect_all_files()}
+						>
+							<SquareEmpty /> &nbsp; Unselect All
+						</button>
+					</div>
+				</div>
+				<div class="flex gap-2 mt-6 w-[30%] border-t-2 border-surface-300 pt-1 border-l-2">
+					<h4 class="h4 ml-2 flex gap-2">Download with WGET<Download /></h4>
+				</div>
+				<div class="flex gap-x-1 p-2 hidden md:block">
+					<div class="filetype-selector flex pb-2">
 						<div>
 							<label>
 								<input
@@ -1715,6 +1576,15 @@
 							</label>
 						</div>
 					</div>
+
+					<button
+						type="button"
+						class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+						on:click|preventDefault={handle_checkbox_submit}
+						>Generate Wget link for download ({selected_files.filter((value) => value == true)
+							.length} selected)</button
+					>
+
 					<!-- TODO CHECKBOX -->
 					<!-- <label
 						for={'checkbox_' + file_obj.index}
@@ -1740,8 +1610,8 @@
 				<div style="display:flex">
 					<div class="bg-surface-700 border-2 rounded-md p-4 m-2">
 						{#if num_download_dropped > 0}
-							({num_download_dropped}) of your selected files were too big and are thus dropped from the
-							download.
+							({num_download_dropped}) of your selected files were too big and are thus dropped from
+							the download.
 						{/if}
 						<div class="mb-2">
 							<span> To download all selected files using Wget: </span>
@@ -1782,8 +1652,41 @@
 			</div>-->
 		</div>
 	</main>
-</div>
 
+	<!-- Sidebar -->
+
+	<aside
+		class={`fixed md:sticky md:top-0 top-9 left-0 z-10 h-full ${
+			sidebarVisible_ ? 'w-64' : 'w-6'
+		} bg-surface-900 text-white p-4 md:translate-x-0 md:static md:h-screen hidden md:block border-l-4 border-[#4472c4] transition-all duration-300`}
+		h
+	>
+		<button
+			class="absolute left-0 top-1/2 -translate-y-1/2 h-12 bg-[#4472c4] text-white rounded-r focus:outline-none z-20"
+			style="border:none; cursor:pointer;"
+			on:click={() => (sidebarVisible_ = !sidebarVisible_)}
+			aria-label="Toggle sidebar"
+		>
+			{sidebarVisible_ ? '>' : '<'}
+		</button>
+
+		{#if sidebarVisible_}
+			<Sidebar
+				{foldertype}
+				{search_term}
+				{search_time}
+				{search_aggregation}
+				{bbox}
+				{startDate}
+				{endDate}
+				{selected_files}
+				{filetype}
+				{isSmallScreen}
+				{folder_data}
+			/>
+		{/if}
+	</aside>
+</div>
 
 <style>
 	.spaced-row td {

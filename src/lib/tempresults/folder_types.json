@@ -1,21 +1,23 @@
 [
 	{
 		"key": "CORDEX_raw",
-		"display_name": "CORDEX-CORE Raw",
+		"display_name": "CORDEX-CORE Raw Variables",
 		"description": "Raw CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_raw_stat",
-		"display_name": "Σ CORDEX-CORE Raw",
+		"display_name": "Σ CORDEX-CORE Raw Variables",
 		"description": "Sum/Mean over time (20/30 years) for raw CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_raw_ind",
@@ -24,7 +26,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_raw_ind_stat",
@@ -33,25 +36,28 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_bias",
-		"display_name": "CORDEX-CORE Bias",
+		"display_name": "CORDEX-CORE Bias Adjusted Variables",
 		"description": "Bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_bias_stat",
-		"display_name": "Σ CORDEX-CORE Bias",
+		"display_name": "Σ CORDEX-CORE Bias Adjusted Variables",
 		"description": "Sum/Mean over time (20/30 years) for bias adjusted CORDEX-CORE data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_bias_ind",
@@ -60,7 +66,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_bias_ind_stat",
@@ -69,7 +76,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data with bias adjustment",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.01, -35.97, 51.81, -5.17]"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_full",
@@ -78,7 +86,8 @@
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from full indicator data for TIPPECC area",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10, -36, 52, -5]"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_slices20",
@@ -87,7 +96,8 @@
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from indicator data slices at 20 years intervals for TIPPECC area",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10, -36, 52, -5]"
 	},
 	{
 		"key": "CORDEX_LANDSURF_ind_slices30",
@@ -96,25 +106,28 @@
 		"citation": "Original Data: https://doi.org/10.58160/gGzexcbDikobkyvK",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from indicator data slices at 30 years intervals for TIPPECC area",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10, -36, 52, -5]"
 	},
 	{
 		"key": "CMIP6_raw",
-		"display_name": "CMIP6 Raw",
+		"display_name": "CMIP6 Raw Variables",
 		"description": "CMIP6 raw data for TIPPECC area",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
 	},
 	{
 		"key": "CMIP6_raw_stat",
-		"display_name": "Σ CMIP6 Raw",
+		"display_name": "Σ CMIP6 Raw Variables",
 		"description": "Sum/Mean over time (20/30 years) for CMIP6 raw data",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
 	},
 	{
 		"key": "CMIP6_raw_ind",
@@ -123,7 +136,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
 	},
 	{
 		"key": "CMIP6_raw_ind_stat",
@@ -132,7 +146,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CMIP6 data",
-		"status": "public"
+		"status": "public",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
 	},
 	{
 		"key": "CCAM_raw",
@@ -140,7 +155,8 @@
 		"description": "CCAM raw data for TIPPECC area",
 		"citation": "",
 		"header_regex": "",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "CCAM_raw_ind",
@@ -148,7 +164,8 @@
 		"description": "CCAM raw data for TIPPECC area",
 		"citation": "",
 		"header_regex": "",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "CHIRPS",
@@ -157,7 +174,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "CHIRPS3",
@@ -166,7 +184,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS v3 data",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "GLEAM",
@@ -175,7 +194,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from GLEAM data",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "kariba_CORDEX",
@@ -184,7 +204,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "vaal_CORDEX",
@@ -193,7 +214,8 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "vaal_CHIRPS",
@@ -202,7 +224,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data for Vaal dam catchment",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "vaal_ERA5_LAND",
@@ -211,7 +234,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "luanginga_CORDEX",
@@ -220,16 +244,18 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
-		{
+	{
 		"key": "nwnamibia_CORDEX",
 		"display_name": "CORDEX-CORE NW Namibia",
 		"description": "CORDEX-CORE data for north western namibia research area",
 		"citation": "",
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for north western namibia research area",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "kunene_ERA5_LAND",
@@ -238,7 +264,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Downloaded from CDS",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "kunene_GLEAM",
@@ -247,7 +274,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "sftlf",
@@ -256,7 +284,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "sftlf",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "orog",
@@ -265,7 +294,8 @@
 		"citation": "",
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	},
 	{
 		"key": "paper",
@@ -274,6 +304,7 @@
 		"citation": "",
 		"header_regex": "",
 		"lineage": "",
-		"status": "internal"
+		"status": "internal",
+		"bbox": "[10, -35, 51, -5"
 	}
 ]
