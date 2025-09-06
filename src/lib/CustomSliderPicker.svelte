@@ -119,7 +119,7 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-1 place-items-center">
-			{`${new Date(dateMap[+slider_index]).toDateString()} (Layer #${(+slider_index + 1)})`}
+			{`${new Date(dateMap[+slider_index]).toDateString()} (Layer #${+slider_index + 1})`}
 		</div>
 	</div>
 {/if}

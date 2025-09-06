@@ -73,13 +73,12 @@
 	export let show_in_bounds = true;
 	export let horizontal = true;
 
-	
 	let value_steps: any[] = [];
 	export let color_steps: any[] = [];
-	
+
 	const DATA_MODES = ['divergent', 'sequential', 'divergent_individual', 'categorical'];
 	export let data_mode: string = DATA_MODES[0];
-	
+
 	let original_data_mode: string = data_mode;
 	let original_color_scheme = color_scheme;
 	let original_color_scheme_key: string;
@@ -685,17 +684,20 @@
 
 <div id={frame_id} class="px-4 mt-2 {horizontal ? 'w-full' : 'w-[260px]'}">
 	<!--Buttons/Inputs-->
-	<div class="grid grid-cols-1 place-items-center variant-outline-tertiary  p-1 {horizontal ? 'grid-cols-1 w-full' : 'w-full'}">
+	<div
+		class="grid grid-cols-1 place-items-center variant-outline-tertiary p-1 {horizontal
+			? 'grid-cols-1 w-full'
+			: 'w-full'}"
+	>
 		{#each object_order as obj_element}
 			{#if obj_element == 'tools'}
-				<div class={horizontal ? 'flex w-full place-items-center ' : 'pt-3 flex'}  >
-
+				<div class={horizontal ? 'flex w-full place-items-center ' : 'pt-3 flex'}>
 					<div
 						class="{horizontal
 							? 'flex flex-wrap w-full text-xs font-bold place-items-center gap-x-2 justify-evenly'
 							: ''} {object_order_flip && colorbar_order_flip ? 'mt-[2px]' : ''}"
 					>
-					<!--Verticality-->
+						<!--Verticality-->
 						<div class="max-w-[120px] flex-1 {horizontal ? '' : 'mb-1'}">
 							{#if horizontal}
 								<button
@@ -704,14 +706,25 @@
 										horizontal = !horizontal;
 									}}
 									title="Switch to horizontal legend layout"
-									><span class="flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="8" y1="6" x2="21" y2="6"></line>
-    <line x1="8" y1="12" x2="21" y2="12"></line>
-    <line x1="8" y1="18" x2="21" y2="18"></line>
-    <line x1="3" y1="6" x2="3" y2="6"></line>
-    <line x1="3" y1="12" x2="3" y2="12"></line>
-    <line x1="3" y1="18" x2="3" y2="18"></line>
-</svg></span>
+									><span class="flex"
+										><svg
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<line x1="8" y1="6" x2="21" y2="6" />
+											<line x1="8" y1="12" x2="21" y2="12" />
+											<line x1="8" y1="18" x2="21" y2="18" />
+											<line x1="3" y1="6" x2="3" y2="6" />
+											<line x1="3" y1="12" x2="3" y2="12" />
+											<line x1="3" y1="18" x2="3" y2="18" />
+										</svg></span
+									>
 								</button>
 							{:else}
 								<button
@@ -720,12 +733,23 @@
 										horizontal = !horizontal;
 									}}
 									title="Switch to vertical legend layout"
-									><span class="flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="3" width="7" height="7"></rect>
-    <rect x="14" y="3" width="7" height="7"></rect>
-    <rect x="3" y="14" width="7" height="7"></rect>
-    <rect x="14" y="14" width="7" height="7"></rect>
-</svg></span>
+									><span class="flex"
+										><svg
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<rect x="3" y="3" width="7" height="7" />
+											<rect x="14" y="3" width="7" height="7" />
+											<rect x="3" y="14" width="7" height="7" />
+											<rect x="14" y="14" width="7" height="7" />
+										</svg></span
+									>
 								</button>
 							{/if}
 						</div>
@@ -756,15 +780,11 @@
 							{/if}
 						</div>
 
-
-
 						<!--Custom Min-->
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
-								<label
-									for="custom_bounds_input"
-									class="flex  p-1"
-									title="Set custom maximum bound">Custom Min:</label
+								<label for="custom_bounds_input" class="flex p-1" title="Set custom maximum bound"
+									>Custom Min:</label
 								>
 							</nobr>
 							<input
@@ -777,10 +797,8 @@
 						<!--Custom Max-->
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
-								<label
-									for="custom_bounds_input"
-									class="flex  p-1"
-									title="Set custom maximum bound">Custom Max:</label
+								<label for="custom_bounds_input" class="flex p-1" title="Set custom maximum bound"
+									>Custom Max:</label
 								>
 							</nobr>
 							<input
@@ -793,7 +811,7 @@
 						<!--Steps-->
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
-								<div class="h-full flex-center  p-1">Steps:</div>
+								<div class="h-full flex-center p-1">Steps:</div>
 							</nobr>
 							<input
 								on:change={change_steps}
@@ -810,10 +828,7 @@
 						<!--Color Scheme-->
 						<div class={horizontal ? 'flex' : ''}>
 							<nobr>
-								<div
-									class="flex  p-1 h-full flex-center"
-									title="Select color scheme"
-								>
+								<div class="flex p-1 h-full flex-center" title="Select color scheme">
 									Color Scheme:
 								</div>
 							</nobr>
@@ -865,7 +880,7 @@
 				<!--Color Gradient-->
 			{:else if obj_element == 'colors'}
 				<div
-					class="grid grid-cols-1 	{horizontal ? 'grid-cols-1 pt-2' : 'grid-cols-[40px_40px] p-1'}
+					class="grid grid-cols-1 {horizontal ? 'grid-cols-1 pt-2' : 'grid-cols-[40px_40px] p-1'}
 						{object_order_flip ? '' : 'mt-1'}
 						place-items-center"
 				>
@@ -958,8 +973,9 @@
 													{:else if Math.floor(value_steps.length / 2) - 2 == i || i == Math.floor(value_steps.length / 2)}
 														{#if data_mode != 'sequential'}
 															<div
-																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																	8}px;"
+																style="width: {crect_w}px; padding-left: {Math.floor(
+																	crect_w / 2.0
+																) - 8}px;"
 															>
 																{value.toFixed(num_digits)}
 															</div>
@@ -969,8 +985,9 @@
 													{:else if i == Math.floor(value_steps.length / 2) - 1}
 														{#if data_mode != 'sequential'}
 															<div
-																style="width: {crect_w}px; padding-left: {Math.floor(crect_w / 2.0) -
-																	8}px;"
+																style="width: {crect_w}px; padding-left: {Math.floor(
+																	crect_w / 2.0
+																) - 8}px;"
 															>
 																&nbsp;&nbsp;|
 															</div>

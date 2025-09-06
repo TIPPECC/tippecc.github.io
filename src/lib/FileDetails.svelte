@@ -18,31 +18,39 @@
 
 <div class="bg-surface-700">
 	<div class="flex flex-wrap items-center gap-2 w-full">
-	<TabGroup class="flex flex-wrap gap-2 grow">
-		<Tab bind:group={tabSet} name="tab1" value={0}>
-			<svelte:fragment slot="lead" />
-			<span class={tabSet === 0 ? 'font-bold' : ''}>Metadata</span>
-		</Tab>
-		<Tab bind:group={tabSet} name="tab2" value={1}><span class={tabSet === 1 ? 'font-bold' : ''}>Related Datasets</span></Tab>
-		<Tab bind:group={tabSet} name="tab3" value={2}><span class={tabSet === 2 ? 'font-bold' : ''}>Provenance</span></Tab>
-		<Tab bind:group={tabSet} name="tab4" value={3}><span class={tabSet === 3 ? 'font-bold' : ''}>Citation</span></Tab>
-		{#if folder_data[file_obj.index]['tif_convertable']}
-			<Tab bind:group={tabSet} name="tab5" value={4}><span class={tabSet === 4 ? 'font-bold' : ''}>Map</span></Tab>
+		<TabGroup class="flex flex-wrap gap-2 grow">
+			<Tab bind:group={tabSet} name="tab1" value={0}>
+				<svelte:fragment slot="lead" />
+				<span class={tabSet === 0 ? 'font-bold' : ''}>Metadata</span>
+			</Tab>
+			<Tab bind:group={tabSet} name="tab2" value={1}
+				><span class={tabSet === 1 ? 'font-bold' : ''}>Related Datasets</span></Tab
+			>
+			<Tab bind:group={tabSet} name="tab3" value={2}
+				><span class={tabSet === 2 ? 'font-bold' : ''}>Provenance</span></Tab
+			>
+			<Tab bind:group={tabSet} name="tab4" value={3}
+				><span class={tabSet === 3 ? 'font-bold' : ''}>Citation</span></Tab
+			>
+			{#if folder_data[file_obj.index]['tif_convertable']}
+				<Tab bind:group={tabSet} name="tab5" value={4}
+					><span class={tabSet === 4 ? 'font-bold' : ''}>Map</span></Tab
+				>
+			{/if}
+		</TabGroup>
+		{#if folder_data[file_obj.index]['metadata_exists']}
+			<div class="ml-auto">
+				<a
+					href="/climate_services_gateway/file_info?type={foldertype}&filename={selected_file}"
+					class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+					style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;"
+				>
+					File Information View
+				</a>
+			</div>
 		{/if}
-</TabGroup>
- {#if folder_data[file_obj.index]['metadata_exists']}
-        <div class="ml-auto">
-            <a
-                href="/climate_services_gateway/file_info?type={foldertype}&filename={selected_file}"
-                class="px-3 p-1 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                style="margin-top: 5px; margin-right: 2px; margin-left: auto; display: block; width: max-content;"
-            >
-                File Information View
-            </a>
-        </div>
-    {/if}
-</div>
-<TabGroup>
+	</div>
+	<TabGroup>
 		<!-- Tab Panels --->
 		<svelte:fragment slot="panel">
 			{#if tabSet === 0}
@@ -70,7 +78,6 @@
 				{/if}
 			{:else if tabSet === 1}
 				{#if folder_data[file_obj.index]['metadata_prov_stats']}
-
 					<div class="bg-box" id="base_for_entities_{random_id}">
 						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
 							ℹ️ Available files based on this file
@@ -134,10 +141,10 @@
 					{/key}
 				{/if}
 			{/if}
-</svelte:fragment>
-
+		</svelte:fragment>
 	</TabGroup>
 </div>
+
 <style>
 	.text-label {
 		color: #60a5fa; /* Die gewünschte Farbe, hier entspricht es Tailwinds "text-label" */
