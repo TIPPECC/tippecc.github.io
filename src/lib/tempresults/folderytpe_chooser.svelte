@@ -24,6 +24,7 @@
 		header_regex: string;
 		lineage?: string;
 		status: string;
+		bbox?: string;
 	}[] = folder_types;
 	const foldertypes_full = foldertypes;
 	// filter out the folder types that are not relevant
@@ -134,9 +135,7 @@
 					bind:startDate
 					bind:endDate
 					startingExtent={JSON.parse(
-						foldertypes.find((x) => x.key == foldertype)?.bbox
-							? foldertypes.find((x) => x.key == foldertype)?.bbox
-							: '[10, -35, 51, -5]'
+						foldertypes.find((x) => x.key == foldertype)?.bbox ?? '[10, -35, 51, -5]'
 					)}
 				/>
 			{/if}
@@ -152,15 +151,17 @@
 			Selected: {foldertypes.find((x) => x.key == foldertype)?.display_name ?? 'Please select'}
 		</h1>
 	</div>
-	<li class="text-sm ml-10">
-		{foldertypes.find((x) => x.key == foldertype)?.description ?? 'No description available'}
-	</li>
-	<li class="text-sm ml-10">
-		{foldertypes.find((x) => x.key == foldertype)?.lineage ?? 'No lineage available'}
-	</li>
-	<li class="text-sm ml-10">
-		Cite as: {foldertypes.find((x) => x.key == foldertype)?.citation ?? 'No citation available'}
-	</li>
+	<ul class="list-disc">
+		<li class="text-sm ml-10">
+			{foldertypes.find((x) => x.key == foldertype)?.description ?? 'No description available'}
+		</li>
+		<li class="text-sm ml-10">
+			{foldertypes.find((x) => x.key == foldertype)?.lineage ?? 'No lineage available'}
+		</li>
+		<li class="text-sm ml-10">
+			Cite as: {foldertypes.find((x) => x.key == foldertype)?.citation ?? 'No citation available'}
+		</li>
+	</ul>
 </div>
 
 <style>

@@ -14,13 +14,83 @@
 	import Polygon from 'ol/geom/Polygon';
 
 	export let boundingBox = null; // [west, east, south, north]
-	let aoiInput: Array<number | null> = boundingBox || [null, null, null, null]; // [minx, maxx, miny, maxy]
 	export let startDate = '';
 	export let endDate = '';
 	export let startingExtent: [number, number, number, number];
 
+	let aoiInput: Array<number | null> = boundingBox || [null, null, null, null]; // [minx, maxx, miny, maxy]
 	$: boundingBox = [...aoiInput];
 
+	let showContent = true;
+
+	/**
+	 * @type {Map}
+	 */
+	let map: Map;
+	/**
+	 * @type {import("ol/interaction/Interaction").default}
+	 */
+	let extent: ExtentInteraction;
+
+	let map_exists: boolean = false;
+
+	// Initialize the map when the component is mounted
+	onMount(initializeMap);
+
+	function initializeMap() {
+		if (map_exists === false) {
+			const buffer = 10; // degrees or units of startingExtent
+			const bufferedExtent = getBufferedExtent(startingExtent, buffer);
+			console.log('Starting Extent:', startingExtent);
+			console.log('Buffered Extent:', bufferedExtent);
+
+			map = new Map({
+				target: 'map-container',
+				layers: [
+					new TileLayer({
+						source: new OSM()
+					})
+				],
+				view: new View({
+					center: [1069792, -944278],
+					extent: transformExtent(bufferedExtent, 'EPSG:4326', 'EPSG:3857')
+				})
+			});
+
+			drawExtentBox(map, startingExtent);
+
+			extent = new ExtentInteraction({
+				condition: shiftKeyOnly,
+				boxStyle: new Style({
+					stroke: new Stroke({
+						color: 'red',
+						width: 3
+					}),
+					fill: new Fill({
+						color: 'rgba(255,0,0,0.1)'
+					})
+				})
+			});
+			drawExtentBox(map, startingExtent);
+			map.addInteraction(extent);
+			map_exists = true;
+
+			// Debounce function
+			const debounce = (func: { (): void; apply?: any }, wait: number | undefined) => {
+				let timeout: string | number | NodeJS.Timeout | undefined;
+				return (...args: any) => {
+					clearTimeout(timeout);
+					timeout = setTimeout(() => func.apply(undefined, args), wait);
+				};
+			};
+
+			const debouncedChangeExtent = debounce(changeExtent, 300);
+
+			extent.on('extentchanged', debouncedChangeExtent);
+		}
+	}
+
+	// Validate and adjust aoiInput values
 	function validateInput() {
 		// makesure min is always smaller than max
 		if (aoiInput[0] !== null && aoiInput[1] !== null && aoiInput[0] > aoiInput[1]) {
@@ -72,12 +142,7 @@
 		v !== null && !isNaN(Number(v)) ? Math.round(Number(v) * 100) / 100 : v
 	);
 
-	let showContent = true;
-
-	function toggleContent() {
-		showContent = !showContent;
-	}
-
+	// Function to change the extent based on user interaction
 	function changeExtent() {
 		console.log('Extent changed');
 		// [minx, miny, maxx, maxy]
@@ -125,6 +190,8 @@
 			aoiInput[3] = lon_lat_extent[3];
 		}
 	}
+
+	// Clear the form inputs and reset the extent on the map
 	function clearForm() {
 		aoiInput = [null, null, null, null];
 		startDate = '';
@@ -137,8 +204,9 @@
 			extent = new ExtentInteraction({ condition: shiftKeyOnly });
 			map.addInteraction(extent);
 			//	extent.on('extentchanged', changeExtant);
-			// extent.setExtent(null); // entfernt die Bounding Box von der Karte
-			map.on('pointerup', () => {
+			// extent.setExtent(null); // removed the Bounding Box from the map
+
+			map.getViewport().addEventListener('pointerup', () => {
 				if (extent.getActive()) {
 					// User finished interaction
 					// You can now handle the final extent
@@ -147,21 +215,6 @@
 			});
 		}
 	}
-
-	/**
-	 * @type {Map}
-	 */
-	let map: Map;
-	/**
-	 * @type {import("ol/interaction/Interaction").default}
-	 */
-	let extent: ExtentInteraction;
-	/**
-	 * @type {any[]}
-	 */
-	let minx: number;
-
-	let map_exists: boolean = false;
 
 	/**
 	 * Draws a bounding box on an OpenLayers map from extent.
@@ -216,63 +269,8 @@
 	 * @param {number} buffer - Buffer in degrees (or units of extent)
 	 * @returns {[number, number, number, number]}
 	 */
-	function getBufferedExtent(extent, buffer = 1) {
+	function getBufferedExtent(extent: number[], buffer = 1) {
 		return [extent[0] - buffer, extent[1] - buffer, extent[2] + buffer, extent[3] + buffer];
-	}
-
-	// Initialize the map when the component is mounted
-	onMount(initializeMap);
-	function initializeMap() {
-		if (map_exists === false) {
-			const buffer = 10; // degrees or units of startingExtent
-			const bufferedExtent = getBufferedExtent(startingExtent, buffer);
-			console.log('Starting Extent:', startingExtent);
-			console.log('Buffered Extent:', bufferedExtent);
-
-			map = new Map({
-				target: 'map-container',
-				layers: [
-					new TileLayer({
-						source: new OSM()
-					})
-				],
-				view: new View({
-					center: [1069792, -944278],
-					extent: transformExtent(bufferedExtent, 'EPSG:4326', 'EPSG:3857')
-				})
-			});
-
-			drawExtentBox(map, startingExtent);
-
-			extent = new ExtentInteraction({
-				condition: shiftKeyOnly,
-				boxStyle: new Style({
-					stroke: new Stroke({
-						color: 'red',
-						width: 3
-					}),
-					fill: new Fill({
-						color: 'rgba(255,0,0,0.1)'
-					})
-				})
-			});
-			drawExtentBox(map, startingExtent);
-			map.addInteraction(extent);
-			map_exists = true;
-
-			// Debounce function
-			const debounce = (func: { (): void; apply?: any }, wait: number | undefined) => {
-				let timeout: string | number | NodeJS.Timeout | undefined;
-				return (...args: any) => {
-					clearTimeout(timeout);
-					timeout = setTimeout(() => func.apply(undefined, args), wait);
-				};
-			};
-
-			const debouncedChangeExtent = debounce(changeExtent, 300);
-
-			extent.on('extentchanged', debouncedChangeExtent);
-		}
 	}
 </script>
 

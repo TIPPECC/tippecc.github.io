@@ -79,6 +79,7 @@
 
 <svelte:head>
 	<title>TIPPECC</title>
+	<meta name="description" content="The TIPPECC Project Website and Climate Services Gateway" />
 </svelte:head>
 
 <!-- App Shell -->

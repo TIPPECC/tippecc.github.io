@@ -217,15 +217,15 @@
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 text-zinc-200 mt-3" />
 </div>
 
-<TabGroup>
-	<Tab bind:group={tabSet} name="tab1" value={0}>
+<TabGroup labelledby="Tabs for additional information">
+	<Tab bind:group={tabSet} name="tab1" value={0} title="Other Metadata">
 		<svelte:fragment slot="lead" />
 		<span>Other Metadata</span>
 	</Tab>
-	<Tab bind:group={tabSet} name="tab1" value={1}>Related Datasets</Tab>
-	<Tab bind:group={tabSet} name="tab2" value={2}>Provenance</Tab>
+	<Tab bind:group={tabSet} name="tab1" value={1} title="Related Datasets">Related Datasets</Tab>
+	<Tab bind:group={tabSet} name="tab2" value={2} title="Provenance">Provenance</Tab>
 	{#if folder_data['tif_convertable']}
-		<Tab bind:group={tabSet} name="tab4" value={3}>Map</Tab>
+		<Tab bind:group={tabSet} name="tab4" value={3} title="Map">Map</Tab>
 	{/if}
 	<svelte:fragment slot="panel">
 		{#if tabSet === 0}

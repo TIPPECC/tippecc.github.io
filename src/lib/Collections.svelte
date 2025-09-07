@@ -45,6 +45,8 @@
 		dirty: boolean;
 		filesuffix: string;
 		dat_exists: boolean;
+		dat_clipped_exists?: boolean;
+		nc_clipped_exists?: boolean;
 		tif_exists: boolean;
 		tif_convertable: boolean;
 		metadata_exists: boolean;
@@ -104,7 +106,7 @@
 	$: startDate = '';
 	$: endDate = '';
 
-	function formatBbox(bbox) {
+	function formatBbox(bbox: any[]) {
 		return bbox.map((coord) => coord.toFixed(2));
 	}
 
@@ -192,6 +194,10 @@
 		{ time: 'seasonal', show: 'false' },
 		{ time: 'monthly', show: 'false' }
 	];
+
+	// clipped file existence
+	let clipped_dat_files_exist = false;
+	let clipped_nc_files_exist = false;
 
 	onMount(() => {
 		if (browser) {
@@ -526,6 +532,14 @@
 		uncheck_aggregation();
 
 		for (let x = 0; x < folder_data.length; x++) {
+			// check if clipped files exist and set to true if so
+			if (folder_data[x]['dat_clipped_exists'] == true) {
+				clipped_dat_files_exist = true;
+			}
+			if (folder_data[x]['nc_clipped_exists'] == true) {
+				clipped_nc_files_exist = true;
+			}
+
 			var filename: string = folder_data[x]['filename'];
 			const match = filename.match(filePattern);
 
@@ -565,7 +579,7 @@
 			delete categories['No Category'];
 		}
 		cat_folder_data = categories;
-		let maxVarLength = Math.max(...variables.map((v) => show_variable(v).length));
+		let maxVarLength = Math.max(...variables.map((v: string) => show_variable(v).length));
 		varButtonHight = Math.ceil(maxVarLength / 14) * 24; // 14 is the maximum ammount of caharacter per line in var button, 24 is the height for one line
 		variables = [...variables];
 
@@ -605,7 +619,7 @@
 	}
 
 	async function refresh_foldercontent(force_update = false) {
-		folder_data = {};
+		folder_data = [];
 		variables = [];
 		search_term = '';
 		// only_convertable false fetches all files
@@ -733,8 +747,10 @@
 
 	let filetype = 'nc';
 	let requested_filetype = 'nc';
-	function handleFileTypeChange(event) {
-		filetype = event.target.value;
+
+	function handleFileTypeChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		filetype = target.value;
 		// requested_filetype = filetype;
 	}
 	// array with current geo_data['facets']['file_id']
@@ -799,7 +815,10 @@
 				available collections of datasets by climate model or region.<br />
 				<br />Please report issues and feedback
 				<span class="text-bold underline"
-					><a href="https://github.com/TIPPECC/tippecc.github.io/issues" target="_blank">here</a
+					><a
+						href="https://github.com/TIPPECC/tippecc.github.io/issues"
+						target="_blank"
+						title="Report issues and feedback">here</a
 					></span
 				>.
 			</div>
@@ -849,7 +868,7 @@
 								class="w-[120px] h-[{varButtonHight}px] break-words variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2
 							{search_term.includes(String(variable)) ? 'font-bold' : ''}"
 								style="height: {varButtonHight}px"
-								on:click={set_search_term(variable)}
+								on:click={() => set_search_term(variable)}
 								>{show_variable(variable).replaceAll('_', '_\u200b')}</button
 							>
 						</div>
@@ -862,6 +881,7 @@
 						class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
 						type="text"
 						placeholder="Type to filter filenames or click label above..."
+						aria-label="Filter filenames"
 						bind:value={search_term}
 					/>
 					<button
@@ -1031,15 +1051,26 @@
 								</button>
 							</div>
 							<div class={cat_obj.toggled ? 'visible' : 'hidden'}>
-								<table class="table-fixed mb-1 m-2 hidden md:block">
+								<p id="table__{cat_counter}" class="sr-only">
+									Table listing available datasets with file name, metadata, file size, last
+									modified date, download and visualize options. Show metadata button loads
+									additional information about the dataset and its provenance. Number of files
+									available in this category: {cat_obj.files.length}
+								</p>
+								<table
+									class="table-fixed mb-1 m-2 hidden md:block"
+									aria-describedby="table__{cat_counter}"
+								>
 									<thead>
 										<tr>
-											<th class="text-left">File Name</th>
-											<th class="text-left min-w-[85px] max-w-[85px]">Metadata</th>
-											<th class="text-left min-w-[80px] max-w-[80px]">File Size</th>
-											<th class="text-left min-w-[140px] max-w-[140px]">Last Modified</th>
-											<th class="text-left min-w-[122px] max-w-[122px]">Download</th>
-											<th class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
+											<th scope="col" class="text-left">File Name</th>
+											<th scope="col" class="text-left min-w-[85px] max-w-[85px]">Metadata</th>
+											<th scope="col" class="text-left min-w-[80px] max-w-[80px]">File Size</th>
+											<th scope="col" class="text-left min-w-[140px] max-w-[140px]"
+												>Last Modified</th
+											>
+											<th scope="col" class="text-left min-w-[122px] max-w-[122px]">Download</th>
+											<th scope="col" class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -1129,13 +1160,15 @@
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md"
+																title="Download .nc file"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
 																		file_obj.index
 																	]['filename']}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
 																	class="flex"
-																	title="Download .nc file"
+																	aria-hidden="true"
+																	tabindex="-1"
 																>
 																	<Download />
 																	<div
@@ -1148,13 +1181,15 @@
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	title="Download clipped .nc file"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=nc_clipped"
 																		class="flex"
-																		title="Download clipped .nc file"
+																		aria-hidden="true"
+																		tabindex="-1"
 																	>
 																		<Download />
 																		<div
@@ -1169,13 +1204,15 @@
 															{#if folder_data[file_obj.index]['dat_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	title="Download .dat file"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=dat"
 																		class="flex"
-																		title="Download .dat file"
+																		aria-hidden="true"
+																		tabindex="-1"
 																	>
 																		<Download />
 																		<div
@@ -1218,13 +1255,15 @@
 															{#if folder_data[file_obj.index]['dat_clipped_exists']}
 																<button
 																	class="mr-1 max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	title="Download clipped .dat file"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=dat_clipped"
 																		class="flex"
-																		title="Download clipped .dat file"
+																		aria-hidden="true"
+																		tabindex="-1"
 																	>
 																		<Download />
 																		<div
@@ -1258,13 +1297,15 @@
 																<!-- CASE 2: Tif file exists. -->
 																<button
 																	class="max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	title="Download .tif file"
 																>
 																	<a
 																		href="{API_URL}/climate/get_temp_file?name={folder_data[
 																			file_obj.index
 																		]['filename']}&type={foldertype}&filetype=tif"
 																		class="flex"
-																		title="Download TIFF file"
+																		aria-hidden="true"
+																		tabindex="-1"
 																	>
 																		<Download />
 																		<div
@@ -1284,12 +1325,15 @@
 														{:else}
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																title="Download {folder_data[file_obj.index]['filesuffix']} file"
 															>
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
 																		file_obj.index
 																	]['filename']}&type={foldertype}&filetype=dat"
 																	class="flex"
+																	aria-hidden="true"
+																	tabindex="-1"
 																>
 																	<Download />
 																	<div
@@ -1510,73 +1554,84 @@
 					<h4 class="h4 ml-2 flex gap-2">Download with WGET<Download /></h4>
 				</div>
 				<div class="flex gap-x-1 p-2 hidden md:block">
-					<div class="filetype-selector flex pb-2">
-						<div>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="nc"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .nc
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="nc_custom"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .nc (custom area and time)
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="nc_clipped"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .nc (clipped)
-							</label>
-						</div>
-						<div>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="dat"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .dat
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="dat_clipped"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .dat (clipped)
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="filetype"
-									value="tif"
-									bind:group={filetype}
-									on:change={handleFileTypeChange}
-								/>
-								Filetype .tiff
-							</label>
-						</div>
-					</div>
+					<fieldset>
+						<legend class="text-lg font-medium mb-2">Select type of file for download:</legend>
+						<div class="filetype-selector flex pb-2">
+							<div>
+								<!--only show if valid extent or time exists-->
+								{#if add2FileDownloadUrl.length > 0}
+									<label>
+										<input
+											type="radio"
+											name="filetype"
+											value="nc_custom"
+											bind:group={filetype}
+											on:change={handleFileTypeChange}
+										/>
+										File type .nc (custom time and/or time extent)
+									</label>
+								{/if}
 
+								<label>
+									<input
+										type="radio"
+										name="filetype"
+										value="nc"
+										bind:group={filetype}
+										on:change={handleFileTypeChange}
+									/>
+									File type .nc
+								</label>
+								<!--Only show if there are clipped files available -->
+								{#if clipped_nc_files_exist}
+									<label>
+										<input
+											type="radio"
+											name="filetype"
+											value="nc_clipped"
+											bind:group={filetype}
+											on:change={handleFileTypeChange}
+										/>
+										File type .nc (clipped)
+									</label>
+								{/if}
+
+								<label>
+									<input
+										type="radio"
+										name="filetype"
+										value="dat"
+										bind:group={filetype}
+										on:change={handleFileTypeChange}
+									/>
+									File type .dat
+								</label>
+								<!--Only show if there are clipped files available -->
+								{#if clipped_dat_files_exist}
+									<label>
+										<input
+											type="radio"
+											name="filetype"
+											value="dat_clipped"
+											bind:group={filetype}
+											on:change={handleFileTypeChange}
+										/>
+										File type .dat (clipped)
+									</label>
+								{/if}
+								<label>
+									<input
+										type="radio"
+										name="filetype"
+										value="tif"
+										bind:group={filetype}
+										on:change={handleFileTypeChange}
+									/>
+									File type .tiff
+								</label>
+							</div>
+						</div>
+					</fieldset>
 					<button
 						type="button"
 						class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
@@ -1584,21 +1639,6 @@
 						>Generate Wget link for download ({selected_files.filter((value) => value == true)
 							.length} selected)</button
 					>
-
-					<!-- TODO CHECKBOX -->
-					<!-- <label
-						for={'checkbox_' + file_obj.index}
-						title="Select for download: {folder_data[file_obj.index]['filename']}"
-					>
-						<input
-							type="checkbox"
-							value={file_obj.index}
-							id={'checkbox_' + file_obj.index}
-							bind:checked={selected_files[file_obj.index]}
-							on:change={on_folder_checkbox_change}
-						/>
-						&nbsp;{}
-					</label> -->
 				</div>
 			{:else}
 				<div class="flex-center">
@@ -1659,7 +1699,7 @@
 		class={`fixed md:sticky md:top-0 top-9 left-0 z-10 h-full ${
 			sidebarVisible_ ? 'w-64' : 'w-6'
 		} bg-surface-900 text-white p-4 md:translate-x-0 md:static md:h-screen hidden md:block border-l-4 border-[#4472c4] transition-all duration-300`}
-		h
+		aria-label="Sidebar"
 	>
 		<button
 			class="absolute left-0 top-1/2 -translate-y-1/2 h-12 bg-[#4472c4] text-white rounded-r focus:outline-none z-20"
@@ -1679,10 +1719,6 @@
 				{bbox}
 				{startDate}
 				{endDate}
-				{selected_files}
-				{filetype}
-				{isSmallScreen}
-				{folder_data}
 			/>
 		{/if}
 	</aside>

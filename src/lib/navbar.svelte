@@ -21,12 +21,12 @@
 
 	function increaseZoom() {
 		zoomLevel += 0.1;
-		document.body.style.zoom = zoomLevel;
+		document.body.style.zoom = zoomLevel.toString();
 	}
 
 	function decreaseZoom() {
 		zoomLevel = Math.max(0.1, zoomLevel - 0.1);
-		document.body.style.zoom = zoomLevel;
+		document.body.style.zoom = zoomLevel.toString();
 	}
 
 	let isDrawerOpen = false; // State to toggle the drawer menu
@@ -39,7 +39,7 @@
 {#if verticality}
 	<div class="z-40 bg-primary-900 grow w-full overflow-hidden bg-opacity-60 flex">
 		<div class="grow-0 float-left">
-			<ul>
+			<ul title="Main Navigation">
 				{#each nav_elements as el}
 					<li
 						class="float-left {current === el['label']
@@ -60,35 +60,18 @@
 		<div class="grow float-right items-center">
 			<div class="zoom-controls flex justify-between items-center float-right pr-4 pt-4">
 				<span class="text-white text-lg">A<span class="text-sm">A</span></span>
-				<svg
-					class="zoom-icon fill-white"
+				<button
+					class="zoom-icon text-white text-xl px-2 font-bold"
 					on:click={decreaseZoom}
-					on:keydown={decreaseZoom}
-					tabindex="0"
-					role="button"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					width="24"
-					height="24"
+					title="Decrease Zoom">-</button
 				>
-					<path d="M19 13H5v-2h14v2z" />
-				</svg>
-				<svg
-					class="zoom-icon fill-white"
+				<button
+					class="zoom-icon text-white text-xl px-2 font-bold"
 					on:click={increaseZoom}
-					on:keydown={increaseZoom}
-					tabindex="0"
-					role="button"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					width="24"
-					height="24"
+					title="Increase Zoom">+</button
 				>
-					<path d="M19 13H5v-2h14v2zm-7-7v14h-2V6h2z" />
-				</svg>
 			</div>
 		</div>
-
 		<div class="">
 			<div class="float-right pr-10">
 				<figure>
