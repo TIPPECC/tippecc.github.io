@@ -156,7 +156,7 @@
 		"citation": "",
 		"header_regex": "",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "CCAM_raw_ind",
@@ -165,7 +165,7 @@
 		"citation": "",
 		"header_regex": "",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "CHIRPS",
@@ -175,7 +175,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "CHIRPS3",
@@ -185,7 +185,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS v3 data",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "GLEAM",
@@ -195,7 +195,7 @@
 		"header_regex": "",
 		"lineage": "Derived from GLEAM data",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "kariba_CORDEX",
@@ -205,7 +205,7 @@
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Kariba dam catchment",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "vaal_CORDEX",
@@ -215,7 +215,7 @@
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Vaal dam catchment",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "vaal_CHIRPS",
@@ -225,7 +225,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from CHIRPS data for Vaal dam catchment",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "vaal_ERA5_LAND",
@@ -235,7 +235,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Derived from ERA5-LAND data for Vaal dam catchment",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "luanginga_CORDEX",
@@ -245,7 +245,7 @@
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for Luanginga dam catchment",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "nwnamibia_CORDEX",
@@ -255,7 +255,7 @@
 		"header_regex": "",
 		"lineage": "Derived from CORDEX-CORE data for north western namibia research area",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "kunene_ERA5_LAND",
@@ -265,7 +265,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "Downloaded from CDS",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "kunene_GLEAM",
@@ -275,7 +275,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "sftlf",
@@ -285,7 +285,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "sftlf",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "orog",
@@ -295,7 +295,7 @@
 		"header_regex": "(^(.*?\\d{4}-\\d{4}.*?)(?=\\d{4}-\\d{4}))",
 		"lineage": "",
 		"status": "internal",
-		"bbox": "[10, -35, 51, -5"
+		"bbox": "[10, -35, 51, -5]"
 	},
 	{
 		"key": "paper",
