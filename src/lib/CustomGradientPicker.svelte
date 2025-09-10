@@ -42,7 +42,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let init_color_scheme = '';
-	export let frame_id = '';
+	export let frame_id = '0'; // set from outside with a random number
 	let color_scheme = misc_seq; // scheme
 	let color_scheme_key: string; // key for Select element
 	export let diff_scheme_key: string; // equivalent divergent scheme_key for when in diff mode
@@ -788,7 +788,7 @@
 								>
 							</nobr>
 							<input
-								id="custom_bounds_input"
+								id="custom_bounds_input_min_{frame_id}"
 								class="flex-1 text-black ml-1 max-w-[96px] pl-1"
 								on:change={set_custom_min}
 							/>
@@ -802,7 +802,7 @@
 								>
 							</nobr>
 							<input
-								id="custom_bounds_input"
+								id="custom_bounds_input_max_{frame_id}"
 								class="flex-1 text-black ml-1 max-w-[96px] pl-1"
 								on:change={set_custom_max}
 							/>

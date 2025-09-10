@@ -1476,6 +1476,7 @@
 			cmin_real={current_band_metainfo.min}
 			cmax_real={current_band_metainfo.max}
 			{showScaleWarning}
+			frame_id={random_id.toString()}
 			bind:this={cg_picker}
 			bind:horizontal={horizontal_scala}
 			bind:diff_mode
