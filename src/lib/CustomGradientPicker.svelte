@@ -122,6 +122,7 @@
 		if (div) {
 			var divWidth = Math.max(0, div.offsetWidth - 38);
 			crect_w = Math.floor(divWidth / steps); // example: half the width
+			if (crect_w > 40.0) { crect_w = 40.0; }
 
 			// if (divWidth <= 840.0) {
 			// 	mini_mode = true;
