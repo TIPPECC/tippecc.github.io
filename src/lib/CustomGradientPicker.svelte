@@ -122,7 +122,9 @@
 		if (div) {
 			var divWidth = Math.max(0, div.offsetWidth - 38);
 			crect_w = Math.floor(divWidth / steps); // example: half the width
-			if (crect_w > 40.0) { crect_w = 40.0; }
+			if (crect_w > 40.0) {
+				crect_w = 40.0;
+			}
 
 			// if (divWidth <= 840.0) {
 			// 	mini_mode = true;
@@ -133,7 +135,7 @@
 	};
 
 	// Converts hex string color into an [r,g,b] array color
-	var h2r = function (hex) {
+	var h2r = function (hex: string) {
 		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
@@ -141,7 +143,7 @@
 	};
 
 	// Converts an [r,g,b] array color into a hex string color
-	var r2h = function (rgb) {
+	var r2h = function (rgb: number[]) {
 		return '#' + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
 	};
 
@@ -658,7 +660,7 @@
 			throw new Error('cmin cant be >= 0!');
 		}
 
-		var helper = [];
+		var helper: any[] = [];
 		helper = helper.concat(generate_linear_value_stops(), [0], generate_exponential_value_stops());
 		// helper = helper.concat(generate_linear_value_stops(), [0], generate_root_expo_values_stops());
 
@@ -784,8 +786,10 @@
 						<!--Custom Min-->
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
-								<label for="custom_bounds_input" class="flex p-1" title="Set custom maximum bound"
-									>Custom Min:</label
+								<label
+									for="custom_bounds_input_min_{frame_id}"
+									class="flex p-1"
+									title="Set custom maximum bound">Custom Min:</label
 								>
 							</nobr>
 							<input
@@ -798,8 +802,10 @@
 						<!--Custom Max-->
 						<div class="flex {horizontal ? '' : 'mb-1'}">
 							<nobr>
-								<label for="custom_bounds_input" class="flex p-1" title="Set custom maximum bound"
-									>Custom Max:</label
+								<label
+									for="custom_bounds_input_max_{frame_id}"
+									class="flex p-1"
+									title="Set custom maximum bound">Custom Max:</label
 								>
 							</nobr>
 							<input

@@ -45,9 +45,12 @@
 		];
 	}
 
-	function onSliderChange(e?) {
+	function onSliderChange(e: Event) {
 		// Update the internal slider value based on input change
-		slider_index = e.target.value;
+		const target = e.currentTarget as HTMLInputElement;
+		if (target) {
+			slider_index = +target.value;
+		}
 		if (valMap) {
 			slider_value = valMap[slider_index];
 			dispatch('slider_changed', {});
@@ -93,7 +96,7 @@
 
 {#if valMap}
 	<div class="md:px-20 max-md:px-4">
-		<h4 class="h4 text-center">Layer slider</h4>
+		<h4 class="h5 text-center">Time Slider</h4>
 		<div class="relative h-[40px] mt-6">
 			<!-- Slider input with custom steps -->
 			<input
@@ -105,6 +108,7 @@
 				step="1"
 				bind:value={slider_index}
 				on:change={onSliderChangeFunction}
+				title="Select time step by moving the slider"
 			/>
 			<!-- Labels for the slider steps -->
 			{#each valMap as val, idx}

@@ -21,7 +21,7 @@
 	import Feature from 'ol/Feature';
 	import VectorSource from 'ol/source/Vector';
 	import VectorLayer from 'ol/layer/Vector';
-	import { fromUrl } from 'geotiff';
+	import { fromUrl, type TypedArray } from 'geotiff';
 	import CircleStyle from 'ol/style/Circle';
 	import Chart from 'chart.js/auto';
 	import 'chartjs-plugin-trendline';
@@ -46,80 +46,80 @@
 	// maps geo-variable short handles to color_scheme and scale_type
 	// used to set initial_color_scheme and initial_data_mode on init
 	let map_vars_mapping = {
-		'hurs': {
+		hurs: {
 			color_scheme: 'misc_seq',
 			diff_scheme: 'misc_div',
 			scale_type: 'sequential'
 		},
-		'pr': {
+		pr: {
 			color_scheme: 'prec_seq',
 			diff_scheme: 'prec_div',
 			scale_type: 'sequential'
 		},
-		'rlds': {
+		rlds: {
 			color_scheme: 'chem_seq',
 			diff_scheme: 'chem_div',
 			scale_type: 'sequential'
 		},
-		'rlus': {
+		rlus: {
 			color_scheme: 'chem_seq',
 			diff_scheme: 'chem_div',
 			scale_type: 'sequential'
 		},
-		'rsds': {
+		rsds: {
 			color_scheme: 'chem_seq',
 			diff_scheme: 'chem_div',
 			scale_type: 'sequential'
 		},
-		'rsus': {
+		rsus: {
 			color_scheme: 'chem_seq',
 			diff_scheme: 'chem_div',
 			scale_type: 'sequential'
 		},
-		'sfcWind': {
+		sfcWind: {
 			color_scheme: 'wind_seq',
 			diff_scheme: 'wind_div',
 			scale_type: 'sequential'
 		},
-		'tas': {
+		tas: {
 			color_scheme: 'temp_seq',
 			diff_scheme: 'temp_div',
 			scale_type: 'sequential'
 		},
-		'ai': {
+		ai: {
 			color_scheme: 'prec_seq',
 			diff_scheme: 'prec_div',
 			scale_type: 'sequential'
 		},
-		'evspsblpot': {
+		evspsblpot: {
 			color_scheme: 'chem_seq',
 			diff_scheme: 'chem_div',
 			scale_type: 'sequential'
 		},
-		'water_budget': {
+		water_budget: {
 			color_scheme: 'prec_div',
 			diff_scheme: 'prec_div',
 			scale_type: 'divergent'
 		},
-		'spei': {
+		spei: {
 			color_scheme: 'prec_div',
 			diff_scheme: 'prec_div',
 			scale_type: 'divergent'
 		},
-		'spi': {
+		spi: {
 			color_scheme: 'prec_div',
 			diff_scheme: 'prec_div',
 			scale_type: 'divergent'
 		},
-		'kbdi': {
+		kbdi: {
 			color_scheme: 'prec_seq',
 			diff_scheme: 'prec_div',
 			scale_type: 'sequential'
 		}
-	}
+	};
 
 	let initial_color_scheme: string = 'prec_div';
-	let initial_diff_scheme: string = 'prec_div'
+	let initial_diff_scheme: string = 'prec_div';
 	let initial_data_mode: string = 'divergent';
 
 	init_map_values_from_filename();
@@ -219,10 +219,17 @@
 		}
 	});
 
-	let chart; // Chart object
+	// Add two highlight indices (A and B). B may be null (hidden).
+	let highlightIndexA: number | undefined = 2;
+	let highlightIndexB: number | undefined = undefined;
+
+	let chart: Chart<'line', number[], string>; // Chart object
 	onMount(() => {
-		let ctx = document.getElementById('chart_' + random_id).getContext('2d');
-		let highlightIndex = 2; // Index of highlighted point
+		const canvasEl = document.getElementById('chart_' + random_id) as HTMLCanvasElement | null;
+		if (!canvasEl) return;
+		let ctx = canvasEl.getContext('2d');
+		if (!ctx) return;
+		// create chart with two annotation lines (A and B)
 		chart = new Chart(ctx, {
 			type: 'line',
 			data: {
@@ -264,17 +271,28 @@
 					},
 					annotation: {
 						annotations: {
-							highlightLine: {
+							highlightLineA: {
 								type: 'line',
-								xMin: highlightIndex,
-								xMax: highlightIndex,
+								xMin: highlightIndexA,
+								xMax: highlightIndexA,
 								borderColor: 'red',
 								borderWidth: 2,
-								display: true, // Hide initially
+								display: highlightIndexA !== undefined,
 								label: {
-									content: 'Highlighted Time',
-									enabled: true,
-									position: 'top'
+									content: 'Highlight A',
+									position: 'center'
+								}
+							},
+							highlightLineB: {
+								type: 'line',
+								xMin: highlightIndexB,
+								xMax: highlightIndexB,
+								borderColor: 'orange',
+								borderWidth: 2,
+								display: highlightIndexB !== undefined,
+								label: {
+									content: 'Highlight B',
+									position: 'center'
 								}
 							}
 						}
@@ -307,7 +325,10 @@
 			years = years.map(Number);
 		}
 
-		const numericData = data.map(Number); // Ensure data is numeric
+		const numericData =
+			typeof data === 'string'
+				? Array.from(data).map(Number)
+				: Array.prototype.map.call(data, Number); // Ensure data is numeric
 
 		// Calculate trendline
 		const regressionData = years
@@ -336,11 +357,13 @@
 		chart.data.labels = years;
 
 		// Set data for the chart
-		chart.data.datasets[0].data = data;
+		chart.data.datasets[0].data = numericData;
 		chart.data.datasets[1].data = trendValues;
 		chart.data.datasets[2].data = ema;
 
-		chart.options.scales.y.title.text = 'Value in ' +file_metadata['varinfo']['unit'];
+		if (chart.options.scales && chart.options.scales.y && chart.options.scales.y.title) {
+			chart.options.scales.y.title.text = 'Value in ' + file_metadata['varinfo']['unit'];
+		}
 
 		chart.update();
 	}
@@ -350,7 +373,7 @@
 	 */
 	function init_map_values_from_filename() {
 		const diff_pattern = /\d{4}_\d{4}-\d{4}_\d{4}/;
-		Object.keys(map_vars_mapping).forEach(key => {
+		Object.keys(map_vars_mapping).forEach((key) => {
 			if (selected_file.toLowerCase().includes(key.toLowerCase())) {
 				initial_color_scheme = map_vars_mapping[key as keyof typeof map_vars_mapping].color_scheme;
 				initial_data_mode = map_vars_mapping[key as keyof typeof map_vars_mapping].scale_type;
@@ -368,16 +391,39 @@
 		});
 	}
 
-	// Function to update highlight dynamically
-	function updateHighlight(highlightIndex: number) {
-		//const highlightIndex = index;
-		if (!chart) {
-			return;
+	// Replace single-line updater with a two-line updater and keep backward-compat wrapper
+	function updateHighlights(indexA: number | null, indexB: number | null = null) {
+		if (!chart) return;
+		const anns: any = chart.options.plugins?.annotation?.annotations || {};
+
+		// update A
+		if (anns.highlightLineA) {
+			if (indexA === null) {
+				anns.highlightLineA.display = false;
+			} else {
+				anns.highlightLineA.xMin = indexA;
+				anns.highlightLineA.xMax = indexA;
+				anns.highlightLineA.display = true;
+			}
 		}
-		chart.options.plugins.annotation.annotations.highlightLine.xMin = highlightIndex;
-		chart.options.plugins.annotation.annotations.highlightLine.xMax = highlightIndex;
-		chart.options.plugins.annotation.annotations.highlightLine.display = true; // Show the line
+
+		// update B
+		if (anns.highlightLineB) {
+			if (indexB === null) {
+				anns.highlightLineB.display = false;
+			} else {
+				anns.highlightLineB.xMin = indexB;
+				anns.highlightLineB.xMax = indexB;
+				anns.highlightLineB.display = true;
+			}
+		}
+
 		chart.update();
+	}
+
+	// backward-compatible wrapper for code that expects single highlight
+	function updateHighlight(highlightIndex: number) {
+		updateHighlights(highlightIndex, null);
 	}
 
 	let coordinates = writable<number[]>([]);
@@ -402,11 +448,13 @@
 		});
 
 		// pointermove trigger function to read hovered data point
-		function displayPixelValue(event) {
+		function displayPixelValue(event: any) {
 			if (!layer) {
 				return;
 			}
-			const data = layer.getData(event.pixel);
+			const pixel = event.pixel;
+			const coordinate = event.coordinate;
+			const data = layer.getData(pixel);
 			if (!data) {
 				return;
 			}
@@ -417,11 +465,11 @@
 			var hov_pix_x = document.getElementById('hovering_pixel_x');
 			var hov_pix_y = document.getElementById('hovering_pixel_y');
 			if (hov_pix_x != null) {
-				hov_pix_x.textContent = event.pixel[0].toFixed(0);
+				hov_pix_x.textContent = pixel[0].toFixed(0);
 			}
 
 			if (hov_pix_y != null) {
-				hov_pix_y.textContent = event.pixel[1].toFixed(0);
+				hov_pix_y.textContent = pixel[1].toFixed(0);
 			}
 
 			var hov_val = document.getElementById('hovering_value');
@@ -436,10 +484,10 @@
 					hov_val.textContent = data_zero.toFixed(2);
 				}
 			}
-			coordinates.set([...event.coordinate]);
+			coordinates.set([...coordinate]);
 		}
 
-		map.on(['pointermove'], displayPixelValue);
+		map.on('pointermove', displayPixelValue);
 		let lastCoordinate = null;
 
 		// click trigger function to read clicked data point and show time series
@@ -529,14 +577,17 @@
 		await set_color_bounds();
 	}
 
-	function parseReferenceDate(units) {
+	function parseReferenceDate(units: string) {
 		const match = units.match(/(\w+) since (\d{4}-\d{2}-\d{2})/);
+		if (!match) {
+			throw new Error('Invalid units format: ' + units);
+		}
 		return {
 			unit: match[1],
 			refDate: new Date(match[2])
 		};
 	}
-	function convertToDate(offset, refDate, calendar) {
+	function convertToDate(offset: number, refDate: Date, calendar: string) {
 		const msPerDay = 86400 * 1000; // 1 day in milliseconds
 		const date = new Date(refDate.getTime());
 
@@ -580,7 +631,7 @@
 		// var time_prefix_multiplier = 365.2425;
 		const { unit, refDate } = parseReferenceDate(file_metadata['time#units']);
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
-		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
 		for (let i = 0; i < dates; i++) {
 			band_slider_values.push(dates[i].getFullYear());
 			band_slider_dates.push(dates[i]);
@@ -598,7 +649,7 @@
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
 		console.log('Calendar: ', calendar);
 		console.log('NetCDF times: ', net_cdf_times);
-		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
 		// console.log('Dates: ', dates);
 		for (let i = 0; i < dates.length; i++) {
 			var curDate = dates[i];
@@ -617,7 +668,7 @@
 	function fill_band_slider_monthmean(net_cdf_times: any, start_date: number) {
 		const { unit, refDate } = parseReferenceDate(file_metadata['time#units']);
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
-		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
 
 		for (let i = 0; i < dates.length; i++) {
 			band_slider_values.push(dates[i].toLocaleDateString('en-US', { month: 'long' }));
@@ -655,7 +706,7 @@
 	function fill_band_slider_seasons(net_cdf_times: any, start_date: number) {
 		const { unit, refDate } = parseReferenceDate(file_metadata['time#units']);
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
-		const dates = net_cdf_times.map((offset) => convertToDate(offset, refDate, calendar));
+		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
 		console.log('Dates: ', dates);
 		console.log('Calendar: ', file_metadata['time#calendar']);
 		for (let i = 0; i < dates.length; i++) {
@@ -956,6 +1007,7 @@
 		selected_band_diff = parseInt(slider_index_diff) + 1;
 		await refresh_dif_band_metadata();
 		visualize_band();
+		updateHighlights(selected_band - 1, selected_band_diff - 1); // update highlight in chart
 	}
 
 	/**
@@ -1048,7 +1100,7 @@
 		})
 	});
 
-	function selectStyle(feature) {
+	function selectStyle(feature: { get: (arg0: string) => string }) {
 		const color = feature.get('COLOR') || '#eeeeee';
 		selected.getFill()?.setColor(color);
 		return selected;
@@ -1147,7 +1199,11 @@
 		// console.log("showScaleWarning: ", showScaleWarning);
 
 		// force gray rescale if conditions are met
-		if (!cg_picker.get_forcedGrayScaleMode() && colorScaleCovPercent <= 100.0 / 21.0 && !map_drawn_once) {
+		if (
+			!cg_picker.get_forcedGrayScaleMode() &&
+			colorScaleCovPercent <= 100.0 / 21.0 &&
+			!map_drawn_once
+		) {
 			cg_picker.apply_gray_rescale(false, true);
 			cg_picker.update_color_and_value_steps(false);
 		}
@@ -1196,8 +1252,6 @@
 		// console.log("Source TileGrid: \n", source.getTileGrid()); // null
 		// console.log("Source getTilePixelRatio: \n", source.getTilePixelRatio(1)); // ??? returns 1 usually
 		// console.log("Source extent: \n", source.getExtent()); //
-
-		// console.log(":", layer.getSource().getExtent());
 
 		// console.log("Layer extent: \n", layer.getExtent()); // null (normally) ... this returns the LAYER's extent
 
@@ -1254,7 +1308,7 @@
 	 * Fetches time series data from a GeoTIFF file at a given coordinate.
 	 * @param coordinate
 	 */
-	async function getTimeSeriesFromGeoTIFF(coordinate) {
+	async function getTimeSeriesFromGeoTIFF(coordinate: Coordinate) {
 		const tiff = await fromUrl(virtual_data_url);
 		const image = await tiff.getImage();
 		const rasterData = await image.readRasters();
@@ -1278,7 +1332,12 @@
 		x = Math.max(0, Math.min(x, width - 1));
 		y = Math.max(0, Math.min(y, height - 1));
 
-		let values = rasterData.map((band) => band[y * width + x]);
+		let values = rasterData.map((band) => {
+			if (typeof band === 'object' && band !== null && 'length' in band) {
+				return (band as TypedArray)[y * width + x];
+			}
+			return NaN; // fallback value to ensure type is always number
+		});
 
 		return values; // Time series data
 	}
@@ -1287,6 +1346,7 @@
 	let categories: any = [];
 	let full_var: any = [];
 	import folder_types from '$lib/tempresults/folder_types.json';
+	import type { Coordinate } from 'ol/coordinate';
 	function set_cat_folder_data() {
 		// Regex pattern to match filenames
 		let filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
@@ -1365,6 +1425,7 @@
 		filesearch_input_changed();
 	}
 </script>
+
 {#if band_slider_values && metadata_loaded}
 	{#if band_slider_values.length >= 2}
 		<div class="md:flex w-full pl-4 pr-4">
@@ -1372,11 +1433,13 @@
 				class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 			>
 				<h2><b>Layer #{selected_band}:</b></h2>
-				<div id="band_min">Min: <span class="mr-2"></span>{current_band_metainfo['min']}</div>
-				<div id="band_max">Max: <span class="mr-2"></span>{current_band_metainfo['max']}</div>
-				<div id="unit">Unit: <span class="mr-2"></span>{file_metadata['varinfo']['unit']}</div>
+				<div id="band_min">Min: <span class="mr-2" />{current_band_metainfo['min']}</div>
+				<div id="band_max">Max: <span class="mr-2" />{current_band_metainfo['max']}</div>
+				<div id="unit">Unit: <span class="mr-2" />{file_metadata['varinfo']['unit']}</div>
 				<div id="noDataValue">
-					nDV: <span class="mr-2"></span>{parseFloat(current_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
+					nDV: <span class="mr-2" />{parseFloat(
+						current_band_metainfo['noDataValue'].toFixed(3)
+					).toExponential()}
 				</div>
 			</div>
 			<div class="px-2 variant-outline-tertiary mt-2 pt-1 md:ml-1 w-full">
@@ -1396,9 +1459,9 @@
 				<div
 					class="variant-outline-tertiary min-w-[128px] md:max-w-[128px] mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
 				>
-					<h2>Layer meta data <b>#{selected_band_diff}:</b></h2>
-					<div id="band_min">MIN: {current_diff_band_metainfo['min']}</div>
-					<div id="band_min">MAX: {current_diff_band_metainfo['max']}</div>
+					<h2>Layer <b>#{selected_band_diff}:</b></h2>
+					<div id="band_min">Min: {current_diff_band_metainfo['min']}</div>
+					<div id="band_max">Max: {current_diff_band_metainfo['max']}</div>
 					<div id="unit">Unit: {file_metadata['varinfo']['unit']}</div>
 					<div id="noDataValue">
 						nDV: {parseFloat(current_diff_band_metainfo['noDataValue'].toFixed(3)).toExponential()}
@@ -1432,8 +1495,10 @@
 		</div>
 	{/if}
 
-	<div class="w-full px-4 mt-2">
-		<div class="variant-outline-tertiary p-2">
+	<div class="md:flex w-full pl-4 pr-4">
+		<div
+			class="variant-outline-tertiary w-full mt-2 px-2 pt-1 max-md:grid max-md:grid-cols-1 max-md:justify-items-center"
+		>
 			<!--<span>Hovering Pixel: [</span>
 			<span id="hovering_pixel_x" />,
 			<span id="hovering_pixel_y" />]-->
@@ -1447,15 +1512,21 @@
 			{/if}
 
 			<span><em> click on map to view timeseries</em></span>
-
+		</div>
+		<div
+			class="variant-outline-tertiary grid grid-cols-1 justify-items-center h-full mt-2 px-2 md:ml-4 md:mr-2 max-md:mt-0 max-md:w-full"
+		>
 			{#if band_slider_values.length >= 2}
 				<span>
 					<button
-						class="variant-filled-tertiary {diff_mode ? '' : 'hover:bg-tertiary-600'} p-1 px-2 lg:ml-2 max-lg:mt-1 rounded-md"
-						on:click={() => {
-							toggle_diff_mode();
-						}}>{diff_mode ? 'Normal mode' : 'Compare Layers'}</button
+						class={'px-3 p-4 pr-4 py-1 m-2text-white rounded variant-filled-tertiary ' +
+							(diff_mode ? '' : 'hover:bg-tertiary-600 ') +
+							'  float-right whitespace-nowrap'}
+						on:click={() => toggle_diff_mode()}
+						title={diff_mode ? 'Switch to Single Layer Mode' : 'Switch to Compare Layer Mode'}
 					>
+						{diff_mode ? 'Single Layer' : 'Compare Layer'}
+					</button>
 				</span>
 			{/if}
 		</div>
@@ -1463,12 +1534,16 @@
 {/if}
 {#if show_chart}
 	<div class="w-full px-4 mt-2">
-		<div class="variant-outline-tertiary p-2">
-			<canvas id="chart_{random_id}" width="400" height="100" />
+		<div class="variant-outline-tertiary p-2 bg-surface-700">
+			<canvas
+				id="chart_{random_id}"
+				width="100"
+				height="100"
+				style=" max-width: 100%; max-height: 300px"
+			/>
 		</div>
 	</div>
 {/if}
-
 
 <div class={horizontal_scala ? '' : 'flex'}>
 	<div class="flex justify-center items-center">
@@ -1503,7 +1578,8 @@
 				/>
 			</label>
 		</div>
-		<div id="map_{random_id}" class="map" />
+		<!-- ensure map target id matches the string used when creating the OpenLayers Map -->
+		<div id={'map_' + random_id} class="map" />
 	</div>
 </div>
 
