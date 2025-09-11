@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { API_URL } from '../../../app.config';
 	import { browser } from '$app/environment';
-	import metadata_icon from '$lib/icons/tag-label-svgrepo-com.svg';
+	import MetadataIcon from '$lib/icons/tag-label-svgrepo-com.svelte';
 
 	import { onMount, tick } from 'svelte';
 	import {
@@ -189,7 +189,7 @@
 <div class="content-div">
 	<div class="flex">
 		<h1 class="content-heading">File Information</h1>
-		<img src={metadata_icon} alt="..." width="30px" />
+		<MetadataIcon />
 	</div>
 
 	<blockquote class="content-blockquote mb-4">

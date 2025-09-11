@@ -4,9 +4,9 @@
 	import Uni_zambia from '$lib/uni_zambia.svelte';
 </script>
 
-<div class="bg-surface-100-800-token p-2 pt-10 bg-primary-200">
+<div class="dark:bg-surface-100-800-token p-2 pt-10 bg-primary-200">
 	<div class="flex justify-center">
-		<span class="pr-4"> @2024 TIPPECC</span><a href={base + '/imprint'}>Imprint</a>
+		<span class="pr-4"> @2025 TIPPECC</span><a href={base + '/imprint'}>Imprint</a>
 	</div>
 
 	<div

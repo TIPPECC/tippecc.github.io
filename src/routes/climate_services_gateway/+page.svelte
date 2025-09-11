@@ -9,7 +9,7 @@
 	import move from '$lib/icons/move-up-svgrepo-com_change.svg';
 	import download from '$lib/icons/download-2-svgrepo-com.svg';
 	import network from '$lib/icons/network-mapping-svgrepo-com.svg';
-	import metadata from '$lib/icons/tag-label-svgrepo-com.svg';
+	import MetadataIcon from '$lib/icons/tag-label-svgrepo-com.svelte';
 	import stat from '$lib/icons/sum-sign-svgrepo-com.svg';
 	import cut from '$lib/icons/cut1-round-824-svgrepo-com.svg';
 	import change from '$lib/icons/global-warming-svgrepo-com.svg';
@@ -112,7 +112,7 @@
 		<WorkPackage
 			wp="Metadata"
 			color="#6B9B2A"
-			icon={metadata}
+			icon={MetadataIcon}
 			title="Metadata for all datasets"
 			description="For transparency and reproducibility we provide extended and adjusted metadata for all datasets. Metadata is currently not available and stored for all datasets but will be provided in the future."
 			link={false}

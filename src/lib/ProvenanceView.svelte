@@ -48,9 +48,7 @@
 	{#if metadata_prov_stats}
 		<!-- print object-->
 		<div class="bg-box">
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-				ℹ️ Provenance: Overview
-			</h2>
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Overview</h2>
 			<div class="ml-2">
 				<div class="flex gap-2">
 					<span class="font-bold text-blue-400">Number of involved files:</span>
@@ -110,7 +108,7 @@
 	{#if metadata_prov}
 		<!-- print object-->
 		<div class="bg-box">
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 				ℹ️ Provenance: Last Processing Step(s)
 			</h2>
 			<ProvenanceProcessingView data={metadata_prov} />
@@ -120,35 +118,19 @@
 
 {#if metadata_prov_stats}
 	<div class="bg-box" id="source_files_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Provenance: Source Files
-		</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Source Files</h2>
 		<div class="italic">(e.g. downloaded from the ESGF portal + additional files)</div>
 		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-			ℹ️ Provenance: Result Files
-		</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Result Files</h2>
 		<div class="italic">(files created during previous processing steps)</div>
 		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 			ℹ️ Provenance: Files based on this file
 		</h2>
 		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} {in_main_page} />
 	</div>
 {/if}
-
-<style>
-	.bg-box {
-		background-color: #1f2937; /* Dunkelgrau (zinc-800) als Standardhintergrund */
-		border: 1px solid #374151; /* Etwas dunklerer Rand (zinc-700) */
-		border-radius: 1rem; /* abgerundete Ecken */
-		padding: 1rem; /* Innenabstand */
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für den 3D-Effekt */
-		margin-bottom: 1rem; /* Abstand nach unten */
-		margin-top: 1rem; /* Abstand nach oben */
-	}
-</style>

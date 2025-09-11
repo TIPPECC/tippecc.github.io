@@ -1,9 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
+
+		<!-- Set theme early to avoid flicker (only toggle html.dark, do NOT modify data-theme) -->
+		<script>
+			(function () {
+				try {
+					var saved = null;
+					try {
+						saved = localStorage.getItem('theme');
+					} catch (e) {}
+					// If user saved a preference use it, otherwise default to dark
+					if (saved === 'dark') {
+						document.documentElement.classList.add('dark');
+					} else if (saved === 'light') {
+						document.documentElement.classList.remove('dark');
+					} else {
+						// no saved preference → default to dark
+						document.documentElement.classList.add('dark');
+					}
+				} catch (e) {}
+			})();
+		</script>
+
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover" data-theme="wintry">

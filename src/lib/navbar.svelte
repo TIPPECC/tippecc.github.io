@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	// Import necessary types
 	/**
 	 * Hint: - you would want to type annotate this as an Array
@@ -10,12 +12,12 @@
 	/**
 	 * @type {string}
 	 */
-	export let current;
+	export let current: string;
 
 	/**
 	 * @type {boolean}
 	 */
-	export let verticality;
+	export let verticality: boolean;
 
 	let zoomLevel = 1;
 
@@ -34,6 +36,30 @@
 	function toggleDrawer() {
 		isDrawerOpen = !isDrawerOpen;
 	}
+
+	// replace local theme handling with shared store
+	import { theme, toggleTheme, initTheme, setTheme } from '$lib/stores/theme';
+
+	onMount(() => {
+		// initialize theme store (will sync html.dark and localStorage)
+		initTheme();
+
+		let saved: string | null = null;
+		try {
+			saved = localStorage.getItem('theme');
+		} catch (e) {
+			saved = null;
+		}
+
+		if (saved === 'dark' || saved === 'light') {
+			// use store helper to set theme
+			setTheme(saved as 'dark' | 'light');
+		} else {
+			// adopt current html class (do NOT overwrite other attributes)
+			const initial = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+			setTheme(initial);
+		}
+	});
 </script>
 
 {#if verticality}
@@ -56,7 +82,7 @@
 			</ul>
 		</div>
 
-		<!-- Zoom Controls -->
+		<!-- Zoom Controls + Theme Toggle -->
 		<div class="grow float-right items-center">
 			<div class="zoom-controls flex justify-between items-center float-right pr-4 pt-4">
 				<span class="text-white text-lg">A<span class="text-sm">A</span></span>
@@ -70,6 +96,56 @@
 					on:click={increaseZoom}
 					title="Increase Zoom">+</button
 				>
+
+				<!-- Theme toggle button -->
+				<button
+					class="ml-3 px-2 py-1 rounded text-white"
+					on:click={toggleTheme}
+					aria-label={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
+					title={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
+				>
+					{#if $theme === 'dark'}
+						<!-- sun icon (white via currentColor) -->
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							aria-hidden="true"
+							focusable="false"
+							class="inline-block"
+						>
+							<g
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								fill="none"
+							>
+								<circle cx="12" cy="12" r="4" stroke="currentColor" fill="currentColor" />
+								<path
+									d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+									stroke="currentColor"
+								/>
+							</g>
+						</svg>
+					{:else}
+						<!-- moon icon (white via currentColor) -->
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							aria-hidden="true"
+							focusable="false"
+							class="inline-block"
+						>
+							<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor" />
+						</svg>
+					{/if}
+				</button>
 			</div>
 		</div>
 		<div class="">
@@ -168,6 +244,50 @@
 	<!-- Drawer Button for Mobile Screens -->
 	<button on:click={toggleDrawer} class="btn-icon z-40 bg-surface-900 btn-icon-sm lg:!hidden p-2">
 		<i class="fa-solid fa-bars text-xl" />Menu
+	</button>
+
+	<!-- Theme toggle next to drawer button on small screens -->
+	<button
+		on:click={toggleTheme}
+		class="btn-icon z-40 btn-icon-sm lg:!hidden p-2 ml-2"
+		aria-label={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
+		title={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
+	>
+		{#if $theme === 'light'}
+			<!-- sun icon (white) -->
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				aria-hidden="true"
+				focusable="false"
+				class="inline-block text-white"
+			>
+				<g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="4" stroke="currentColor" fill="currentColor" />
+					<path
+						d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+						stroke="currentColor"
+					/>
+				</g>
+			</svg>
+		{:else}
+			<!-- moon icon (white) -->
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="currentColor"
+				aria-hidden="true"
+				focusable="false"
+				class="inline-block text-white"
+			>
+				<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor" />
+			</svg>
+		{/if}
 	</button>
 
 	<!-- Horizontal Navbar for Mobile Screens -->

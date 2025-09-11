@@ -10,7 +10,7 @@
 	import ProvenanceView from '$lib/ProvenanceView.svelte';
 	import ProvenanceListView from '$lib/ProvenanceListView.svelte';
 	import ExtentOnMap from './ExtentOnMap.svelte';
-	import file_icon from '$lib/icons/file-info-alt-1-svgrepo-com.svg';
+	import FileIcon from '$lib/icons/file-info-alt-1-svgrepo-com.svelte';
 	// import { json } from 'stream/consumers';
 	export let folder_data;
 	export let file_obj;
@@ -53,8 +53,8 @@
 <br />
 <div class="">
 	<div class="flex items-center justify-between mb-3">
-		<h2 class="text-lg text-label font-semibold flex items-center gap-2 text-white">
-			<img src={file_icon} alt="..." width="30px" />
+		<h2 class="text-lg text-label font-semibold flex items-center gap-2">
+			<FileIcon />
 			{folder_data['filename']}
 		</h2>
 
@@ -67,10 +67,12 @@
 			Collection View
 		</a>
 	</div>
-	<div class="bg-surface-700 rounded-lg p-4">
+	<div class="dark:bg-surface-700 rounded-lg p-4">
 		<span class="font-semibold">{description}</span>
 	</div>
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mt-4 bg-surface-800 rounded-lg">
+	<div
+		class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mt-4 bg-surface-200 dark:bg-surface-800 rounded-lg"
+	>
 		<div class="p-4">
 			<div class="font-bold text-lg">Variable</div>
 			<div>
@@ -91,7 +93,7 @@
 			</div>
 			<div>
 				<span class="font-bold ml-4 text-blue-400">Global Min / Max:</span>
-				<span class="font-medium text-zinc-300"
+				<span class=""
 					>{round(folder_data['metadata']['file']['global_min'], 2)} / {round(
 						folder_data['metadata']['file']['global_max'],
 						2
@@ -206,7 +208,7 @@
 				]}
 			/>
 
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Cite as:</h2>
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Cite as:</h2>
 			<div>
 				<span class="font-bold text-blue-400">Reference:</span>
 				<span>please contact the TIPPECC team</span>
@@ -318,15 +320,3 @@
 		{/if}
 	</svelte:fragment>
 </TabGroup>
-
-<style>
-	.bg-box {
-		background-color: #1f2937; /* Dunkelgrau (zinc-800) als Standardhintergrund */
-		border: 1px solid #374151; /* Etwas dunklerer Rand (zinc-700) */
-		border-radius: 1rem; /* abgerundete Ecken */
-		padding: 1rem; /* Innenabstand */
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für den 3D-Effekt */
-		margin-bottom: 1rem; /* Abstand nach unten */
-		margin-top: 1rem; /* Abstand nach oben */
-	}
-</style>

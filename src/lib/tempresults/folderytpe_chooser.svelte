@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import folder_types from './folder_types.json';
-	import selected from '$lib/icons/select-multiple-svgrepo-com.svg';
+	import Selected from '$lib/icons/select-multiple-svgrepo-com.svelte';
 	import SelectBoundingBox from '$lib/components/SelectBoundingBox.svelte';
 
 	export var filter: string = '';
@@ -67,8 +67,8 @@
 </script>
 
 <!-- Backend Folder Content as checkboxes -->
-<div class="bg-surface-600 z-30 ml-2">
-	<div class="pl-2 pb-2 bg-surface-700">
+<div class="dark:bg-surface-600 z-30 ml-2">
+	<div class="pl-2 pb-2 dark:bg-surface-700">
 		<div class="mb-1 mt-2 text-lg">
 			<h3>1. Climate Model / Region</h3>
 
@@ -77,10 +77,10 @@
 				{#each categories as cat}
 					<button
 						type="button"
-						class="btn-sm bg-[#873c07] m-1 text-lg rounded-md hover:bg-tertiary-500 {current_category ==
+						class="btn-sm m-1 text-lg rounded-md hover:bg-tertiary-500 font-semibold text-white {current_category ==
 						cat
-							? 'font-bold bg-[#873c07] underline text-white'
-							: ''}"
+							? ' bg-tertiary-500 text-white underline'
+							: 'bg-[#124495d4]'}"
 						on:click={() => set_filter(cat)}
 						>{cat.replace('CORDEX', 'CORDEX-CORE (RCM)').replace('CMIP6', 'CMIP6 (GCM)')}</button
 					>
@@ -91,7 +91,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="pl-2 pr-4 pb-2 bg-surface-700 mt-2">
+	<div class="pl-2 pr-4 pb-2 dark:bg-surface-700 mt-2">
 		<div class="mb-1 mt-2 text-lg">
 			<h3>2. Dataset Processing Level, Type & Aggregation</h3>
 
@@ -103,10 +103,10 @@
 			{#each foldertypes as ftype}
 				<button
 					type="button"
-					class="btn-sm bg-[#b05803] m-1 text-lg rounded-md hover:bg-tertiary-500 {foldertype ==
+					class="btn-sm m-1 text-lg rounded-md hover:bg-tertiary-500 font-semibold text-white {foldertype ==
 					ftype.key
-						? 'font-bold bg-[#b05803] underline text-white'
-						: ''}"
+						? ' bg-tertiary-500 underline'
+						: 'bg-[#124495d4]'}"
 					on:click={() => set_foldertype(ftype.key)}
 					>{ftype.display_name.replace(current_category, '').replace('-CORE', '')}</button
 				>
@@ -117,14 +117,14 @@
 			periods)
 		</div>
 	</div>
-	<div class="pl-2 pr-4 pb-2 bg-surface-700 mt-2 hidden md:block">
+	<div class="pl-2 pr-4 pb-2 dark:bg-surface-700 mt-2 hidden md:block">
 		<div class="mb-1 mt-2 text-lg" id="download-extent">
 			<h3>3. Download Extent</h3>
 
 			<div class="text-sm ml-2 pb-2">Set the spatial and/or temporal extent for your download.</div>
 			<button
 				type="button"
-				class="btn-sm bg-[#b05803] m-1 text-lg rounded-md hover:bg-tertiary-500"
+				class="btn-sm bg-[#0352b0] m-1 text-lg rounded-md hover:bg-tertiary-500 font-semibold text-white"
 				on:click={() => (showBoundingBox = !showBoundingBox)}
 			>
 				{showBoundingBox ? 'Hide' : 'Show'} Bounding Box & Time Selection
@@ -146,7 +146,8 @@
 
 <div class="mt-6 w-[50%] border-t-2 border-white pt-1 border-l-2">
 	<div class="flex ml-2">
-		<span><img src={selected} alt="..." width="30px" class="mr-1" /></span>
+		<!--<span><img src={selected} alt="..." width="30px" class="mr-1" /></span>-->
+		<Selected />
 		<h1 class="h4">
 			Selected: {foldertypes.find((x) => x.key == foldertype)?.display_name ?? 'Please select'}
 		</h1>

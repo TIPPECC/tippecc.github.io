@@ -16,7 +16,7 @@
 	let random_id = Math.random().toString(36).substring(2, 15); // Generate a random ID
 </script>
 
-<div class="bg-surface-700">
+<div class="dark:bg-surface-700">
 	<div class="flex flex-wrap items-center gap-2 w-full">
 		<TabGroup class="flex flex-wrap gap-2 grow">
 			<Tab bind:group={tabSet} name="tab1" value={0}>
@@ -79,7 +79,7 @@
 			{:else if tabSet === 1}
 				{#if folder_data[file_obj.index]['metadata_prov_stats']}
 					<div class="bg-box" id="base_for_entities_{random_id}">
-						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 							ℹ️ Available files based on this file
 						</h2>
 						<ProvenanceListView
@@ -88,7 +88,7 @@
 						/>
 					</div>
 					<div class="bg-box" id="base_for_entities_{random_id}">
-						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+						<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 							ℹ️ Available files used to create this file
 						</h2>
 						<ProvenanceListView
@@ -148,14 +148,5 @@
 <style>
 	.text-label {
 		color: #60a5fa; /* Die gewünschte Farbe, hier entspricht es Tailwinds "text-label" */
-	}
-	.bg-box {
-		background-color: #1f2937; /* Dunkelgrau (zinc-800) als Standardhintergrund */
-		border: 1px solid #374151; /* Etwas dunklerer Rand (zinc-700) */
-		border-radius: 1rem; /* abgerundete Ecken */
-		padding: 1rem; /* Innenabstand */
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für den 3D-Effekt */
-		margin-bottom: 1rem; /* Abstand nach unten */
-		margin-top: 1rem; /* Abstand nach oben */
 	}
 </style>

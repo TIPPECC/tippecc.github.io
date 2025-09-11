@@ -12,6 +12,7 @@
 	import VectorSource from 'ol/source/Vector';
 	import Feature from 'ol/Feature';
 	import Polygon from 'ol/geom/Polygon';
+	import { theme } from '$lib/stores/theme';
 
 	export let boundingBox = null; // [west, east, south, north]
 	export let startDate = '';
@@ -275,7 +276,7 @@
 </script>
 
 <div class="card">
-	<div class="card-body pb-3 pl-3 pr-3 pt-2 bg-surface-700">
+	<div class="card-body pb-3 pl-3 pr-3 pt-2 dark:bg-surface-700">
 		<h5>a) Temporal Extent</h5>
 		<div class="flex flex-row gap-4 mt-4 items-center">
 			<div class="flex flex-col">
@@ -286,7 +287,7 @@
 						type="date"
 						class="input input-bordered"
 						bind:value={startDate}
-						style="color-scheme: dark"
+						style={theme.toString() === 'dark' ? 'color-scheme: dark' : ''}
 					/>
 				</div>
 			</div>
@@ -298,13 +299,13 @@
 						type="date"
 						class="input input-bordered"
 						bind:value={endDate}
-						style="color-scheme: dark"
+						style={theme.toString() === 'dark' ? 'color-scheme: dark' : ''}
 					/>
 				</div>
 			</div>
 			<div class="flex flex-col justify-end mb-2 ml-auto">
 				<button
-					class="btn bg-red-900 btn-sm btn-error hover:bg-error/20"
+					class="btn bg-tertiary-900 hover:bg-tertiary-700 text-white font-semibold"
 					type="button"
 					on:click={clearForm}
 				>

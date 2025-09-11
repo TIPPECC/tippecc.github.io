@@ -103,13 +103,13 @@
 		{#if label_value_arr[cat]['Category']}
 			<div class="items-center mt-4">
 				<a href={label_value_arr[cat]['Category_Key']} class="font-bold hover:underline"
-					>{label_value_arr[cat]['Category']}<span class="ml-2 text-xs font-semibold italic"
+					>{label_value_arr[cat]['Category']}<span class="ml-2 text-sm font-semibold italic"
 						>(show)</span
 					></a
 				>
 			</div>
 		{/if}
-		<ul class="ml-4 text-gray-300 list-disc mt-1">
+		<ul class="ml-4 dark:text-gray-300 list-disc mt-1">
 			{#each Object.keys(label_value_arr[cat]) as label}
 				{#if label != 'Category' && label != 'Category_Key'}
 					<li class="mt-1 ml-2">

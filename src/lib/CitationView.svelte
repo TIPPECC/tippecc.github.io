@@ -28,7 +28,7 @@
 
 {#if in_main_page}
 	<div class="bg-box">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">ℹ️ Cite as:</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Cite as:</h2>
 		<div>
 			<span class="font-bold text-blue-400">Reference:</span>
 			<span>please contact the TIPPECC team</span>
@@ -39,7 +39,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
 	{#if file['citation_historical_source']}
 		<div class="bg-box">
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 				ℹ️ Citation: Historical Source
 			</h2>
 			<div>
@@ -62,7 +62,7 @@
 	{/if}
 	{#if file['citation_scenario_source']}
 		<div class="bg-box">
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 				ℹ️ Citation: Scenario Source
 			</h2>
 			<div>
@@ -85,7 +85,7 @@
 	{/if}
 	{#if file['citation_historical_scenario_source']}
 		<div class="bg-box">
-			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
 				ℹ️ Citation: Historical & Scenario Source
 			</h2>
 			<div>
@@ -107,15 +107,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.bg-box {
-		background-color: #1f2937; /* Dunkelgrau (zinc-800) als Standardhintergrund */
-		border: 1px solid #374151; /* Etwas dunklerer Rand (zinc-700) */
-		border-radius: 1rem; /* abgerundete Ecken */
-		padding: 1rem; /* Innenabstand */
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für den 3D-Effekt */
-		margin-bottom: 1rem; /* Abstand nach unten */
-		margin-top: 1rem; /* Abstand nach oben */
-	}
-</style>

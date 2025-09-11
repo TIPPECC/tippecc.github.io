@@ -15,8 +15,8 @@
 	import CaretDown from '$lib/icons/caret_down.svelte';
 	import CaretRight from '$lib/icons/caret_right.svelte';
 	import SquareCheckmark from '$lib/icons/square_checkmark.svelte';
-	import magnifier from '$lib/icons/magnifier-svgrepo-com.svg';
-	import list from '$lib/icons/list-ul-alt-svgrepo-com.svg';
+	import Magnifier from '$lib/icons/magnifier-svgrepo-com.svelte';
+	import List from '$lib/icons/list-ul-alt-svgrepo-com.svelte';
 	import Process from '$lib/icons/start-process.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
@@ -334,7 +334,7 @@
 
 	// submit all checkboxes with checked state true
 	// this writes a txt file in the backend, remembering all selected files
-	// this txt file is saved with a 32 char hex hash form uuid
+	// this txt file is saved with a 32 char hex form uuid
 	// the response of this request is a string containing a wget request with the
 	// mentioned hash, that should download all selected files from our server
 	async function handle_checkbox_submit() {
@@ -611,9 +611,10 @@
 		}
 	}
 
-	function scroll_to_file(key: number) {
+	async function scroll_to_file(key: number) {
 		const element = document.getElementById('checkbox_' + key);
 		if (element) {
+			// Add scroll-margin-top to prevent header overlap/shrinking
 			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}
@@ -799,9 +800,9 @@
 	<!-- Sidebar -->
 
 	<main
-		class="col-span-1 bg-surface-600 p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
+		class="col-span-1 dark:bg-surface-600 p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
 	>
-		<div class=" bg-surface-600 p-4">
+		<div class=" dark:bg-surface-600 p-4">
 			<div class="flex">
 				<h1 class="content-heading">Available Collections</h1>
 				<div class="flex-center">
@@ -814,13 +815,32 @@
 				development is still ongoing as well as the processing of datasets. Here you can explore the
 				available collections of datasets by climate model or region.<br />
 				<br />Please report issues and feedback
-				<span class="text-bold underline"
-					><a
+				<span class="text-bold underline">
+					<a
 						href="https://github.com/TIPPECC/tippecc.github.io/issues"
 						target="_blank"
-						title="Report issues and feedback">here</a
-					></span
-				>.
+						rel="noopener noreferrer"
+						title="Report issues and feedback (opens in new tab)"
+						aria-label="Report issues and feedback (opens in new tab)"
+					>
+						here
+						<!-- small external-link icon -->
+						<svg
+							class="inline-block ml-1 align-text-top"
+							width="15"
+							height="15"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+							focusable="false"
+						>
+							<path d="M14 3h7v7h-2V6.41L10.41 15 9 13.59 18.59 4H14V3z" />
+							<path d="M5 5h6v2H7v10h10v-4h2v6H5z" />
+						</svg>
+					</a>
+				</span>
+				.
 			</div>
 			<section id="collection" />
 			<FoldertypeChooser
@@ -848,7 +868,7 @@
 			<section id="filter" />
 			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Dataset Filters</h4>
-				<img src={magnifier} alt="..." width="20px" />
+				<Magnifier />
 				<!--<button
 					class="p-1 variant-filled-surface hover:bg-tertiary-900 items-center rounded-md w-[30px] h-[30px]"
 					on:click={() => {search_term = ""; search_time = "_"; search_aggregation= "_"}}
@@ -875,10 +895,10 @@
 					{/each}
 				</div>
 			{/if}
-			<div class="p2">
+			<div class="p4">
 				<div class="relative w-full ml-2">
 					<input
-						class="input w-full mt-4 p-2 rounded-md placeholder-gray-200"
+						class="input w-full mt-4 p-2 rounded-md dark:placeholder-gray-100 placeholder:italic border-2 border-surface-300"
 						type="text"
 						placeholder="Type to filter filenames or click label above..."
 						aria-label="Filter filenames"
@@ -992,14 +1012,14 @@
 			<section id="datasets" />
 			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Filtered Datasets</h4>
-				<img src={list} alt="..." width="20px" />
+				<List />
 			</div>
 
 			{#if folder_data.length > 0}
 				<div class="flex flex-wrap gap-4 p-2">
 					<div>
 						<button
-							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md text-white"
 							on:click={() => expand_all_categories()}
 						>
 							<CaretRight /> &nbsp; Expand All
@@ -1007,7 +1027,7 @@
 					</div>
 					<div>
 						<button
-							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md text-white"
 							on:click={() => close_all_categories()}
 						>
 							<CaretDown /> &nbsp; Close All
@@ -1026,7 +1046,9 @@
 								: 'hidden'}
 						>
 							<div
-								class="w-full h-[36px] flex items-center rounded-md pl-3 {cat_counter % 2 == 0
+								class="w-full h-[36px] flex items-center rounded-md pl-3 text-white {cat_counter %
+									2 ==
+								0
 									? 'bg-[#124495d4]'
 									: 'bg-[#4472c4e3]'} mb-1"
 							>
@@ -1104,7 +1126,7 @@
 															bind:checked={selected_files[file_obj.index]}
 															on:change={on_folder_checkbox_change}
 														/>
-														<span class:text-blue-300={selected_files[file_obj.index]}>
+														<span class:dark:text-blue-300={selected_files[file_obj.index]}>
 															&nbsp; ... {folder_data[file_obj.index]['filename']
 																.replace(folder_cat, '')
 																.replace(/^_+/, '')}
@@ -1159,7 +1181,7 @@
 													<div class="flex">
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md"
+																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
 																title="Download .nc file"
 															>
 																<a
@@ -1180,7 +1202,7 @@
 															</button>
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download clipped .nc file"
 																>
 																	<a
@@ -1203,7 +1225,7 @@
 
 															{#if folder_data[file_obj.index]['dat_exists']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download .dat file"
 																>
 																	<a
@@ -1224,7 +1246,7 @@
 																</button>
 															{:else if folder_data[file_obj.index]['in_limit_conversion']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md"
+																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
 																	on:click={() =>
 																		try_to_generate_dat_file(
 																			folder_data[file_obj.index]['filename'],
@@ -1254,7 +1276,7 @@
 
 															{#if folder_data[file_obj.index]['dat_clipped_exists']}
 																<button
-																	class="mr-1 max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	class="mr-1 max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download clipped .dat file"
 																>
 																	<a
@@ -1278,7 +1300,7 @@
 															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
-																	class="max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md"
+																	class="max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
 																	on:click={() =>
 																		try_to_access_tiff_file(
 																			folder_data[file_obj.index]['filename'],
@@ -1296,7 +1318,7 @@
 															{:else if folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 2: Tif file exists. -->
 																<button
-																	class="max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																	class="max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download .tif file"
 																>
 																	<a
@@ -1324,7 +1346,7 @@
 															<!-- Other Filetypes -->
 														{:else}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md"
+																class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																title="Download {folder_data[file_obj.index]['filesuffix']} file"
 															>
 																<a
@@ -1535,7 +1557,7 @@
 				<div class="flex flex-wrap gap-4 p-2">
 					<div>
 						<button
-							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md text-white"
 							on:click={() => select_all_files()}
 						>
 							<SquareCheckmark /> &nbsp; Select All
@@ -1543,7 +1565,7 @@
 					</div>
 					<div>
 						<button
-							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+							class="w-[120px] h-[30px] flex-center bg-tertiary-900 hover:bg-tertiary-500 rounded-md text-white"
 							on:click={() => unselect_all_files()}
 						>
 							<SquareEmpty /> &nbsp; Unselect All
@@ -1634,7 +1656,7 @@
 					</fieldset>
 					<button
 						type="button"
-						class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md"
+						class="btn bg-tertiary-900 hover:bg-tertiary-500 rounded-md text-white"
 						on:click|preventDefault={handle_checkbox_submit}
 						>Generate Wget link for download ({selected_files.filter((value) => value == true)
 							.length} selected)</button
@@ -1648,7 +1670,7 @@
 
 			{#if wget_request_string.length > 0}
 				<div style="display:flex">
-					<div class="bg-surface-700 border-2 rounded-md p-4 m-2">
+					<div class="dark:bg-surface-700 border-2 rounded-md p-4 m-2">
 						{#if num_download_dropped > 0}
 							({num_download_dropped}) of your selected files were too big and are thus dropped from
 							the download.
@@ -1656,7 +1678,7 @@
 						<div class="mb-2">
 							<span> To download all selected files using Wget: </span>
 						</div>
-						<div class=" p-[3px] bg-surface-900 [word-spacing:6px]">
+						<div class=" p-[3px] dark:bg-surface-900 [word-spacing:6px]">
 							{wget_request_string}
 						</div>
 						<!--<div class="mb-2">
@@ -1696,9 +1718,9 @@
 	<!-- Sidebar -->
 
 	<aside
-		class={`fixed md:sticky md:top-0 top-9 left-0 z-10 h-full ${
+		class={`fixed md:sticky md:top-0 top-9 left-0 z-10 h-screen ${
 			sidebarVisible_ ? 'w-64' : 'w-6'
-		} bg-surface-900 text-white p-4 md:translate-x-0 md:static md:h-screen hidden md:block border-l-4 border-[#4472c4] transition-all duration-300`}
+		} bg-surface-200 dark:bg-surface-900 p-4 md:translate-x-0 md:static md:h-screen hidden md:block border-l-4 border-[#4472c4] transition-all duration-300 overflow-y-auto`}
 		aria-label="Sidebar"
 	>
 		<button
