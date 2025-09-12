@@ -1,8 +1,8 @@
 <script>
 	import { base } from '$app/paths';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import orcid from '$lib/icons/orcid-svgrepo-com.svg';
-	import website from '$lib/icons/web-svgrepo-com.svg';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import OrcidIcon from '$lib/icons/orcid-svgrepo-com.svelte';
+	import WebsiteIcon from '$lib/icons/web-svgrepo-com.svelte';
 	import { API_URL } from '../../app.config';
 	//	import team from '../team/team.json';
 
@@ -29,10 +29,11 @@
 	let team = data.result;
 	team_array = team.reverse();
 	team_array = team_array.sort(compare);
+	// @ts-ignore
 	team_array.sort(
 		(/** @type {{ related_org: string; }} */ a, /** @type {{ related_org: string; }} */ b) =>
 			//	b.last_name.toLowerCase() - a.last_name.toLowerCase() ||
-
+		
 			(b.related_org === 'GERICS') - (a.related_org === 'GERICS') ||
 			(b.related_org === 'Uni Jena') - (a.related_org === 'Uni Jena') ||
 			(b.related_org === 'WITS-GCI') - (a.related_org === 'WITS-GCI') ||
@@ -68,9 +69,9 @@
 </script>
 
 <div class="content-div">
-	<div class="flex">
+	<div class="flex items-center">
 		<h1 class="content-heading">Team</h1>
-		<img src={group} alt="..." width="30px" />
+		<Group />
 	</div>
 	<blockquote class="content-blockquote mb-4">
 		TIPPECC is coordinated by: <br />
@@ -161,20 +162,28 @@
 									{#if member.title}{member.title} {/if}{member.first_name}
 									{member.last_name}
 								</h3>
-								{#if member.website}<div class="flex">
-										<img src={website} alt="Contact see website" width="20px" /><a
-											href={member.website}
-											target="_blank"
-											class="pl-1 underline">website</a
-										>
-									</div>{/if}
-								{#if member.person_orcid}<div class="flex">
-										<img src={orcid} alt="ORCID" width="20px" /><a
-											href="https://orcid.org/{member.person_orcid}"
-											target="_blank"
-											class="pl-1 underline">{member.person_orcid}</a
-										>
-									</div>{/if}
+								{#if member.website}
+									<a
+										href={member.website}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="pl-1 underline flex items-center gap-1 whitespace-nowrap"
+									>
+										<WebsiteIcon />
+										<span>website</span>
+									</a>
+								{/if}
+								{#if member.person_orcid}
+									<a
+										href={"https://orcid.org/" + member.person_orcid}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="pl-1 underline flex items-center gap-1 whitespace-nowrap"
+									>
+										<OrcidIcon />
+										<span>{member.person_orcid}</span>
+									</a>
+								{/if}
 							</div>
 						</div>
 						<div />

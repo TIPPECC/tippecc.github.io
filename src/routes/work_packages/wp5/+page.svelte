@@ -1,16 +1,16 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import collaboration_svg from '$lib/icons/collaboration-picture-visualize-person-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import Collaboration from '$lib/icons/collaboration-picture-visualize-person-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#6B9B2A] mt-4"><b>WP 5</b></span>
+	<span class="chip static-courser bg-[#6B9B2A] mt-4 text-white"><b>WP 5</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Stakeholder engagements (continuous participatory co-production)
 		</h1>
-		<img src={collaboration_svg} alt="..." width="40px" />
+		<Collaboration />
 	</div>
 
 	<blockquote class="content-blockquote">
@@ -19,14 +19,14 @@
 	</blockquote>
 
 	<div class="flex pt-10">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team/#coleen_vogel">Coleen Vogel (WITS)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
-		<img src={group} alt="Lead" width="30px" />
+		<Group />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#unza_iwemc">UNZA-IWRMC</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#uni_jena">Uni Jena</a></div>

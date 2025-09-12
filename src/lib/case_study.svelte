@@ -1,17 +1,27 @@
 <script>
 	export let color = '';
-	export let icon = '';
+	export let icon ;
 	export let wp = '';
 	export let title = '';
 	export let description = 'no';
-	export let image = '';
 </script>
 
 {#if description === 'no'}
 	<div class="card p-4 m-2 border border-5 border-[{color}]">
-		<div class="text-left mt-[-28px]"><span class="chip bg-[{color}]"><b>{wp}</b></span></div>
+		<div class="text-left mt-[-28px] text-white"><span class="chip bg-[{color}]"><b>{wp}</b></span></div>
 		<div class="flex">
-			<span><img src={icon} alt="..." width="40px" class="mt-2" /></span>
+			{#if icon}
+				{#if typeof icon === 'string'}
+					<span><img src={icon} alt="icon" width="40" class="mt-2" /></span>
+				{:else}
+					<span><svelte:component this={icon} width={40} class="mt-2" /></span>
+				{/if}
+			{:else}
+				<!-- fallback if no icon provided -->
+				<span class="mt-2 w-10 h-10 bg-gray-200 rounded" />
+			{/if}
+
+
 
 			<b class="text-lg underline underline-offset-4 decoration-[{color}] ml-2">{title}</b><br />
 		</div>
@@ -25,9 +35,19 @@
 		href="/case_studies/{wp.replaceAll(' ', '').toLowerCase()}"
 		title="click to learn more"
 	>
-		<div class="text-left mt-[-28px]"><span class="chip bg-[{color}]"><b>{wp}</b></span></div>
+		<div class="text-left mt-[-28px] text-white"><span class="chip bg-[{color}]"><b>{wp}</b></span></div>
 		<div class="flex">
-			<span><img src={icon} alt="..." width="40px" class="mt-2" /></span>
+			{#if icon}
+				{#if typeof icon === 'string'}
+					<span><img src={icon} alt="icon" width="40" class="mt-2" /></span>
+				{:else}
+					<span><svelte:component this={icon} width={40} class="mt-2" /></span>
+				{/if}
+			{:else}
+				<!-- fallback if no icon provided -->
+				<span class="mt-2 w-10 h-10 bg-gray-200 rounded" />
+			{/if}
+
 
 			<b class="text-lg underline underline-offset-4 decoration-[{color}] ml-2">{title}</b><br />
 		</div>

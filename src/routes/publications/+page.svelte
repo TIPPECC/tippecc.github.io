@@ -1,5 +1,5 @@
 <script>
-	import book from '$lib/icons/book-svgrepo-com.svg';
+	import Book from '$lib/icons/book-svgrepo-com.svelte';
 	const paper = [
 		{
 			authors: 'Engelbrecht FA, Steinkopf J, Padavatan J, Midgley GF',
@@ -134,9 +134,9 @@
 </script>
 
 <div class="content-div">
-	<div class="flex">
+	<div class="flex items-center">
 		<h1 class="content-heading">Publications</h1>
-		<img src={book} alt="..." width="30px" />
+		<Book />
 	</div>
 
 	<blockquote class="content-blockquote mb-4">

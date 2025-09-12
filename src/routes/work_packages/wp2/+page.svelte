@@ -1,16 +1,16 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import graph from '$lib/icons/graph-analytics-business-2-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import Graph from '$lib/icons/graph-analytics-business-2-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#B93F4A] mt-4"><b>WP 2</b></span>
+	<span class="chip static-courser bg-[#B93F4A] mt-4 text-white"><b>WP 2</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Synthesis of comprehensive information on climate change impacts
 		</h1>
-		<img src={graph} alt="..." width="40px" />
+		<Graph />
 	</div>
 
 	<blockquote class="content-blockquote">
@@ -20,14 +20,14 @@
 	</blockquote>
 
 	<div class="flex pt-10">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team/#kawawa_banda">Kawawa Banda (UNZA IWRMC )</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
-		<img src={group} alt="Lead" width="30px" />
+		<Group />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#uni_jena">Uni Jena</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gerics">GERICS</a></div>

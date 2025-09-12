@@ -1,16 +1,16 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import change_without from '$lib/icons/change_without_return-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import ChangeWithout from '$lib/icons/change_without_return-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#26D7D9] mt-4"><b>WP 4</b></span>
+	<span class="chip static-courser bg-[#26D7D9] mt-4 text-white"><b>WP 4</b></span>
 	<div class="flex">
 		<h1 class="content-heading">
 			Regional Tipping Points and co-development of adaptation options
 		</h1>
-		<img src={change_without} alt="..." width="40px" />
+		<ChangeWithout />
 	</div>
 
 	<blockquote class="content-blockquote">
@@ -21,14 +21,14 @@
 	</blockquote>
 
 	<div class="flex pt-10">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team/#francois_engelbrecht">Francois Engelbrecht (WITS_GCI)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
-		<img src={group} alt="Lead" width="30px" />
+		<Group />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gobabeb">Gobabeb</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#ub">UB</a></div>

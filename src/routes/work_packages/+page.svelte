@@ -1,13 +1,10 @@
 <script>
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import collaboration_svg from '$lib/icons/collaboration-picture-visualize-person-svgrepo-com.svg';
-	import weather from '$lib/icons/weather-temperature-forecast-svgrepo-com .svg';
-	import graph from '$lib/icons/graph-analytics-business-2-svgrepo-com.svg';
-	import networking from '$lib/icons/networking-collaboration-svgrepo-com.svg';
-	import change_without from '$lib/icons/change_without_return-svgrepo-com.svg';
-	import host_website from '$lib/icons/host-website-se-svgrepo-com.svg';
-	import move from '$lib/icons/move-up-svgrepo-com_change.svg';
-	import { goto } from '$app/navigation';
+	import Collaboration from '$lib/icons/collaboration-picture-visualize-person-svgrepo-com.svelte';
+	import Graph from '$lib/icons/graph-analytics-business-2-svgrepo-com.svelte';
+	import Networking from '$lib/icons/networking-collaboration-svgrepo-com.svelte';
+	import ChangeWithout from '$lib/icons/change_without_return-svgrepo-com.svelte';
+	import HostWebsite from '$lib/icons/host-website-se-svgrepo-com.svelte';
+	import Move from '$lib/icons/move-up-svgrepo-com_change.svelte';
 	import WorkPackage from '$lib/work_package.svelte';
 
 	// Workaround for missing tailwind classes
@@ -19,9 +16,9 @@
 </script>
 
 <div class="content-div">
-	<div class="flex">
+	<div class="flex items-center">
 		<h1 class="content-heading">Work Packages</h1>
-		<img src={networking} alt="..." width="30px" />
+		<Networking />
 	</div>
 
 	<blockquote class="content-blockquote mb-4">
@@ -33,7 +30,7 @@
 		<WorkPackage
 			wp="WP 1"
 			color="#D17208"
-			icon={move}
+			icon={Move}
 			title="Regional projections of future climate change"
 			description="This WP will set the data foundation that is needed to derive the climate indicators for the
         analysis of climate impacts (WP2), regional tipping points (WP4) and the web-portal based
@@ -43,7 +40,7 @@
 		<WorkPackage
 			wp="WP 2"
 			color="#B93F4A"
-			icon={graph}
+			icon={Graph}
 			title="Synthesis of comprehensive information on climate change impacts"
 			description="This WP will develop a range of indicators of climate change impacts across the sectors of
         water, agriculture and biodiversity that will be used to inform engagements with various
@@ -52,7 +49,7 @@
 		<WorkPackage
 			wp="WP 3"
 			color="#98B1D8"
-			icon={host_website}
+			icon={HostWebsite}
 			title="Climate Services Gateway through co-production"
 			description="The objective of this WP is the development of a web-based Climate Service Gateway with and
         for scientists and stakeholders, which will serve as a platform for easy access to
@@ -62,7 +59,7 @@
 		<WorkPackage
 			wp="WP 4"
 			color="#26D7D9"
-			icon={change_without}
+			icon={ChangeWithout}
 			title="Regional Tipping Points and co-development of adaptation options"
 			description="The WP will analyse regional tipping points in the southern African region towards the
         provision of climate services such as informing adaptation actions and policy. This will
@@ -72,7 +69,7 @@
 		<WorkPackage
 			wp="WP 5"
 			color="#6B9B2A"
-			icon={collaboration_svg}
+			icon={Collaboration}
 			title="Stakeholder engagements (continuos participatory co-production)"
 			description="This WP will ensure that the project is co-produced with stakeholders and that the project
             activities are aligned with the needs of the stakeholders."

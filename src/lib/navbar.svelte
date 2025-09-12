@@ -68,7 +68,7 @@
 			<ul title="Main Navigation">
 				{#each nav_elements as el}
 					<li
-						class="float-left {current === el['label']
+						class="float-left font-semibold text-white {current === el['label']
 							? 'bg-secondary-500'
 							: 'bg-primary-900 bg-transparent '}"
 					>
@@ -242,8 +242,8 @@
 	</div>
 {:else}
 	<!-- Drawer Button for Mobile Screens -->
-	<button on:click={toggleDrawer} class="btn-icon z-40 bg-surface-900 btn-icon-sm lg:!hidden p-2">
-		<i class="fa-solid fa-bars text-xl" />Menu
+	<button on:click={toggleDrawer} class="z-40 lg:!hidden p-2">
+		<i class="fa-solid fa-bars text-xl pl-4" />Menu
 	</button>
 
 	<!-- Theme toggle next to drawer button on small screens -->
@@ -253,7 +253,7 @@
 		aria-label={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
 		title={`Switch to ${$theme === 'light' ? 'dark' : 'light'} theme`}
 	>
-		{#if $theme === 'light'}
+		{#if $theme === 'dark'}
 			<!-- sun icon (white) -->
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -283,7 +283,7 @@
 				fill="currentColor"
 				aria-hidden="true"
 				focusable="false"
-				class="inline-block text-white"
+				class="inline-block"
 			>
 				<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor" />
 			</svg>
@@ -297,7 +297,7 @@
 				<ul class="flex flex-col">
 					{#each nav_elements as el}
 						<li
-							class="flex items-center {current === el['label']
+							class="flex items-center font-semibold text-white {current === el['label']
 								? 'bg-secondary-500'
 								: 'bg-transparent'}"
 						>

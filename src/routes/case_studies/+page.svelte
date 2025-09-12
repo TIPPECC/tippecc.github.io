@@ -1,12 +1,11 @@
 <script>
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import search_pin from '$lib/icons/search-pin-svgrepo-com.svg';
-	import water from '$lib/icons/water-drop-svgrepo-com.svg';
-	import income from '$lib/icons/other-income-svgrepo-com.svg';
-	import fence from '$lib/icons/fence-for-horses-jumps-svgrepo-com.svg';
-	import cow from '$lib/icons/cow-silhouette-svgrepo-com.svg';
-	import no_water from '$lib/icons/no-water-svgrepo-com.svg';
-	import maize from '$lib/icons/corn-svgrepo-com.svg';
+	import Search_pin from '$lib/icons/search-pin-svgrepo-com.svelte';
+	import Water from '$lib/icons/water-drop-svgrepo-com.svelte';
+	import Income from '$lib/icons/other-income-svgrepo-com.svelte';
+	import Fence from '$lib/icons/fence-for-horses-jumps-svgrepo-com.svelte';
+	import Cow from '$lib/icons/cow-silhouette-svgrepo-com.svelte';
+	import No_water from '$lib/icons/no-water-svgrepo-com.svelte';
+	import Maize from '$lib/icons/corn-svgrepo-com.svelte';
 	import CaseStudy from '$lib/case_study.svelte';
 	import { base } from '$app/paths';
 
@@ -19,9 +18,9 @@
 </script>
 
 <div class="content-div">
-	<div class="flex">
+	<div class="flex items-center">
 		<h1 class="content-heading">Case Studies</h1>
-		<img src={search_pin} alt="..." width="30px" />
+		<Search_pin />
 	</div>
 
 	<blockquote class="content-blockquote mb-4">
@@ -36,7 +35,7 @@
 		<CaseStudy
 			wp="Case Study 1"
 			color="#D17208"
-			icon={water}
+			icon={Water}
 			title="Rural water supply (Upper Zambezi / Barotse floodplain)"
 			description=""
 			image="{base}/IMG_2338.webp"
@@ -45,7 +44,7 @@
 		<CaseStudy
 			wp="Case Study 2"
 			color="#B93F4A"
-			icon={income}
+			icon={Income}
 			title="Livelihoods of communities living in semi-arid regions"
 			description=""
 			image="{base}/case_study_2.webp"
@@ -53,7 +52,7 @@
 		<CaseStudy
 			wp="Case Study 3"
 			color="#98B1D8"
-			icon={fence}
+			icon={Fence}
 			title="Transboundary conservation"
 			description=""
 			image="{base}/IMG_2338.webp"
@@ -61,7 +60,7 @@
 		<CaseStudy
 			wp="Case Study 4"
 			color="#98B1D8"
-			icon={no_water}
+			icon={No_water}
 			title="“day zero” events"
 			description="no"
 			image="{base}/IMG_2338.webp"
@@ -69,7 +68,7 @@
 		<CaseStudy
 			wp="Case Study 5"
 			color="#98B1D8"
-			icon={cow}
+			icon={Cow}
 			title="cattle industry"
 			description="no"
 			image="{base}/IMG_2338.webp"
@@ -77,7 +76,7 @@
 		<CaseStudy
 			wp="Case Study 6"
 			color="#98B1D8"
-			icon={maize}
+			icon={Maize}
 			title="maize crop"
 			description="no"
 			image="{base}/IMG_2338.webp"

@@ -1,14 +1,14 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import host_website from '$lib/icons/host-website-se-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import HostWebsite from '$lib/icons/host-website-se-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#98B1D8] mt-4"><b>WP 3</b></span>
+	<span class="chip static-courser bg-[#98B1D8] mt-4 text-white"><b>WP 3</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Climate Services Gateway through co-production</h1>
-		<img src={host_website} alt="..." width="40px" />
+		<HostWebsite />
 	</div>
 
 	<blockquote class="content-blockquote">
@@ -19,14 +19,14 @@
 	</blockquote>
 
 	<div class="flex pt-10">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team/#sophie_biskop">Sophie Biskop (Uni Jena)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
-		<img src={group} alt="Lead" width="30px" />
+		<Group />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#uni_jena">Uni Jena</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gerics">GERICS</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>

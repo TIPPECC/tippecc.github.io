@@ -9,13 +9,13 @@
 
 {#if link === true}
 	<a
-		class="card p-4 m-2 border border-5 hover:bg-surface-600"
+		class="card p-4 m-2 border border-5 dark:hover:bg-surface-600"
 		href={'/work_packages/' + wp.replaceAll(' ', '').toLowerCase()}
 		title="click to learn more"
 		style="border-color: {color};"
 	>
 		<div class="text-left mt-[-28px]">
-			<span class="chip" style="background-color: {color};"><b>{wp}</b></span>
+			<span class="chip text-white" style="background-color: {color};"><b>{wp}</b></span>
 		</div>
 		<div class="flex">
 			{#if icon}
@@ -39,9 +39,9 @@
 		</blockquote>
 	</a>
 {:else}
-	<span class="card p-4 m-2 border border-5 hover:bg-surface-600" style="border-color: {color};">
+	<span class="card p-4 m-2 border border-5 hover:bg-surface-200 dark:hover:bg-surface-600" style="border-color: {color};">
 		<div class="text-left mt-[-28px]">
-			<span class="chip static-courser" style="background-color: {color};"><b>{wp}</b></span>
+			<span class="chip static-courser text-white" style="background-color: {color};"><b>{wp}</b></span>
 		</div>
 		<div class="flex">
 			{#if icon}

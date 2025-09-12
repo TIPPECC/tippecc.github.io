@@ -52,17 +52,15 @@
 
 <br />
 <div class="">
-	<div class="flex items-center justify-between mb-3">
-		<h2 class="text-lg text-label font-semibold flex items-center gap-2">
+	<div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 gap-2">
+		<h2 class="text-lg text-label font-semibold flex items-center gap-2 max-w-full break-words">
 			<FileIcon />
-			{folder_data['filename']}
+			<span class="break-all">{folder_data['filename']}</span>
 		</h2>
 
 		<a
-			href="/climate_services_gateway/collections/?type={foldertype}&filename={folder_data[
-				'filename'
-			]}"
-			class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+			href={"/climate_services_gateway/collections/?type=" + foldertype + "&filename=" + folder_data['filename']}
+			class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-normal"
 		>
 			Collection View
 		</a>

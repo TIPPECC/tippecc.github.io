@@ -800,9 +800,9 @@
 	<!-- Sidebar -->
 
 	<main
-		class="col-span-1 dark:bg-surface-600 p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
+		class="col-span-1 dark:bg-surface-600 p-1 md:p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
 	>
-		<div class=" dark:bg-surface-600 p-4">
+		<div class=" dark:bg-surface-600 p-1 md:p-4">
 			<div class="flex">
 				<h1 class="content-heading">Available Collections</h1>
 				<div class="flex-center">
@@ -866,7 +866,7 @@
 			{/if}
 			<br />
 			<section id="filter" />
-			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
+			<div class="flex gap-2 mt-6 md:w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Dataset Filters</h4>
 				<Magnifier />
 				<!--<button
@@ -1010,7 +1010,7 @@
 			<section id="clipping" />
 
 			<section id="datasets" />
-			<div class="flex gap-2 mt-6 w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
+			<div class="flex gap-2 mt-6 md:w-[25%] border-t-2 border-surface-300 pt-1 border-l-2">
 				<h4 class="h4 ml-2">Filtered Datasets</h4>
 				<List />
 			</div>
@@ -1046,7 +1046,7 @@
 								: 'hidden'}
 						>
 							<div
-								class="w-full h-[36px] flex items-center rounded-md pl-3 text-white {cat_counter %
+								class="w-full h-[50px] md:h-[36px] flex items-center rounded-md pl-3 text-white {cat_counter %
 									2 ==
 								0
 									? 'bg-[#124495d4]'
@@ -1572,8 +1572,11 @@
 						</button>
 					</div>
 				</div>
-				<div class="flex gap-2 mt-6 w-[30%] border-t-2 border-surface-300 pt-1 border-l-2">
+				<div class="flex gap-2 mt-6 md:w-[30%] border-t-2 border-surface-300 pt-1 border-l-2">
 					<h4 class="h4 ml-2 flex gap-2">Download with WGET<Download /></h4>
+				</div>
+				<div class="p-2 md:hidden">
+					Download deactivated on mobile devices. Please use a desktop computer or laptop.
 				</div>
 				<div class="flex gap-x-1 p-2 hidden md:block">
 					<fieldset>

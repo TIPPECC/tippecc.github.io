@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -7,9 +6,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   fill="#ffffff"
-   height="800px"
-   width="800px"
+   fill="currentColor"
+   height="30px"
+   width="30px"
    version="1.1"
    id="Capa_1"
    viewBox="0 0 452.025 452.025"
@@ -20,8 +19,8 @@
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
          rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
    id="defs50">    </defs><sodipodi:namedview
-   pagecolor="#ffffff"
-   bordercolor="#666666"
+   pagecolor="currentColor"
+   bordercolor="currentColor"
    borderopacity="1"
    objecttolerance="10"
    gridtolerance="10"

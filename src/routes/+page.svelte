@@ -3,8 +3,8 @@
 	import { base } from '$app/paths';
 	import { browser } from '$app/environment';
 	import Carousel from 'svelte-carousel';
-	import goals from '$lib/icons/goals-svgrepo-com.svg';
-	import background from '$lib/icons/background-svgrepo-com.svg';
+	import Goals from '$lib/icons/goals-svgrepo-com.svelte';
+
 	import { fade, fly, scale, blur } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import icon from '$lib/tippecc_icon.svg';
@@ -197,15 +197,15 @@
 	</div>
 {/if}
 <div class="grow flex w-full justify-center py-2 bg-primary-900/80">
-	<h1 class="h3">
+	<h1 class="h3 text-white">
 		Climate change information for adapting to regional tipping points in southern Africa
 	</h1>
 </div>
 
 <div class="content-div">
-	<div class="flex pt-4">
+	<div class="flex pt-4 flex items-center">
 		<h1 class="content-heading">Goals</h1>
-		<img src={goals} alt="..." width="25px" />
+		<Goals />
 	</div>
 
 	<blockquote class="content-blockquote">

@@ -1,14 +1,14 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import group from '$lib/icons/group-svgrepo-com.svg';
-	import move from '$lib/icons/move-up-svgrepo-com_change.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Group from '$lib/icons/group-svgrepo-com.svelte';
+	import Move from '$lib/icons/move-up-svgrepo-com_change.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#D17208] mt-4"><b>WP 1</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4 text-white"><b>WP 1</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Regional projections of future climate change</h1>
-		<img src={move} alt="..." width="40px" />
+		<Move />
 	</div>
 
 	<blockquote class="content-blockquote">
@@ -18,14 +18,14 @@
 	</blockquote>
 
 	<div class="flex pt-10">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team/#torsten_weber">Torsten Weber (GERICS)</a>
 		</div>
 	</div>
 
 	<div class="flex pt-4">
-		<img src={group} alt="Lead" width="30px" />
+		<Group />
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#gerics">GERICS</a></div>
 		<div class="pl-4 text-lg"><a class="anchor" href="/team/#wits_gci">WITS-GCI</a></div>
 	</div>

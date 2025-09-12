@@ -1,17 +1,17 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import income from '$lib/icons/other-income-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Income from '$lib/icons/other-income-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 2</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4 text-white"><b>Case Study 2</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Livelihoods of communities living in semi-arid regions</h1>
-		<img src={income} alt="..." width="40px" />
+		<Income />
 	</div>
 
 	<div class="flex pt-2 pb-4">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team#theo_wassenaar">Theo Wassenaar</a>
 		</div>

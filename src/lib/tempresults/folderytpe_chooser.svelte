@@ -144,7 +144,7 @@
 	</div>
 </div>
 
-<div class="mt-6 w-[50%] border-t-2 border-white pt-1 border-l-2">
+<div class="mt-6 md:w-[50%] border-t-2 border-white pt-1 border-l-2">
 	<div class="flex ml-2">
 		<!--<span><img src={selected} alt="..." width="30px" class="mr-1" /></span>-->
 		<Selected />

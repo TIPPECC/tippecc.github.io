@@ -1,5 +1,5 @@
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
+<svg width="30px" height="30px" style="flex: 0 0 30px" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="currentColor" stroke="currentColor" stroke-miterlimit="10" stroke-width="0.5" class="icon line-color">
 
 <g id="SVGRepo_bgCarrier" stroke-width="0"/>
 
@@ -9,7 +9,7 @@
 
 <defs>
 
-<style>.cls-1{fill:none;stroke:#ffffff;stroke-miterlimit:10;stroke-width:0.624;}</style>
+<style>.cls-1{fill:none;stroke:currentColor;stroke-miterlimit:10;stroke-width:0.624;}</style>
 
 </defs>
 

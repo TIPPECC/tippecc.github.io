@@ -1,17 +1,17 @@
 <script>
-	import leader from '$lib/icons/leadership-svgrepo-com.svg';
-	import fence from '$lib/icons/fence-for-horses-jumps-svgrepo-com.svg';
+	import Leader from '$lib/icons/leadership-svgrepo-com.svelte';
+	import Fence from '$lib/icons/fence-for-horses-jumps-svgrepo-com.svelte';
 </script>
 
 <div class="content-div">
-	<span class="chip static-courser bg-[#D17208] mt-4"><b>Case Study 3</b></span>
+	<span class="chip static-courser bg-[#D17208] mt-4 text-white"><b>Case Study 3</b></span>
 	<div class="flex">
 		<h1 class="content-heading">Transboundary conservation</h1>
-		<img src={fence} alt="..." width="40px" />
+		<Fence />
 	</div>
 
 	<div class="flex pt-2 pb-4">
-		<img src={leader} alt="Lead" width="30px" />
+		<Leader />
 		<div class="pl-4 text-lg">
 			<a class="anchor" href="/team#tjeremy_perkins">Jeremy Perkins</a>
 		</div>

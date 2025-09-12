@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -7,8 +6,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="800px"
-   height="800px"
+   width="30px"
    viewBox="0 0 24 24"
    fill="none"
    transform="matrix(1, 0, 0, -1, 0, 0)rotate(0)"
@@ -31,8 +29,8 @@
   <defs
      id="defs17" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
+     pagecolor="#currentColor"
+     bordercolor="currentColor"
      borderopacity="1"
      objecttolerance="10"
      gridtolerance="10"
@@ -65,32 +63,32 @@
        y="4"
        width="6"
        height="6"
-       stroke="#fefbfb"
+       stroke="currentColor"
        stroke-width="1"
        stroke-linecap="round"
        stroke-linejoin="round"
        id="rect4"
-       style="fill-opacity:0;fill:#000000" />
+       style="fill-opacity:0;fill:currentColor" />
     <rect
        x="14"
        y="14"
        width="6"
        height="6"
-       stroke="#fefbfb"
+       stroke="currentColor"
        stroke-width="1"
        stroke-linecap="round"
        stroke-linejoin="round"
        id="rect6" />
     <path
        d="M10 19.3733C8.4087 19.3733 6.88258 18.7411 5.75736 17.6159C4.63214 16.4907 4 14.9646 4 13.3733C4 11.782 4.63214 10.2559 5.75736 9.13065C6.88258 8.00543 8.4087 7.37329 10 7.37329"
-       stroke="#fefbfb"
+       stroke="currentColor"
        stroke-width="1"
        stroke-linecap="round"
        stroke-linejoin="round"
        id="path8" />
     <path
        d="M8.396 5.54468L10.9256 6.98482L9.48551 9.51447"
-       stroke="#fefbfb"
+       stroke="currentColor"
        stroke-width="1"
        stroke-linecap="round"
        stroke-linejoin="round"
@@ -101,21 +99,21 @@
      y="7.0235295"
      width="2.9505873"
      height="2.8094115"
-     stroke="#fefbfb"
+     stroke="currentColor"
      stroke-width="1"
      stroke-linecap="round"
      stroke-linejoin="round"
      id="rect4-1"
-     style="fill:#000000;fill-opacity:0" />
+     style="fill:currentColor;fill-opacity:0" />
   <rect
      x="14.251763"
      y="4.2282352"
      width="2.4847059"
      height="2.7952943"
-     stroke="#fefbfb"
+     stroke="currentColor"
      stroke-width="1"
      stroke-linecap="round"
      stroke-linejoin="round"
      id="rect4-4"
-     style="fill:#000000;fill-opacity:0" />
+     style="fill:currentColor;fill-opacity:0" />
 </svg>
