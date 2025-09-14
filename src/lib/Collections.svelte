@@ -613,9 +613,24 @@
 
 	async function scroll_to_file(key: number) {
 		const element = document.getElementById('checkbox_' + key);
+
+		// workaround for chrome bug using scrollIntoView as it removes parts of the header.
+		// For some reasons this does not occuere with firefox and edge.
+		// It works using scrollIntoViewIfNeeded as intended, but this is not a standard and not
+		// supported in all browsers
+
 		if (element) {
 			// Add scroll-margin-top to prevent header overlap/shrinking
-			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			if ('scrollIntoViewIfNeeded' in element) {
+				// Use type assertion to access non-standard scrollIntoViewIfNeeded
+				if (typeof (element as any).scrollIntoViewIfNeeded === 'function') {
+					(element as any).scrollIntoViewIfNeeded(true);
+				} else {
+					element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			} else {
+				element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
 		}
 	}
 
@@ -786,6 +801,16 @@
 </script>
 
 <div class="grid grid-cols-[auto_1fr]">
+	<!-- full-page loading overlay -->
+	{#if loading}
+		<div class="loading-overlay fixed inset-0 z-50 flex items-center justify-center">
+			<div class="overlay-backdrop" aria-hidden="true" />
+			<div class="overlay-content">
+				<LoadingRing />
+			</div>
+		</div>
+	{/if}
+
 	<!-- Burger button (only mobile) 
 	<button
 		class="md:hidden fixed top-9 left-0 z-20 bg-gray-800 text-white p-2 rounded"
@@ -800,7 +825,7 @@
 	<!-- Sidebar -->
 
 	<main
-		class="col-span-1 dark:bg-surface-600 p-1 md:p-4 space-y-4 lg:md-[5%] lg:md-[5%] lg:pr-[10%] lg:pl-[5%]"
+		class="wrap-buttons col-span-1 dark:bg-surface-600 p-1 md:p-4 space-y-4 lg:md-[5%] lg:md:[5%] lg:pr-[10%] lg:pl-[5%]"
 	>
 		<div class=" dark:bg-surface-600 p-1 md:p-4">
 			<div class="flex">
@@ -1091,7 +1116,7 @@
 											<th scope="col" class="text-left min-w-[140px] max-w-[140px]"
 												>Last Modified</th
 											>
-											<th scope="col" class="text-left min-w-[122px] max-w-[122px]">Download</th>
+											<th scope="col" class="text-left min-w-[150px] max-w-[150px]">Download</th>
 											<th scope="col" class="text-left min-w-[86px] max-w-[86px]">Visualize</th>
 										</tr>
 									</thead>
@@ -1177,8 +1202,8 @@
 														: folder_data[file_obj.index]['creation_date'].split(' ')[0]}
 												</td>
 												<!-- download link -->
-												<td class="min-w-[122px]">
-													<div class="flex">
+												<td class="min-w-[180px]">
+													<div class="flex flex-wrap gap-1">
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
@@ -1187,7 +1212,7 @@
 																<a
 																	href="{API_URL}/climate/get_temp_file?name={folder_data[
 																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
+																	]['filename']}&type={foldertype}&filetype=nc"
 																	class="flex"
 																	aria-hidden="true"
 																	tabindex="-1"
@@ -1200,6 +1225,30 @@
 																	</div>
 																</a>
 															</button>
+															{#if add2FileDownloadUrl.length > 0}
+																<button
+																	class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
+																	title="Download .nc file based on selected extent"
+																>
+																	<a
+																		href="{API_URL}/climate/get_temp_file?name={folder_data[
+																			file_obj.index
+																		][
+																			'filename'
+																		]}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
+																		class="flex"
+																		aria-hidden="true"
+																		tabindex="-1"
+																	>
+																		<Download />
+																		<div
+																			class="ml-1 flex text-white place-items-center justify-items-center"
+																		>
+																			.nc(e)
+																		</div>
+																	</a>
+																</button>
+															{/if}
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
@@ -1246,7 +1295,7 @@
 																</button>
 															{:else if folder_data[file_obj.index]['in_limit_conversion']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
+																	class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
 																	on:click={() =>
 																		try_to_generate_dat_file(
 																			folder_data[file_obj.index]['filename'],
@@ -1276,7 +1325,7 @@
 
 															{#if folder_data[file_obj.index]['dat_clipped_exists']}
 																<button
-																	class="mr-1 max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
+																	class="mr-1 max-h-[33px] mb-2 w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download clipped .dat file"
 																>
 																	<a
@@ -1300,7 +1349,7 @@
 															{#if folder_data[file_obj.index]['tif_convertable'] && !folder_data[file_obj.index]['tif_exists']}
 																<!-- CASE 1: Try to generate tif. -->
 																<button
-																	class="max-h-[33px] w-full p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
+																	class="max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
 																	on:click={() =>
 																		try_to_access_tiff_file(
 																			folder_data[file_obj.index]['filename'],
@@ -1753,5 +1802,21 @@
 	.spaced-row td {
 		padding-top: 10px;
 		padding-bottom: 10px;
+	}
+
+	/* Styles for the loading overlay */
+	.loading-overlay {
+		background-color: rgba(0, 0, 0, 0.7);
+	}
+
+	.overlay-backdrop {
+		position: absolute;
+		inset: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	.overlay-content {
+		position: relative;
+		z-index: 10;
 	}
 </style>
