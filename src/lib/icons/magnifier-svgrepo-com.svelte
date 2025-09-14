@@ -1,4 +1,10 @@
-<svg width="20px" style="flex: 0 0 20px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg
+	width="20px"
+	style="flex: 0 0 20px"
+	viewBox="0 0 32 32"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
 	<g id="SVGRepo_bgCarrier" stroke-width="0" />
 
 	<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />

@@ -1305,6 +1305,89 @@
 	}
 
 	/**
+	 * Calculate most commonly used value ranges for the current geotiff file.
+	 * This function is async and might take a while depending on the file size.
+	 * It will update the current_band_metainfo min and max values.
+	 */
+	async function get_histogram(rasterData?: any) {
+		if (!metadata_loaded) {
+			console.log('Metadata not loaded, cannot calculate color bounds.');
+			return;
+		}
+		loading_map = true;
+		await tick();
+
+		try {
+			if (!rasterData) {
+				const tiff = await fromUrl(virtual_data_url);
+				const image = await tiff.getImage();
+				rasterData = await image.readRasters();
+			}
+			// Calculate histogram for the selected band
+			const bandIndex = selected_band - 1; // Convert to 0-based index
+			const bandData = rasterData[bandIndex] as TypedArray;
+
+			if (!bandData) {
+				throw new Error(`Band data for band index ${bandIndex} is undefined.`);
+			}
+
+			// Create histogram
+			const histogram: { [key: number]: number } = {};
+			for (let i = 0; i < bandData.length; i++) {
+				const value = bandData[i];
+				if (value in histogram) {
+					histogram[value]++;
+				} else {
+					histogram[value] = 1;
+				}
+			}
+
+			// Convert histogram to sorted array of [value, count] pairs
+			const sortedHistogram = Object.entries(histogram)
+				.map(([value, count]) => [parseFloat(value), count])
+				.sort((a, b) => a[0] - b[0]);
+
+			// Calculate cumulative distribution
+			let cumulativeCount = 0;
+			const totalCount = bandData.length;
+			const cdf: { value: number; cumulative: number }[] = sortedHistogram.map(([value, count]) => {
+				cumulativeCount += count;
+				return { value: value as number, cumulative: cumulativeCount / totalCount };
+			});
+
+			console.log('CDF:', cdf);
+			// Range with most data points (e.g., between 2nd and 98th percentiles)
+
+			// Determine min and max values based on percentiles (e.g., 2nd and 98th percentiles)
+			const lowerPercentile = 0.02;
+			const upperPercentile = 0.98;
+
+			let newMin = current_band_metainfo.min;
+			let newMax = current_band_metainfo.max;
+
+			for (const entry of cdf) {
+				if (entry.cumulative >= lowerPercentile) {
+					newMin = entry.value;
+					break;
+				}
+			}
+			for (let i = cdf.length - 1; i >= 0; i--) {
+				if (cdf[i].cumulative <= upperPercentile) {
+					newMax = cdf[i].value;
+					break;
+				}
+			}
+			// Update band metainfo
+			current_band_metainfo.min = newMin;
+			current_band_metainfo.max = newMax;
+			console.log(`Updated color bounds: min=${newMin}, max=${newMax}`);
+		} catch (error) {
+			console.error('Error calculating histogram:', error);
+		} finally {
+			loading_map = false;
+		}
+	}
+	/**
 	 * Fetches time series data from a GeoTIFF file at a given coordinate.
 	 * @param coordinate
 	 */
@@ -1318,6 +1401,8 @@
 		const height = image.getHeight();
 		const [x_res, y_res] = image.getResolution(); // Get resolution
 		const isFlipped = y_res < 0; // Check if Y-axis is flipped
+
+		// get_histogram();
 
 		// Convert map coordinates to pixel coordinates
 		let x = Math.round(((coordinate[0] - bbox[0]) / (bbox[2] - bbox[0])) * (width - 1));

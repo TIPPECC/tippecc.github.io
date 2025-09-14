@@ -33,7 +33,7 @@
 	team_array.sort(
 		(/** @type {{ related_org: string; }} */ a, /** @type {{ related_org: string; }} */ b) =>
 			//	b.last_name.toLowerCase() - a.last_name.toLowerCase() ||
-		
+
 			(b.related_org === 'GERICS') - (a.related_org === 'GERICS') ||
 			(b.related_org === 'Uni Jena') - (a.related_org === 'Uni Jena') ||
 			(b.related_org === 'WITS-GCI') - (a.related_org === 'WITS-GCI') ||
@@ -175,7 +175,7 @@
 								{/if}
 								{#if member.person_orcid}
 									<a
-										href={"https://orcid.org/" + member.person_orcid}
+										href={'https://orcid.org/' + member.person_orcid}
 										target="_blank"
 										rel="noopener noreferrer"
 										class="pl-1 underline flex items-center gap-1 whitespace-nowrap"
