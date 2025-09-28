@@ -59,11 +59,11 @@
 						<a href="#source_files_{random_id}" class="underline"> source files</a>
 						&
 						{metadata_prov_stats?.['result_entities']?.['results']?.['bindings']?.length}
-						<a href="#result_files_{random_id}" class="underline"> result files</a>)
+						<a href="#result_files_{random_id}" class="underline"> intermediate files</a>)
 					</span>
 				</div>
 				<div class="flex gap-2">
-					<span class="font-bold text-blue-400">Number of files based on this file:</span>
+					<span class="font-bold text-blue-400">Number of files derived from this file:</span>
 					<span
 						><a href="#base_for_entities_{random_id}" class="underline"
 							>{metadata_prov_stats?.['base_for_entities']?.['results']?.['bindings']?.length ??
@@ -123,13 +123,13 @@
 		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Result Files</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Intermediate Files</h2>
 		<div class="italic">(files created during previous processing steps)</div>
 		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
 		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-			ℹ️ Provenance: Files based on this file
+			ℹ️ Provenance: Derived Files
 		</h2>
 		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} {in_main_page} />
 	</div>

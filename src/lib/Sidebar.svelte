@@ -63,7 +63,7 @@
 			foldertypes.find((x) => x.key == foldertype)?.citation ?? 'No citation available';
 
 		label_value_arr[1]['Variable / Term'] = formatValue(search_term);
-		label_value_arr[1]['Time'] = formatValue(search_time);
+		label_value_arr[1]['Time'] = formatValue(search_time.replaceAll('_', '-'));
 		label_value_arr[1]['Aggregation'] = formatValue(search_aggregation);
 
 		label_value_arr[2]['Download Extent'] =
@@ -101,9 +101,10 @@
 <nav class="">
 	{#each Object.keys(label_value_arr) as cat}
 		{#if label_value_arr[cat]['Category']}
-			<div class="items-center mt-4">
+			<div class="items-center mt-4 font-semibold text-lg italic">
+				{label_value_arr[cat]['Category']}
 				<a href={label_value_arr[cat]['Category_Key']} class="font-bold hover:underline"
-					>{label_value_arr[cat]['Category']}<span class="ml-2 text-sm font-semibold italic"
+					><span class="ml-2 text-sm font-semibold italic"
 						>(show)</span
 					></a
 				>

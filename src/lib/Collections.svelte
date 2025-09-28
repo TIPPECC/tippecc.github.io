@@ -24,6 +24,7 @@
 	import FileDetails from '$lib/FileDetails.svelte';
 	import FileText from '$lib/icons/file-text.svelte';
 	import Sidebar from '$lib/Sidebar.svelte';
+	import { pushState } from '$app/navigation';
 
 	// Store for date and bbox selection
 	export const selectionStore = writable({
@@ -472,7 +473,8 @@
 
 		folder_data[file_obj.index]['metadata_show'] = true;
 		if (browser) {
-			history.pushState({}, '', '?type=' + foldertype + '&filename=' + filename);
+			pushState('?type=' + foldertype + '&filename=' + filename, "");
+			// history.pushState({}, '', '?type=' + foldertype + '&filename=' +);
 		}
 
 		folder_data = [...folder_data];
@@ -838,8 +840,7 @@
 				The Climate Services Gateway (CSG) is a platform that provides access to high resolution
 				climate projections and analysis ready data for the southern African region. The Gateway
 				development is still ongoing as well as the processing of datasets. Here you can explore the
-				available collections of datasets by climate model or region.<br />
-				<br />Please report issues and feedback
+				available collections of datasets by climate model or region. Please report issues and feedback
 				<span class="text-bold underline">
 					<a
 						href="https://github.com/TIPPECC/tippecc.github.io/issues"
@@ -954,7 +955,7 @@
 									variable.time
 										? 'font-bold'
 										: ''}"
-									on:click={() => set_search_time(variable.time)}>{variable.time}</button
+									on:click={() => set_search_time(variable.time)}>{variable.time.replace('-', ' - ').replaceAll('_', '-')}</button
 								>
 							{/if}
 						{/each}
@@ -980,7 +981,7 @@
 										? 'font-bold'
 										: ''}"
 									on:click={() => set_search_time(variable.time)}
-									>{variable.display_name} ({variable.time})</button
+									>{variable.display_name} ({variable.time.replace('_', '-')})</button
 								>
 							{/if}
 						{/each}
@@ -1006,7 +1007,7 @@
 										? 'font-bold'
 										: ''}"
 									on:click={() => set_search_time(variable.time)}
-									>{variable.display_name} ({variable.time})</button
+									>{variable.display_name} ({variable.time.replace('_', '-')})</button
 								>
 							{/if}
 						{/each}

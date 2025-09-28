@@ -33,6 +33,14 @@
 			<span class="font-bold text-blue-400">Reference:</span>
 			<span>please contact the TIPPECC team</span>
 		</div>
+		<div>
+			<span class="font-bold text-blue-400">DOI:</span>
+			<span>coming soon</span>
+		</div>
+		<div>
+			<span class="font-bold text-blue-400">License:</span>
+			<span>CC-BY-4.0</span>
+		</div>
 	</div>
 {/if}
 
@@ -40,7 +48,7 @@
 	{#if file['citation_historical_source']}
 		<div class="bg-box">
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-				ℹ️ Citation: Historical Source
+				ℹ️ Citation Source: Historical Data
 			</h2>
 			<div>
 				<span class="font-bold text-blue-400">Short reference:</span>
@@ -63,7 +71,7 @@
 	{#if file['citation_scenario_source']}
 		<div class="bg-box">
 			<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-				ℹ️ Citation: Scenario Source
+				ℹ️ Citation Source: Scenario Data
 			</h2>
 			<div>
 				<span class="font-bold text-blue-400">Short reference:</span>
