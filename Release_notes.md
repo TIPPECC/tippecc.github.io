@@ -38,8 +38,25 @@
 **Download by Extent**: Add API for spatial clipping and temporal slicing  ([#112](https://github.com/geofranzi/geoportal/issues/112))
 
 ### _Data_
- correct SPI / SPEI calculations
- refactoring calculation functions to work with Dask to deal with bigger datasets
+- changed SPI / SPEI calculations (remove reference period to reduce boundary hits )
+- refactoring calculation functions to work with Dask to deal with bigger datasets
+- CC-BY-4.0 added for our datasets
+**Known issues** 
+- metadata / units incorrect for SPi / SPEI
+- provenance gaps in CORDEX-CORE data
+- hurs in CORDEX_CORE raw with gaps in ICTP
+- CORDEX-CORE bias adjusted precipitation: continent edge pixel with too much null values 
+- newly add periods and absolute changes missing for most datasets
+- random missing files during periods calculation
+- missing citation
+- metadata in netCDF files not corrected
+- years for some CORDEX-CORE products not correct
+- provenance info not in netCDF
+- yearly sum for radiation seems too big in some files in CMIP6 e.g., TIPPECC_HadGEM3-GC31-MM_day_r1i1p1f3_rlus_1850_2100__yearly_total_j.nc
+- LANDSURF data: DOI not in netCDF
+- CMIP6 bias adjusted missing
+- high resolution data missing
+
 
 
 
