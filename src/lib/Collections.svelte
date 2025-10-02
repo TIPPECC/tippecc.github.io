@@ -177,7 +177,10 @@
 	// initial query
 	// send_query();
 
-	let abs_change = [{ time: '1981_2000-2080_2099', show: 'false' }];
+	let abs_change = [{ time: '1981_2000-2080_2099', show: 'false' },
+		{ time: '1981_2000-2021_2040', show: 'false' },
+		{ time: '1981_2000-2041_2060', show: 'false' }
+	];
 	let twenty_years_period = [
 		{ time: '1981_2000', show: 'false', display_name: 'historical' },
 		{ time: '2021_2040', show: 'false', display_name: 'near future' },
