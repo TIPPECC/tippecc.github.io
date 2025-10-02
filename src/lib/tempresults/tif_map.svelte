@@ -1005,6 +1005,7 @@
 	async function on_dif_slider_change(_e?: any) {
 		await tick();
 		selected_band_diff = parseInt(slider_index_diff) + 1;
+		selected_band = parseInt(slider_index) + 1; // ensure main band is also correctly set
 		await refresh_dif_band_metadata();
 		visualize_band();
 		updateHighlights(selected_band - 1, selected_band_diff - 1); // update highlight in chart
@@ -1533,7 +1534,7 @@
 					dateMap={band_slider_dates}
 					bind:slider_value
 					bind:slider_index
-					on:slider_changed={on_slider_change}
+					on:slider_changed={diff_mode ? on_dif_slider_change : on_slider_change}
 				/>
 			</div>
 		</div>
