@@ -1495,7 +1495,15 @@
 								<!-- Card layout for smaller screens -->
 								<div class="grid gap-4 md:hidden">
 									{#each cat_obj.files as file_obj}
-										<div class="border rounded-md p-4 shadow-md">
+										<div class="border rounded-md p-4 shadow-md {[
+													search_term.toLowerCase(),
+													search_time,
+													search_aggregation
+												].every((term) =>
+													folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+												)
+													? 'visible'
+													: 'hidden'}">
 											<div class="mb-2">
 												<strong>Filename:</strong>
 												<span class="break-all">{folder_data[file_obj.index]['filename']}</span>
