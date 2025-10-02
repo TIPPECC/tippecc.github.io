@@ -1,3 +1,49 @@
+## Version 1.1 (2025-01-10)
+
+#### _Frontend_
+
+**Features** 
+
+- **Download by Extent**: Add interface for download clipped by time and bounding box ([#116](https://github.com/TIPPECC/tippecc.github.io/issues/116))
+- **Map**: Additional IPCC colors (sequential) and compare mode ([#94](https://github.com/TIPPECC/tippecc.github.io/issues/94))
+- **Light mode**: Add in addition to dark mode ([#96](https://github.com/TIPPECC/tippecc.github.io/issues/96), [#98](https://github.com/TIPPECC/tippecc.github.io/issues/98))
+- **Accessibility**: Improve and remove errors ([#121](https://github.com/TIPPECC/tippecc.github.io/issues/121))
+
+**Enhancements:**
+
+- **Loading**: Add loading spinner over full page ([#125](https://github.com/TIPPECC/tippecc.github.io/issues/125))
+- **Mobile version**: improvements and fixes ([#93](https://github.com/TIPPECC/tippecc.github.io/issues/93))([#128](https://github.com/TIPPECC/tippecc.github.io/issues/128))
+- **Metadata**: Add missing cell method ([#91](https://github.com/TIPPECC/tippecc.github.io/issues/91))
+- **Collection Page**: UI improvements ([#90](https://github.com/TIPPECC/tippecc.github.io/issues/90))
+- **Collection Page**: Move select/unselect all to the bottom ([#103](https://github.com/TIPPECC/tippecc.github.io/issues/103))
+- **Filter**: Add names to periods and missing periods ([#102](https://github.com/TIPPECC/tippecc.github.io/issues/102))([#127](https://github.com/TIPPECC/tippecc.github.io/issues/127))
+- **Map**: Exchange basemap with a topo map ([#101](https://github.com/TIPPECC/tippecc.github.io/issues/101))
+- **Map & Chart**: Legend improvements ([#103](https://github.com/TIPPECC/tippecc.github.io/issues/103), [#124](https://github.com/TIPPECC/tippecc.github.io/issues/124))
+
+
+**Bugfixes:**
+
+- **Download by extent**: Find a way to round numbers in Javascript ([#117](https://github.com/TIPPECC/tippecc.github.io/issues/117))
+- **Mobile view**: Conditionally display Mobile FileDetails ([#112](https://github.com/TIPPECC/tippecc.github.io/issues/112))
+- **Collection Page**: Tiff button sometimes too big ([#111](https://github.com/TIPPECC/tippecc.github.io/issues/111))
+- **Map**: OpenLayers CSS missing ([#92](https://github.com/TIPPECC/tippecc.github.io/issues/92))
+- **Deatil Pages**: Layout broken ([#105](https://github.com/TIPPECC/tippecc.github.io/issues/105))
+- **Filter**: Aggregation value not reset on collection change ([#122](https://github.com/TIPPECC/tippecc.github.io/issues/122))
+- **Deep links break layout**: Scroll to open file shrinks the header ([#118](https://github.com/TIPPECC/tippecc.github.io/issues/118))
+- *AMap Legend**: Colorbar resizing fails due to wrong ids ([#123](https://github.com/TIPPECC/tippecc.github.io/issues/123))
+
+
+### _Backend_
+
+**Download by Extent**: Add API for spatial clipping and temporal slicing  ([#112](https://github.com/geofranzi/geoportal/issues/112))
+
+### _Data_
+ correct SPI / SPEI calculations
+ refactoring calculation functions to work with Dask to deal with bigger datasets
+
+
+
+
 ## Version 1.0.0beta (2025-05-16)
 
 ### _Frontend_
