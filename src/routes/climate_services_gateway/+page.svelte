@@ -96,11 +96,11 @@
 			link={false}
 		/>
 		<WorkPackage
-			wp="Spatial & Time Subsetting"
+			wp="Spatial & Time Subsets"
 			color="#662beb"
 			icon={Cut}
-			title="Spatial and time subsetting on request"
-			description="We provide spatial and time subsetting of the data on request. The data can be sliced for a specific region or period. In the future we plan to provide a web interface for spatial and time subsetting."
+			title="User-targeted subsets by region and time"
+			description="We provide spatial and time subsets via the web interface. The data can be sliced for a specific region or period."
 			link={false}
 		/>
 		<WorkPackage
