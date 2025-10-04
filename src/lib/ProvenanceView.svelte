@@ -123,14 +123,14 @@
 		<ProvenanceListView data={metadata_prov_stats?.['source_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="result_files_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Intermediate Files</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+			ℹ️ Provenance: Intermediate Files
+		</h2>
 		<div class="italic">(files created during previous processing steps)</div>
 		<ProvenanceListView data={metadata_prov_stats?.['result_entities']} {in_main_page} />
 	</div>
 	<div class="bg-box" id="base_for_entities_{random_id}">
-		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-			ℹ️ Provenance: Derived Files
-		</h2>
+		<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">ℹ️ Provenance: Derived Files</h2>
 		<ProvenanceListView data={metadata_prov_stats?.['base_for_entities']} {in_main_page} />
 	</div>
 {/if}

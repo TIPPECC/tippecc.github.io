@@ -104,9 +104,7 @@
 			<div class="items-center mt-4 font-semibold text-lg italic">
 				{label_value_arr[cat]['Category']}
 				<a href={label_value_arr[cat]['Category_Key']} class="font-bold hover:underline"
-					><span class="ml-2 text-sm font-semibold italic"
-						>(show)</span
-					></a
+					><span class="ml-2 text-sm font-semibold italic">(show)</span></a
 				>
 			</div>
 		{/if}
