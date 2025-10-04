@@ -177,9 +177,10 @@
 	// initial query
 	// send_query();
 
-	let abs_change = [{ time: '1981_2000-2080_2099', show: 'false' },
-		{ time: '1981_2000-2021_2040', show: 'false' },
-		{ time: '1981_2000-2041_2060', show: 'false' }
+	let abs_change = [
+		{ time: '1981_2000-2021_2040', show: 'false', display_name: 'near future' },
+		{ time: '1981_2000-2041_2060', show: 'false', display_name: 'mid future' },
+		{ time: '1981_2000-2080_2099', show: 'false', display_name: 'far future' }
 	];
 	let twenty_years_period = [
 		{ time: '1981_2000', show: 'false', display_name: 'historical' },
@@ -476,7 +477,7 @@
 
 		folder_data[file_obj.index]['metadata_show'] = true;
 		if (browser) {
-			pushState('?type=' + foldertype + '&filename=' + filename, "");
+			pushState('?type=' + foldertype + '&filename=' + filename, '');
 			// history.pushState({}, '', '?type=' + foldertype + '&filename=' +);
 		}
 
@@ -843,7 +844,8 @@
 				The Climate Services Gateway (CSG) is a platform that provides access to high resolution
 				climate projections and analysis ready data for the southern African region. The Gateway
 				development is still ongoing as well as the processing of datasets. Here you can explore the
-				available collections of datasets by climate model or region. Please report issues and feedback
+				available collections of datasets by climate model or region. Please report issues and
+				feedback
 				<span class="text-bold underline">
 					<a
 						href="https://github.com/TIPPECC/tippecc.github.io/issues"
@@ -954,11 +956,14 @@
 						{#each abs_change as variable}
 							{#if variable.show == 'true'}
 								<button
-									class="w-[220px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
+									class="w-[280px] variant-filled-surface hover:bg-tertiary-900 rounded-md mt-2 mr-2 {search_time ===
 									variable.time
 										? 'font-bold'
 										: ''}"
-									on:click={() => set_search_time(variable.time)}>{variable.time.replace('-', ' - ').replaceAll('_', '-')}</button
+									on:click={() => set_search_time(variable.time)}
+									>{variable.display_name} ({variable.time
+										.replace('-', ' - ')
+										.replaceAll('_', '-')})</button
 								>
 							{/if}
 						{/each}
@@ -1495,15 +1500,17 @@
 								<!-- Card layout for smaller screens -->
 								<div class="grid gap-4 md:hidden">
 									{#each cat_obj.files as file_obj}
-										<div class="border rounded-md p-4 shadow-md {[
-													search_term.toLowerCase(),
-													search_time,
-													search_aggregation
-												].every((term) =>
-													folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
-												)
-													? 'visible'
-													: 'hidden'}">
+										<div
+											class="border rounded-md p-4 shadow-md {[
+												search_term.toLowerCase(),
+												search_time,
+												search_aggregation
+											].every((term) =>
+												folder_data[file_obj.index]['filename'].toLowerCase().includes(term)
+											)
+												? 'visible'
+												: 'hidden'}"
+										>
 											<div class="mb-2">
 												<strong>Filename:</strong>
 												<span class="break-all">{folder_data[file_obj.index]['filename']}</span>
