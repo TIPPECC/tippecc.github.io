@@ -578,7 +578,7 @@
 	}
 
 	function parseReferenceDate(units: string) {
-		const match = units.match(/(\w+) since (\d{4}-\d{2}-\d{2})/);
+		const match = units.match(/(\w+) since (\d{4}-\d{1,2}-\d{1,2})/);
 		if (!match) {
 			throw new Error('Invalid units format: ' + units);
 		}
@@ -803,8 +803,12 @@
 				// case where every condition fails for example unknown time_prefix
 				fill_band_slider_error(net_cdf_times);
 			}
-		} catch (error) {
-			console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error}`);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				console.log(`Encountered error while assigning net_cdf_values to bandslider: ${error.stack}`);
+			} else {
+				console.error(`Encountered unknown error: ${error}`)
+			}
 		}
 
 		if (band_slider_values.length > 1) {
