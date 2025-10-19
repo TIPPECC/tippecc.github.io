@@ -587,10 +587,21 @@
 			refDate: new Date(match[2])
 		};
 	}
-	function convertToDate(offset: number, refDate: Date, calendar: string) {
+	function convertToDate(offset: number, refDate: Date, calendar: string, time_prefix: string = ''): Date {
+		if (time_prefix === 'hours') {
+			offset = offset / 24; // convert hours to days
+		} else if (time_prefix === 'minutes') {
+			offset = offset / 1440; // convert minutes to days
+		} else if (time_prefix === 'seconds') {
+			offset = offset / 86400; // convert seconds to days
+		}
 		const msPerDay = 86400 * 1000; // 1 day in milliseconds
-		const date = new Date(refDate.getTime());
 
+		const date = new Date(refDate.getTime());
+		console.log('Offset: ', offset);
+		console.log('RefDate: ', refDate);
+		console.log('Calendar: ', calendar);
+		console.log('Date before conversion: ', date);
 		switch (calendar) {
 			case 'gregorian':
 			case 'proleptic_gregorian':
@@ -621,6 +632,11 @@
 	}
 
 	function fill_band_slider_error(net_cdf_times: any) {
+		console.warn(
+			'Could not parse time units: ',
+			file_metadata['time#units'],
+			'. Defaulting to raw net_cdf_time values.'
+		);
 		// invalid timestamp -> default to raw net_cdf_time values as bandslider values
 		for (let i = 0; i < net_cdf_times.length; i++) {
 			band_slider_values.push(parseFloat(net_cdf_times[i]));
@@ -632,6 +648,7 @@
 		const { unit, refDate } = parseReferenceDate(file_metadata['time#units']);
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
 		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
+		//console.log('Converted Dates: ', dates);
 		for (let i = 0; i < dates; i++) {
 			band_slider_values.push(dates[i].getFullYear());
 			band_slider_dates.push(dates[i]);
@@ -641,6 +658,7 @@
 	function fill_band_slider_days(
 		net_cdf_times: any,
 		start_date: number,
+		time_prefix: string,
 		displayYears: boolean = false
 	) {
 		const { unit, refDate } = parseReferenceDate(file_metadata['time#units']);
@@ -649,7 +667,7 @@
 		const calendar = file_metadata['time#calendar'] || 'gregorian'; // Default to 'gregorian' if not specified
 		console.log('Calendar: ', calendar);
 		console.log('NetCDF times: ', net_cdf_times);
-		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar));
+		const dates = net_cdf_times.map((offset: number) => convertToDate(offset, refDate, calendar, time_prefix));
 		// console.log('Dates: ', dates);
 		for (let i = 0; i < dates.length; i++) {
 			var curDate = dates[i];
@@ -740,7 +758,7 @@
 			var cur_el: string = timestamp_data[i];
 			if (doesNotContainNumber(cur_el)) {
 				if (cur_el != 'since') {
-					if (cur_el == 'years' || cur_el == 'days') {
+					if (cur_el == 'years' || cur_el == 'days' || cur_el == 'minutes' || cur_el == 'hours') {
 						time_prefix = cur_el;
 					} else {
 						console.log('Encountered new Time Prefix: ', cur_el);
@@ -792,12 +810,12 @@
 				fill_band_slider_seasons(net_cdf_times, start_date);
 			} else if (time_prefix == 'years') {
 				fill_band_slider_years(net_cdf_times, start_date);
-			} else if (time_prefix == 'days') {
+			} else if (time_prefix == 'days' || time_prefix == 'hours' || time_prefix == 'minutes') {
 				if (full_band_date_diff > 365.0) {
 					// displays dates as years
-					fill_band_slider_days(net_cdf_times, start_date, true);
+					fill_band_slider_days(net_cdf_times, start_date, time_prefix, true);
 				} else {
-					fill_band_slider_days(net_cdf_times, start_date);
+					fill_band_slider_days(net_cdf_times, start_date, time_prefix, false);
 				}
 			} else {
 				// case where every condition fails for example unknown time_prefix
