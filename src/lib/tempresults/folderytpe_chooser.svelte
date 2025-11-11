@@ -42,7 +42,9 @@
 	}
 	const dispatch = createEventDispatcher();
 	let current_foldertype = {};
-	foldertypes = foldertypes_full.filter((x) => x.key.startsWith(current_category));
+	foldertypes = foldertypes_full
+		.filter((x) => x.key.startsWith(current_category))
+		.filter((x) => x.status == filter_by_status || x.status == 'public');
 
 	function set_foldertype(new_type: string) {
 		for (let x = 0; x < foldertypes.length; x++) {

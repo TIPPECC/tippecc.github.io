@@ -150,6 +150,46 @@
 		"bbox": "[10.25, -35.75, 51.75, -5.25]"
 	},
 	{
+		"key": "CMIP6_bias",
+		"display_name": "CMIP6 Bias Adjusted Variables",
+		"description": "CMIP6 bias adjusted data for TIPPECC area",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data with bias adjustment",
+		"status": "internal",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
+	},
+	{
+		"key": "CMIP6_bias_stat",
+		"display_name": "Σ CMIP6 Bias Adjusted Variables",
+		"description": "Sum/Mean over time (20/30 years) for CMIP6 bias adjusted data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data with bias adjustment",
+		"status": "internal",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
+	},
+	{
+		"key": "CMIP6_bias_ind",
+		"display_name": "CMIP6 Bias Indicator",
+		"description": "CMIP6 bias adjusted indicator data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data with bias adjustment",
+		"status": "internal",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
+	},
+	{
+		"key": "CMIP6_bias_ind_stat",
+		"display_name": "Σ CMIP6 Bias Indicator",
+		"description": "Sum/Mean over time (20/30 years) for CMIP6 bias adjusted indicator data",
+		"citation": "",
+		"header_regex": "",
+		"lineage": "Derived from CMIP6 data with bias adjustment",
+		"status": "internal",
+		"bbox": "[10.25, -35.75, 51.75, -5.25]"
+	},
+	{
 		"key": "CCAM_raw",
 		"display_name": "CCAM Raw Test",
 		"description": "CCAM raw data for TIPPECC area",
