@@ -1302,29 +1302,29 @@
 																		</div>
 																	</a>
 																</button>
-															{:else if folder_data[file_obj.index]['in_limit_conversion']}
+															{/if}
+															{#if folder_data[file_obj.index]['in_limit_conversion']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
-																	on:click={() =>
-																		try_to_generate_dat_file(
-																			folder_data[file_obj.index]['filename'],
+																	class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white">
+																	<a
+																		href="{API_URL}/climate/generate_dat_file?name={folder_data[
 																			file_obj.index
-																		)}
-																	title="Generate .dat file for download"
-																>
-																	<!-- <a
-																			href="{API_URL}/climate/generate_dat_file?name={folder_data[
-																				file_obj.index
-																			][0]}&type={foldertype}"
-																			class="flex"
-																		> -->
+																		][
+																			'filename'
+																		]}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
+																		class="flex"
+																		aria-hidden="true"
+																		tabindex="-1"
+																	>
 																	<Process />
 																	<div
 																		class="flex place-items-center text-white justify-items-center"
 																	>
 																		.dat
 																		<!-- </a> -->
-																	</div></button
+																	</div>
+																	</a>
+																	</button
 																>
 															{:else}
 																<div class="flex w-full pr-2 items-center justify-center">
