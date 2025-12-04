@@ -1171,6 +1171,12 @@
 																>⚠</span
 															>
 														{/if}
+														{#if folder_data[file_obj.index]['filename'].includes('_ICTP-RegCM4')}
+															<span
+																title="Caution: We found unlogical values in rlus files of the ICTP-RegCM4-Modell. Consider that there are errors when using this datasets. "
+																>⚠</span
+															>
+														{/if}
 													</label>
 												</td>
 												<td>
