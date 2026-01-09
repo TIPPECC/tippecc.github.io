@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import folder_types from './folder_types.json';
+	import {folder_types} from "$lib/stores/folder_types";
 	import Selected from '$lib/icons/select-multiple-svgrepo-com.svelte';
 	import SelectBoundingBox from '$lib/components/SelectBoundingBox.svelte';
 
@@ -25,7 +25,8 @@
 		lineage?: string;
 		status: string;
 		bbox?: string;
-	}[] = folder_types;
+	}[] = $folder_types;
+
 	const foldertypes_full = foldertypes;
 	// filter out the folder types that are not relevant
 	console.log('Filter: ', filter_by_status);

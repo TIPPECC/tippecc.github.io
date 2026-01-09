@@ -6,6 +6,10 @@
 		_fetch_foldercontent_by_type,
 		_fetch_foldercontent_force_update
 	} from '$lib/fetch_folder_content';
+	import {
+		folder_types,
+		load_folder_types
+	} from "$lib/stores/folder_types";
 	import { browser } from '$app/environment';
 	import { tempresult_selection } from '../routes/store/tempresult_store';
 	import FolderTree from '$lib/icons/folder_tree.svelte';
@@ -20,7 +24,7 @@
 	import Process from '$lib/icons/start-process.svelte';
 	import SquareEmpty from '$lib/icons/square_empty.svelte';
 	import LoadingRing from '$lib/LoadingRing.svelte';
-	import folder_types from '$lib/tempresults/folder_types.json';
+	// import folder_types from '$lib/tempresults/folder_types.json';
 	import FileDetails from '$lib/FileDetails.svelte';
 	import FileText from '$lib/icons/file-text.svelte';
 	import Sidebar from '$lib/Sidebar.svelte';
@@ -226,6 +230,10 @@
 		checkHeight();
 		window.addEventListener('resize', checkHeight);
 		return () => window.removeEventListener('resize', checkHeight);
+	});
+
+	onMount(() => {
+		load_folder_types();
 	});
 
 	function check_mobile() {
@@ -520,7 +528,7 @@
 	function set_cat_folder_data() {
 		// Regex pattern to match filenames
 		let filePattern = /(^(.+)_v(\d+)_([^_]+))|^((.+)_day_([^_]+)|^(.+))/; // Regex pattern to match filenames
-		const folder_type = folder_types.find((x) => x.key == foldertype);
+		const folder_type = $folder_types.find((x) => x.key == foldertype);
 		if (folder_type && folder_type.header_regex.length > 2) {
 			filePattern = new RegExp(folder_type.header_regex.replace(/\\/g, '\\'));
 		} else {
@@ -874,15 +882,17 @@
 				.
 			</div>
 			<section id="collection" />
-			<FoldertypeChooser
-				bind:startDate
-				bind:endDate
-				bind:bbox
-				bind:foldertype
-				bind:filter
-				bind:filter_by_status
-				on:foldertype_changed={() => refresh_foldercontent(false)}
-			/>
+			{#if $folder_types.length > 0}
+				<FoldertypeChooser
+					bind:startDate
+					bind:endDate
+					bind:bbox
+					bind:foldertype
+					bind:filter
+					bind:filter_by_status
+					on:foldertype_changed={() => refresh_foldercontent(false)}
+				/>
+			{/if}
 			{#if filter_by_status == 'internal'}
 				<div class="ml-2 mt-2">
 					<button
