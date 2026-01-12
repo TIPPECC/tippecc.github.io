@@ -24,7 +24,7 @@
 		header_regex: string;
 		lineage?: string;
 		status: string;
-		bbox?: string;
+		bbox?: [number, number, number, number];
 	}[] = $folder_types;
 
 	const foldertypes_full = foldertypes;
@@ -137,9 +137,9 @@
 					bind:boundingBox={bbox}
 					bind:startDate
 					bind:endDate
-					startingExtent={JSON.parse(
+					startingExtent={
 						foldertypes.find((x) => x.key == foldertype)?.bbox ?? '[10, -35, 51, -5]'
-					)}
+					}
 				/>
 			{/if}
 		</div>
