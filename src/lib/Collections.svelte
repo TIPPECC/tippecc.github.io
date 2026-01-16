@@ -29,6 +29,7 @@
 	import FileText from '$lib/icons/file-text.svelte';
 	import Sidebar from '$lib/Sidebar.svelte';
 	import { pushState } from '$app/navigation';
+	import { load } from 'ol/Image';
 
 	// Store for date and bbox selection
 	export const selectionStore = writable({
@@ -278,6 +279,64 @@
 			return [];
 		}
 	}
+
+	let show_download_error = false;
+	let download_error_message = '';
+
+	async function download_file(file_obj: any, file_type: string = 'nc', add2FileDownloadUrl: string = '', generate_dat: boolean = false) {
+		let url = '';
+		loading = true;
+		if(generate_dat == false){
+			url = `${API_URL}/climate/get_temp_file?name=${folder_data[file_obj.index]['filename']}&type=${foldertype}&filetype=${file_type}${add2FileDownloadUrl}`;
+		}
+		else{
+			url = `${API_URL}/climate/generate_dat_file?name=${folder_data[file_obj.index]['filename']}&type=${foldertype}${add2FileDownloadUrl}`;
+		}
+		try {
+				const res = await fetch(url);
+
+				if (!res.ok) {
+				const text = await res.text();
+				download_error_message = text || `download failed (${res.status})`;
+				show_download_error = true;
+				return;
+			}
+
+			// Datei-Download
+			const blob = await res.blob();
+			const downloadUrl = URL.createObjectURL(blob);
+
+			const disposition = res.headers.get('Content-Disposition');
+			console.log('disposition', disposition);
+			const filename = getFilenameFromDisposition(disposition) || 'download.bin';
+			const a = document.createElement('a');
+			a.href = downloadUrl;
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(downloadUrl);
+
+		} catch (err: any) {
+			download_error_message = err.message || 'network error';
+			show_download_error = true;
+		}
+		finally{
+			loading = false;
+		}
+	}
+
+	function getFilenameFromDisposition(disposition: string | null) {
+		if (!disposition) return null;
+
+		const utf8Match = disposition.match(/filename\*\=UTF-8''(.+)/);
+		if (utf8Match) {
+			return decodeURIComponent(utf8Match[1]);
+		}
+
+		const asciiMatch = disposition.match(/filename="(.+)"/);
+		return asciiMatch ? asciiMatch[1] : null;
+	}
+
 
 	async function try_to_generate_dat_file(filename: string, fc_index: number) {
 		var api_dat = API_URL + '/climate/generate_dat_file?name=' + filename + '&type=' + foldertype;
@@ -1059,6 +1118,23 @@
 				<List />
 			</div>
 
+		{#if show_download_error}
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+			<div class="bg-red-600 text-white px-6 py-5 rounded-lg shadow-xl max-w-md w-full text-center">
+			<p class="text-base">{download_error_message}</p>
+
+			<button
+				class="mt-4 px-4 py-2 bg-white text-red-600 font-semibold rounded hover:bg-red-100 transition"
+				on:click={() => show_download_error = false}
+			>
+				OK
+			</button>
+			</div>
+		</div>
+		{/if}
+
+
+
 			{#if folder_data.length > 0}
 				<div class="flex flex-wrap gap-4 p-2">
 					<div>
@@ -1233,71 +1309,45 @@
 															<button
 																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
 																title="Download .nc file"
+																on:click={() => download_file(file_obj)}
 															>
-																<a
-																	href="{API_URL}/climate/get_temp_file?name={folder_data[
-																		file_obj.index
-																	]['filename']}&type={foldertype}&filetype=nc"
-																	class="flex"
-																	aria-hidden="true"
-																	tabindex="-1"
+																<Download />
+																<div
+																	class="ml-1 flex text-white place-items-center justify-items-center"
 																>
-																	<Download />
-																	<div
-																		class="ml-1 flex text-white place-items-center justify-items-center"
-																	>
-																		.nc
-																	</div>
-																</a>
+																	.nc
+																</div>
 															</button>
 															{#if add2FileDownloadUrl.length > 0}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
 																	title="Download .nc file based on selected extent"
+																	on:click={() => download_file(file_obj, "nc", add2FileDownloadUrl)}
 																>
-																	<a
-																		href="{API_URL}/climate/get_temp_file?name={folder_data[
-																			file_obj.index
-																		][
-																			'filename'
-																		]}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
-																		class="flex"
-																		aria-hidden="true"
-																		tabindex="-1"
+																	<Download />
+																	<div
+																		class="ml-1 flex text-white place-items-center justify-items-center"
 																	>
-																		<Download />
-																		<div
-																			class="ml-1 flex text-white place-items-center justify-items-center"
-																		>
-																			.nc(e)
-																		</div>
-																	</a>
+																		.nc(e)
+																	</div>
 																</button>
 															{/if}
 															{#if folder_data[file_obj.index]['nc_clipped_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download clipped .nc file"
+																	on:click={() => download_file(file_obj, 'nc_clipped', add2FileDownloadUrl)}
 																>
-																	<a
-																		href="{API_URL}/climate/get_temp_file?name={folder_data[
-																			file_obj.index
-																		]['filename']}&type={foldertype}&filetype=nc_clipped"
-																		class="flex"
-																		aria-hidden="true"
-																		tabindex="-1"
+																	<Download />
+																	<div
+																		class="ml-1 flex text-white place-items-center justify-items-center"
 																	>
-																		<Download />
-																		<div
-																			class="ml-1 flex text-white place-items-center justify-items-center"
-																		>
-																			.nc(c)
-																		</div>
-																	</a>
+																		.nc(c)
+																	</div>
 																</button>
 															{/if}
 
-															{#if folder_data[file_obj.index]['dat_exists']}
+															<!-- {#if folder_data[file_obj.index]['dat_exists']}
 																<button
 																	class="mr-1 max-h-[33px] p-1 flex items-center justify-center bg-[#3b82f6d4] hover:bg-tertiary-900 rounded-md text-white"
 																	title="Download .dat file"
@@ -1318,20 +1368,13 @@
 																		</div>
 																	</a>
 																</button>
-															{/if}
+															{/if} -->
 															{#if folder_data[file_obj.index]['in_limit_conversion']}
 																<button
-																	class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white">
-																	<a
-																		href="{API_URL}/climate/generate_dat_file?name={folder_data[
-																			file_obj.index
-																		][
-																			'filename'
-																		]}&type={foldertype}&filetype=nc{add2FileDownloadUrl}"
-																		class="flex"
-																		aria-hidden="true"
-																		tabindex="-1"
-																	>
+																	class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
+																	title="Download .dat file"
+																	on:click={() => download_file(file_obj, 'dat', '', true)}
+																>
 																	<Process />
 																	<div
 																		class="flex place-items-center text-white justify-items-center"
@@ -1339,9 +1382,24 @@
 																		.dat
 																		<!-- </a> -->
 																	</div>
-																	</a>
 																	</button
 																>
+																{#if add2FileDownloadUrl.length > 0}
+																	<button
+																		class="mr-1 max-h-[33px] p-1 m flex items-center justify-center bg-[#3b82f6d4] hover:bg-fuchsia-900 rounded-md text-white"
+																		title="Download .dat file based on selected extent"
+																		on:click={() => download_file(file_obj, 'dat', add2FileDownloadUrl, true)}
+																	>
+																		<Process />
+																		<div
+																			class="flex place-items-center text-white justify-items-center"
+																		>
+																			.dat(e)
+																			<!-- </a> -->
+																		</div>
+																		</button
+																	>
+																{/if}
 															{:else}
 																<div class="flex w-full pr-2 items-center justify-center">
 																	<!--<XDisabled />-->
