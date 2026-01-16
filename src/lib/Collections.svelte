@@ -1307,7 +1307,7 @@
 													<div class="flex flex-wrap gap-1">
 														{#if folder_data[file_obj.index]['filesuffix'] == '.nc'}
 															<button
-																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
+																class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white pr-2"
 																title="Download .nc file"
 																on:click={() => download_file(file_obj)}
 															>
@@ -1320,7 +1320,7 @@
 															</button>
 															{#if add2FileDownloadUrl.length > 0}
 																<button
-																	class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white"
+																	class="mr-1 max-h-[33px] p-1 flex items-center bg-[#3b82f6d4] hover:bg-tertiary-900 justify-center rounded-md text-white pr-1"
 																	title="Download .nc file based on selected extent"
 																	on:click={() => download_file(file_obj, "nc", add2FileDownloadUrl)}
 																>
