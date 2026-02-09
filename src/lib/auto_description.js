@@ -89,7 +89,7 @@ export function auto_description(filename, foldertype, metadata) {
 			description += 'and ' + regional_model + ' regional model ';
 		}
 		if (bias_correction) {
-			description += 'with bias correction ';
+			description += 'with bias adjustment ';
 		}
 		if (period_1 != 'None') {
 			description += 'for time period ' + period_1 + ' ';
