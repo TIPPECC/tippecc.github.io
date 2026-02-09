@@ -204,7 +204,7 @@
 							<span class="custom-txt-details">{value['experiment_id']}</span>
 						</div>
 						<div>
-							<span class="font-bold text-label">Bias Correction:</span>
+							<span class="font-bold text-label">Bias Adjustment:</span>
 							<span class="custom-txt-details">{value['bias_correction']}</span>
 						</div>
 						<div>

@@ -106,7 +106,7 @@
 				<span class="ml-2">{folder_data['metadata']['file']['experiment_id']}</span>
 			</div>
 			<div>
-				<span class="font-bold ml-4 text-blue-400">Bias Correction:</span>
+				<span class="font-bold ml-4 text-blue-400">Bias Adjustment:</span>
 				<span class="ml-2">{folder_data['metadata']['file']['bias_correction']}</span>
 			</div>
 			<div>
