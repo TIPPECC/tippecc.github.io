@@ -338,7 +338,7 @@ Collection_name;${detailedData.collection_name}
 								{detailedData.bias}
 								<span
 									class="info-icon"
-									title="Bias correction refers to statistical techniques used to adjust model outputs to reduce systematic deviations from observed data, improving the reliability of projections."
+									title="Bias adjustments refer to statistical techniques used to adjust model outputs to reduce systematic deviations from observed data, improving the reliability of projections."
 								>
 									<i class="fas fa-info-circle" aria-hidden="true" />
 								</span>
