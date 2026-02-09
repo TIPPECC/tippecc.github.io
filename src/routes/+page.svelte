@@ -1,19 +1,28 @@
 <script>
 	import { onMount } from 'svelte';
-	import { base } from '$app/paths';
+	// import { base } from '$app/paths';
 	import { browser } from '$app/environment';
-	import Carousel from 'svelte-carousel';
+	// import Carousel from 'svelte-carousel';
 	import Goals from '$lib/icons/goals-svgrepo-com.svelte';
 
 	import { fade, fly, scale, blur } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import icon from '$lib/tippecc_icon.svg';
 	import { Source } from 'ol/source';
+	import { goto } from '$app/navigation';
 
 	let visible = false;
 	let carousel; // for calling methods of the carousel instance
 	onMount(() => {
-		visible = true;
+		if (
+			window.location.host.includes('localhost:5174') ||
+			window.location.host.includes('tippecc.github.io')
+		) {
+			visible = true;
+		} else {
+			goto('/climate_services_gateway');
+		}
+		
 	});
 
 	function typewriter(node, { speed = 1 }) {
@@ -51,7 +60,7 @@
 		};
 	}
 </script>
-
+{#if visible}
 {#if browser}
 	<div class="relative w-full grow flex h-[15rem]">
 		<div class="absolute z-30 grow flex justify-center w-full pt-2 pointer-events-none">
@@ -269,6 +278,7 @@
 		collective resilience to climate change.
 	</div>-->
 </div>
+{/if}
 
 <style lang="postcss">
 	figure {

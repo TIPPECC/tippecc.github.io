@@ -25,15 +25,7 @@
 	$: current_page = $page.url.pathname;
 	$: current = '';
 
-	let nav_elements = [
-		{ label: 'Home', path: '/' },
-		{ label: 'Work Packages', path: '/work_packages' },
-		{ label: 'Case Studies', path: '/case_studies' },
-		// { label: 'Data', path: '/data' },
-		{ label: 'Team', path: '/team' },
-		{ label: 'Publications', path: '/publications' },
-		{ label: 'Climate Services Gateway', path: '/climate_services_gateway' }
-	];
+	let nav_elements = [];
 
 	$: if (undefined != current_page) {
 		nav_elements.forEach((element) => {
@@ -67,6 +59,27 @@
 
 	onMount(() => {
 		// Ensure this code only runs in the browser
+
+		// Define navigation elements based on the current host
+		if (
+			window.location.host.includes('localhost:5174') ||
+			window.location.host.includes('tippecc.github.io')
+		) {
+			nav_elements = [
+				{ label: 'Home', path: '/' },
+				{ label: 'Work Packages', path: '/work_packages' },
+				{ label: 'Case Studies', path: '/case_studies' },
+				{ label: 'Data', path: '/data' },
+				{ label: 'Team', path: '/team' },
+				{ label: 'Publications', path: '/publications' },
+				{ label: 'Climate Services Gateway', path: '/climate_services_gateway' }
+			];
+		} else {
+			nav_elements = [
+				{ label: 'Climate Services Gateway', path: '/climate_services_gateway' }
+			];
+		}
+
 		updateVerticality(); // Set initial value
 		window.addEventListener('resize', updateVerticality);
 
