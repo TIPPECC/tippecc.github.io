@@ -9,12 +9,20 @@ if (dev) {
 		API_URL = 'http://sapphire.ms.wits.ac.za/backend_geoportal';
 		active_backend = 'sapphire';
 } else {
-	if (window.location.hostname === 'leutra.geogr.uni-jena.de' || window.location.hostname === 'leutra.geogr.uni-jena.de') {
-		API_URL = 'https://leutra.geogr.uni-jena.de/backend_geoportal';
-		active_backend = 'leutra';
-	} else if (window.location.hostname === 'sapphire.ms.wits.ac.za') {
-		API_URL = 'http://sapphire.ms.wits.ac.za/backend_geoportal';
-		active_backend = 'sapphire';
+	// When running in production with SSR, `window` is not available.
+	// Default to the leutra backend on the server, and refine based on
+	// hostname only in the browser.
+	if (typeof window !== 'undefined') {
+		if (window.location.hostname === 'leutra.geogr.uni-jena.de' || window.location.hostname === 'leutra.geogr.uni-jena.de') {
+			API_URL = 'https://leutra.geogr.uni-jena.de/backend_geoportal';
+			active_backend = 'leutra';
+		} else if (window.location.hostname === 'sapphire.ms.wits.ac.za') {
+			API_URL = 'http://sapphire.ms.wits.ac.za/backend_geoportal';
+			active_backend = 'sapphire';
+		} else {
+			API_URL = 'https://leutra.geogr.uni-jena.de/backend_geoportal';
+			active_backend = 'leutra';
+		}
 	} else {
 		API_URL = 'https://leutra.geogr.uni-jena.de/backend_geoportal';
 		active_backend = 'leutra';
