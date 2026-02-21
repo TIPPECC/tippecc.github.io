@@ -1,0 +1,6 @@
+RewriteEngine On
+
+
+# If a request is made for a file that does not exist, but a .html version of that file does exist, serve the .html file instead
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+)$ $1.html [L]
