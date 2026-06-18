@@ -1,0 +1,2 @@
+let e="",a="CMIP6_raw";typeof window<"u"?window.location.hostname==="leutra.geogr.uni-jena.de"||window.location.hostname==="leutra.geogr.uni-jena.de"?e="https://leutra.geogr.uni-jena.de/backend_geoportal":window.location.hostname==="sapphire.ms.wits.ac.za"?(e="https://sapphire.ms.wits.ac.za/backend_geoportal",a="CCAM_raw"):e="https://leutra.geogr.uni-jena.de/backend_geoportal":e="https://leutra.geogr.uni-jena.de/backend_geoportal";export{e as A,a as s};
+//# sourceMappingURL=D_vBOdem.js.map

@@ -1,2 +1,0 @@
-let e="";typeof window<"u"?window.location.hostname==="leutra.geogr.uni-jena.de"||window.location.hostname==="leutra.geogr.uni-jena.de"?e="https://leutra.geogr.uni-jena.de/backend_geoportal":window.location.hostname==="sapphire.ms.wits.ac.za"?e="http://sapphire.ms.wits.ac.za/backend_geoportal":e="https://leutra.geogr.uni-jena.de/backend_geoportal":e="https://leutra.geogr.uni-jena.de/backend_geoportal";export{e as A};
-//# sourceMappingURL=CJq9Ms2Z.js.map
