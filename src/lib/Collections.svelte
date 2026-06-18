@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { onMount, tick } from 'svelte';
-	import { API_URL } from '../app.config';
+	import { onMount, } from 'svelte';
+	import { API_URL, start_folder } from '../app.config';
 	import {
 		_fetch_foldercontent_by_type,
 		_fetch_foldercontent_force_update
@@ -153,8 +153,8 @@
 	// 	"wget --input-file 'http://127.0.0.1:8000/climate/get_temp_urls?hash=21cd9c90faad4dc19b73c8c0ae75d51a'";
 	let wget_add_args = '-r -H -N --cut-dirs=2';
 
-	let foldertype = 'CMIP6_raw';
-	let start_file = '';
+
+	let foldertype = start_folder;
 	// Removed duplicate declaration of selected_file
 
 	// set from URL url type ?type=cmip6_raw
